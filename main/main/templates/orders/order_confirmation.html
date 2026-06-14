@@ -1,0 +1,109 @@
+{% extends "base/base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- Main Content -->
+<main class="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-xl relative overflow-hidden">
+<!-- Background Atmospheric Element -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -z-10"></div>
+<div class="max-w-xl w-full text-center space-y-lg bg-surface-container-lowest p-xl rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant">
+<!-- Success Illustration Area -->
+<div class="relative inline-block mb-md">
+<div class="w-24 h-24 bg-tertiary-container/10 rounded-full flex items-center justify-center mx-auto">
+<span class="material-symbols-outlined text-[48px] text-tertiary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Animated decorative circles -->
+<div class="absolute inset-0 animate-ping rounded-full border-2 border-tertiary/20 scale-125"></div>
+</div>
+<!-- Content -->
+<div class="space-y-sm">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Order Placed Successfully!</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mx-auto">Your order has been received. We will contact you shortly to confirm.</p>
+</div>
+<!-- Order ID Card -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-md inline-flex flex-col items-center gap-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Order ID </span>
+<span class="font-headline-md text-headline-md text-primary font-bold">{{ order_id }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Name</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">{{ name }} </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Mobile</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">{{ mobile }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Address</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">{{ location }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Quantity</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">{{ quantity }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Price</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">{{ price }}</span>
+</div>
+<!-- Estimated Timeline -->
+<div class="flex flex-col gap-sm py-md">
+<div class="flex items-center gap-md text-left">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-white text-[18px]">restaurant</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Preparation</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Selected butcher preparing your fresh cuts</p>
+</div>
+</div>
+<div class="w-0.5 h-6 bg-outline-variant ml-4"></div>
+<div class="flex items-center gap-md text-left">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">delivery_dining</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-60">Delivery</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-60">Hygienically packed and on its way</p>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-md pt-lg">
+<button class="bg-primary-container text-white h-[48px] rounded-lg font-label-md text-label-md hover:bg-primary transition-all active:scale-95 flex items-center justify-center gap-sm shadow-md" onclick="window.location.href='/'">
+<span class="material-symbols-outlined text-[20px]">shopping_basket</span>
+                    Continue Shopping
+                </button>
+<button class="bg-white border border-on-surface h-[48px] rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all active:scale-95 flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-[20px] text-[#25D366]">chat</span>
+                    Chat on WhatsApp
+                </button>
+</div>
+</div>
+</main>
+
+<script>
+        // Simple confetti effect for celebration
+        function createConfetti() {
+            const container = document.body;
+            const colors = ['#8f000d', '#b22222', '#10B981', '#FFD700'];
+            
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = -10 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                container.appendChild(confetti);
+
+                const animation = confetti.animate([
+                    { transform: `translate3d(0, 0, 0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate3d(${(Math.random() - 0.5) * 200}px, 100vh, 0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: 2000 + Math.random() * 3000,
+                    easing: 'cubic-bezier(0, .9, .57, 1)'
+                });
+
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+
+        // Trigger confetti on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(createConfetti, 300);
+        });
+    </script>
+</body></html>
+{% endblock %}

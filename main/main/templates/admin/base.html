@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PrimePoultry Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-primary": "#ffb4ac",
+                      "inverse-surface": "#27313f",
+                      "on-tertiary-container": "#60eeb1",
+                      "surface-container-low": "#eff4ff",
+                      "on-primary-container": "#ffc8c2",
+                      "background": "#f8f9ff",
+                      "surface-container-high": "#dee9fc",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed": "#6ffbbe",
+                      "error": "#ba1a1a",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-background": "#121c2a",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#006a48",
+                      "primary-fixed": "#ffdad6",
+                      "surface": "#f8f9ff",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "surface-variant": "#d9e3f6",
+                      "on-surface": "#121c2a",
+                      "outline": "#8e706d",
+                      "on-secondary-fixed-variant": "#454747",
+                      "primary-container": "#b22222",
+                      "on-secondary-container": "#616363",
+                      "secondary": "#5d5f5f",
+                      "secondary-fixed": "#e2e2e2",
+                      "on-primary-fixed-variant": "#92030f",
+                      "on-tertiary-fixed": "#002113",
+                      "on-tertiary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "tertiary": "#004f35",
+                      "surface-container": "#e6eeff",
+                      "surface-tint": "#b52424",
+                      "surface-dim": "#d0dbed",
+                      "surface-bright": "#f8f9ff",
+                      "secondary-fixed-dim": "#c6c6c7",
+                      "secondary-container": "#dfe0e0",
+                      "on-surface-variant": "#5a403e",
+                      "surface-container-highest": "#d9e3f6",
+                      "primary": "#8f000d",
+                      "primary-fixed-dim": "#ffb4ac",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "on-primary": "#ffffff",
+                      "outline-variant": "#e2beba",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "on-primary-fixed": "#410003"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "32px",
+                      "md": "16px",
+                      "gutter": "16px",
+                      "margin-desktop": "48px",
+                      "xs": "4px",
+                      "margin-mobile": "16px",
+                      "lg": "24px",
+                      "base": "8px",
+                      "sm": "12px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-xl": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex overflow-hidden">
+<!-- Navigation Drawer (Sidebar) -->
+<aside class="fixed inset-y-0 left-0 z-[60] flex flex-col py-4 h-full w-80 bg-surface border-r border-outline-variant shadow-xl transition-all duration-200 hidden md:flex">
+<div class="px-6 mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">PrimePoultry</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Admin Control Center</p>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Active State: Dashboard -->
+<a href="{% url 'admin_dashboard' %}" class="{% if request.path == '/admin_dashboard/' %}bg-primary-container text-on-primary-container rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% else %}text-on-surface-variant hover:bg-surface-container-low rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% endif %}">
+<span class="material-symbols-outlined" data-icon="dashboard"  style = "{% if request.path == '/admin_dashboard/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a  href="{% url 'admin_products' %}" class="{% if request.path == '/admin_products/' %}bg-primary-container text-on-primary-container rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% else %}text-on-surface-variant hover:bg-surface-container-low rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% endif %}">
+<span class="material-symbols-outlined" data-icon="inventory_2" style = "{% if request.path == '/admin_products/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">inventory_2</span>
+<span class="font-body-md text-body-md">Products</span>
+</a>
+<a class="{% if request.path == '/admin_orders/' %}bg-primary-container text-on-primary-container rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% else %}text-on-surface-variant hover:bg-surface-container-low rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% endif %}" href="{% url 'admin_orders' %}">
+<span class="material-symbols-outlined" data-icon="receipt_long" style = "{% if request.path == '/admin_orders/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">receipt_long</span>
+<span class="font-body-md text-body-md">Orders</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<div class="p-4 bg-surface-container-low rounded-xl flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate manager in a crisp white shirt, photographed against a minimalist grey background. The lighting is clean and bright, reflecting a professional and authoritative atmosphere suited for a high-end corporate dashboard. The overall style is modern and minimalist with a focus on clarity and professionalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvkM3cW61gwQcjGlb7rWmMPvjAzpdnH-je1vc4bXDT9Sx-fMgMp1uFh_4h1dKHvxJ9j89MjJ1u9U_MWhmJOX2fTrm197iDPZw1TsAY9l7MwobFMECz7SOifAd7a6wbRgvnQ5XCF0rBpMaP84OhkKlfrh5IbIr87sf5sn_0ZVtTJtPpBvGApx8KMxr_NfYVJ-pMgOAOdWnxKKY5uGpwm3zF1jpANXi4fAKRrphq5CwEtWn1qbAfTvEQBLQ1w2wozQoSV6fQaHE_4zfs"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-label-md text-label-md font-bold truncate text-on-surface">Welcome Guest</p>
+<p class="font-label-sm text-label-sm truncate text-on-surface-variant">Freshness Guaranteed</p>
+</div>
+<button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">logout</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col md:ml-80 h-screen overflow-y-auto">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-margin-mobile md:px-margin-desktop py-4 w-full bg-surface/95 backdrop-blur-sm border-b border-outline-variant shadow-sm">
+<div class="flex items-center gap-4">
+<button class="md:hidden material-symbols-outlined text-primary" data-icon="menu">menu</button>
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Dashboard Overview</h2>
+</div>
+<div class="flex items-center gap-gutter">
+<div class="relative hidden md:flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-label-md focus:ring-2 focus:ring-primary-container focus:border-primary-container outline-none transition-all" placeholder="Search orders..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-secondary hover:bg-surface-container-high p-2 rounded-full transition-colors" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-secondary hover:bg-surface-container-high p-2 rounded-full transition-colors" data-icon="shopping_cart">shopping_cart</button>
+</div>
+</header>
+        {% block content %}
+        <!-- Child templates will insert content here -->
+        {% endblock %}
+<!-- Footer -->
+<footer class="w-full py-xl px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-lg bg-surface-container-highest border-t border-outline-variant mt-auto">
+<div>
+<h5 class="font-headline-md text-headline-md text-primary mb-md">Lakshmi Broliers</h5>
+<p class="font-label-md text-label-md text-on-surface-variant">© 2024 Lakshmi Broliers Butcher Shop. All rights reserved. Professional administration suite for inventory and order fulfillment tracking.</p>
+</div>
+<div class="flex flex-col gap-sm">
+<span class="font-label-md text-label-md font-bold text-on-surface">Quick Links</span>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors underline" href="#">Shop Address</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors underline" href="#">WhatsApp Support</a>
+</div>
+<div class="flex flex-col gap-sm">
+<span class="font-label-md text-label-md font-bold text-on-surface">System Status</span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface-variant">Database Connected</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface-variant">Payment Gateway Active</span>
+</div>
+</div>
+</footer>
+</main>
+<!-- Bottom Navigation Bar (Mobile Only) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface border-t border-outline-variant shadow-lg md:hidden">
+<a class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-low transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="rebase_edit">rebase_edit</span>
+<span class="font-label-sm text-label-sm">Products</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-low transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="call">call</span>
+<span class="font-label-sm text-label-sm">Contact</span>
+</a>
+</nav>
+<script>
+        // Simple logic for sidebar toggle on mobile
+        document.querySelector('[data-icon="menu"]').addEventListener('click', () => {
+            const sidebar = document.querySelector('aside');
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
+            sidebar.classList.toggle('w-full');
+            sidebar.classList.toggle('fixed');
+        });
+
+
+        // Hover effects for the metrics cards
+        const cards = document.querySelectorAll('.grid > div');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+
+
+        
+
+    </script>
+</body></html>

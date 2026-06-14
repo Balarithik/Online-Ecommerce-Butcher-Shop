@@ -1,0 +1,163 @@
+{% extends "base/base.html" %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+
+<main class="max-w-[1280px] mx-auto pb-xl">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg p-margin-mobile md:p-margin-desktop">
+<!-- Breadcrumbs (Mobile Hidden) -->
+<nav class="hidden md:flex col-span-12 gap-xs items-center mb-sm text-on-surface-variant font-label-md text-label-md">
+<span class="hover:text-primary cursor-pointer" ><a href="{% url 'home' %}">Home</a></span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer" ><a href="{% url 'products' %}">Products</a></span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface">{{ product.name }}</span>
+</nav>
+<!-- Product Image Section (Bento Style Layout) -->
+<div class="col-span-12 md:col-span-7 space-y-md">
+<div class="relative product-image-container aspect-square md:aspect-[4/3] rounded-xl overflow-hidden bg-white border border-outline-variant shadow-sm group">
+<img alt="Premium Chicken Breast" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A macro photograph of premium raw chicken breasts presented on a pristine white marble butcher's block. The lighting is soft and natural, emphasizing the subtle textures and pale pink freshness of the meat. The background is a clean, minimalist kitchen setting with clinical white space, reflecting the brand's high hygiene standards. The overall mood is high-end, fresh, and appetizing, with vibrant red accents in the lighting's warmth." src="{{ product.image1.url }}"/>
+<div class="absolute top-md left-md">
+<div class="bg-[#10B981]/10 text-[#10B981] px-md py-xs rounded-full font-label-sm text-label-sm flex items-center gap-xs backdrop-blur-sm border border-[#10B981]/20">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            Non--Frozen
+                        </div>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-sm">
+<div class="aspect-square rounded-lg overflow-hidden border-2 border-primary bg-white cursor-pointer shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Close-up of premium raw chicken breast texture on a white surface, bright minimalist studio lighting." src="{{ product.image2.url }}"/>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors">
+<img class="w-full h-full object-cover" data-alt="A clean white ceramic bowl containing fresh boneless chicken breast slices, high-key clinical photography." src="{{ product.image3.url }}"/>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors">
+<img class="w-full h-full object-cover" data-alt="A chef preparing fresh chicken breast on a clean wooden cutting board, minimalist aesthetic, white background." src="{{ product.image4 }}"/>
+</div>
+<div class="aspect-square rounded-lg flex items-center justify-center border border-outline-variant bg-surface-container-low cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">add_a_photo</span>
+</div>
+</div>
+</div>
+<!-- Product Details Section -->
+<div class="col-span-12 md:col-span-5 flex flex-col">
+<div class="mb-lg">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">{{ product.name }}</h1>
+<div class="flex items-center gap-sm mb-md">
+<div class="flex text-[#FFD700]">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant"></span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-lg text-headline-lg text-primary">₹{{ product.price }}</span>
+<span class="font-label-md text-label-md text-on-surface-variant">per kg</span>
+</div>
+</div>
+<div class="p-md bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm mb-lg">
+<p class="font-body-md text-body-md text-on-surface-variant mb-md leading-relaxed">
+                        Sourced from high-welfare local farms, our boneless chicken breasts are hand-trimmed by master butchers to ensure zero fat and maximum protein. Every piece undergoes rigorous hygiene checks in our climate-controlled facility.
+                    </p>
+<ul class="space-y-sm">
+<li class="flex items-center gap-sm text-on-surface font-label-md text-label-md">
+<span class="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+                            No Antibiotics or Hormones
+                        </li>
+<li class="flex items-center gap-sm text-on-surface font-label-md text-label-md">
+<span class="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+                            Vacuum-sealed for Freshness
+                        </li>
+</ul>
+</div>
+<!-- Quantity and CTA -->
+<div class="space-y-md mt-auto">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-bold text-on-surface">Quantity in Kg</span>
+<div class="flex items-center border border-outline rounded-full overflow-hidden">
+<button class="w-10 h-10 flex items-center justify-center hover:bg-surface-container-high transition-colors" onclick="changeQty(-0.250)">
+<span class="material-symbols-outlined text-[20px]">remove</span>
+</button>
+<input class="w-17  text-center border-none focus:ring-0 font-label-md text-label-md bg-transparent" id="qty" min="0.250" step="0.250" type="number" value="1"/>
+<button class="w-10 h-10 flex items-center justify-center hover:bg-surface-container-high transition-colors" onclick="changeQty(0.250)">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col gap-sm">
+<button class="w-full h-12 bg-primary-container text-on-primary-fixed font-label-md text-label-md font-bold rounded-xl active:scale-95 transition-transform shadow-md hover:bg-primary/90 flex items-center justify-center gap-md" onclick="goToCheckout({{ product.id }})">
+<span class="material-symbols-outlined">bolt</span>
+                            Buy Now
+                        </button>
+<!--<button class="w-full h-12 bg-white border border-outline text-on-surface font-label-md text-label-md font-bold rounded-xl active:scale-95 transition-transform hover:bg-surface-container-low flex items-center justify-center gap-md">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+                            Add to Cart
+                        </button>-->
+</div>
+</div>
+</div>
+<!-- "Why Buy From Us" Section -->
+<section class="col-span-12 mt-xl border-t border-outline-variant pt-xl">
+<h2 class="font-headline-md text-headline-md mb-lg text-center">Why Trust Lakshmi Broliers?</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
+<div class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
+<span class="material-symbols-outlined text-[32px]">sanitizer</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-sm">Hygienic Processing</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Our facility follows strict ISO 22000 hygiene standards to ensure zero contamination.</p>
+</div>
+<div class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
+<div class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
+<span class="material-symbols-outlined text-[32px]">nest_eco_leaf</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-sm">Always Fresh</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">From farm to your doorstep within 2 hours. We never freeze our poultry products.</p>
+</div>
+<div class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
+<div class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
+<span class="material-symbols-outlined text-[32px]">local_shipping</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-sm">Fast Delivery</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Delivery around 10km radius from our shop.</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+
+<script>
+function changeQty(delta) {
+    const input = document.getElementById('qty');
+    let val = parseFloat(input.value) + delta;   // use parseFloat
+    const min = parseFloat(input.min) || 0.25;   // respect min
+    if (val < min) val = min;
+    input.value = val.toFixed(3);                // keep decimal precision
+}
+
+// Add a subtle scroll reveal effect
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('header');
+    if (window.scrollY > 20) {
+        header.classList.add('shadow-md');
+    } else {
+        header.classList.remove('shadow-md');
+    }
+});
+
+function goToCheckout(productId) {
+    const qty = document.getElementById('qty').value;
+    if (!qty) {
+        alert("Please select a quantity");
+        return;
+    }
+    // Build the URL dynamically
+    window.location.href = `/products/Checkout/${productId}/${qty}/`;
+}
+</script>
+
+</body></html>
+{% endblock %}

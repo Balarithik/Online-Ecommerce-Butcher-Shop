@@ -1,0 +1,145 @@
+{% extends "base/base.html" %}
+{% block title %}Aboutus{% endblock %}
+
+{% block content %}
+<main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+<!-- Our Story Hero -->
+<section class="mb-xl overflow-hidden rounded-xl bg-surface-container-lowest border border-outline-variant shadow-sm">
+<div class="grid md:grid-cols-2 items-stretch">
+<div class="relative min-h-[300px] h-full">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A professional local butcher in a clean, modern workshop setting, precisely cutting fresh organic poultry. The environment is minimalist and clinical with white tiled walls and stainless steel surfaces, illuminated by bright natural light. The color palette emphasizes deep red meat against clinical whites, reflecting a corporate modern aesthetic of extreme hygiene." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWIRg2VZ_xrm7Oa8Rzyr_4AOvQeAFzNwW8ogh_QMwQnzxxDpq_le5AhApB97daUT86D8mA2AAHJM8aCrho5N2qkgZrdTTXJOfAxM1-YMFLh6rW7yI01szOAgqMr-IPQoY1e5Qy7IEtNRs_LBeRFT0NlEP2PcUtLF154ItAc-HyYTQ2tvBNXxNhwN8jSP-UuITYS0v8xC92fnExg5yZQvSY42X4UCi_SnS_IEtaAibhYvKZYbo5l_Mbn1pGhFMYk00yDtFoKTG_leCH"/>
+</div>
+<div class="p-lg md:p-xl flex flex-col justify-center">
+<div class="inline-flex items-center gap-xs text-primary mb-sm">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Since 1988</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-md">Our Story</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                        Lakshmi Broliers began as a small family-owned butcher shop committed to the simple philosophy that quality meat should never be compromised. As local artisans, we bridge the gap between traditional butchery techniques and modern clinical standards. Every cut we offer is sourced from local farms that prioritize ethical practices and natural growth.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Hygiene Standards Bento Grid -->
+<section class="mb-xl">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-lg gap-md">
+<div class="max-w-2xl">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Hygiene Standards</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Uncompromising safety from the farm to your kitchen table.</p>
+</div>
+<div class="hidden md:flex gap-base">
+<span class="material-symbols-outlined text-tertiary" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-md text-label-md text-tertiary">ISO Certified Facility</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Step 1 -->
+<div class="md:col-span-4 bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-all">
+<div class="w-12 h-12 bg-primary-container/10 rounded-full flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-primary" data-icon="sanitizer">sanitizer</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-xs">Daily Turmeric cleaning</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Our facilities undergo a 12-hour sterilization process every 8 hours using non-toxic antimicrobial agents.</p>
+</div>
+<!-- Step 2 -->
+<div class="md:col-span-8 relative overflow-hidden bg-primary-container p-lg rounded-xl text-on-primary border border-primary shadow-sm group">
+<div class="relative z-10 h-full flex flex-col justify-between">
+<div>
+<h3 class="font-headline-lg text-headline-lg mb-sm">Same Day Delivery</h3>
+<p class="font-body-md text-body-md opacity-90 max-w-md">Our products will be delivered within 1 hour to cutting chicken, To ensure Freshness.</p>
+</div>
+<div class="mt-lg flex items-center gap-sm">
+<span class="font-label-md bg-white/20 px-4 py-1 rounded-full">Leak-Proof</span>
+<!--<span class="font-label-md bg-white/20 px-4 py-1 rounded-full"></span>-->
+</div>
+</div>
+<span class="material-symbols-outlined absolute -bottom-8 -right-8 text-[160px] opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-500" data-icon="package_2">package_2</span>
+</div>
+<!-- Step 3 -->
+<div class="md:col-span-6 bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm flex gap-lg items-center">
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md mb-xs">Temperature Control</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Logistics maintains a constant 22°C environment from the moment of processing until it reaches your door.</p>
+</div>
+<div class="w-24 h-24 bg-tertiary-container/10 rounded-xl flex flex-col items-center justify-center border border-tertiary-container/20">
+<span class="font-headline-lg text-headline-lg text-tertiary">22°C</span>
+<span class="font-label-sm text-label-sm text-tertiary uppercase">Non-Frozen</span>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="md:col-span-6 bg-surface-container-high/30 p-lg rounded-xl border border-outline-variant shadow-sm flex items-center gap-lg">
+<span class="material-symbols-outlined text-secondary text-5xl" data-icon="health_and_safety">health_and_safety</span>
+<div>
+<h3 class="font-headline-md text-headline-md mb-xs">Regular Audits</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Weekly independent inspections ensure our hygiene scores remain in the top 1% of national retail butchers.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Contact & Map Section -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-xl items-start">
+<!-- Contact Info -->
+<div class="space-y-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Get in Touch</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Visit our flagship store or reach out via digital channels.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Address -->
+<div class="p-md bg-white rounded-xl border border-outline-variant">
+<div class="flex items-center gap-sm mb-sm text-primary">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="font-label-md text-label-md font-bold">Shop Address</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">12 Butcher's Row, Fresh Market District, City Center, 623534</p>
+</div>
+<!-- Phone -->
+<div class="p-md bg-white rounded-xl border border-outline-variant">
+<div class="flex items-center gap-sm mb-sm text-primary">
+<span class="material-symbols-outlined" data-icon="call">call</span>
+<span class="font-label-md text-label-md font-bold">Phone</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">+91 9952527477</p>
+</div>
+<!-- WhatsApp -->
+<div class="p-md bg-surface-container-lowest rounded-xl border border-outline-variant ring-1 ring-tertiary/10">
+<div class="flex items-center gap-sm mb-sm text-tertiary">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span class="font-label-md text-label-md font-bold">WhatsApp Support</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Response within 1 working day during shop hours.</p>
+<button class="mt-md w-full bg-tertiary text-on-tertiary py-2 rounded-lg font-label-md hover:opacity-90 transition-opacity">Message Us</button>
+</div>
+<!-- Hours -->
+<div class="p-md bg-white rounded-xl border border-outline-variant">
+<div class="flex items-center gap-sm mb-sm text-primary">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md font-bold">Business Hours</span>
+</div>
+<ul class="text-label-md space-y-xs">
+<li class="flex justify-between"><span>Mon - Sun</span> <span class="font-bold">06:00 - 17:00</span></li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Map Placeholder -->
+<div class="relative w-full aspect-square md:aspect-video lg:aspect-auto lg:h-full min-h-[400px] rounded-xl overflow-hidden border border-outline-variant bg-surface-container shadow-inner">
+<div class="absolute inset-0 flex items-center justify-center flex-col text-on-surface-variant/40">
+<span class="material-symbols-outlined text-6xl mb-md" data-icon="map">map</span>
+<p class="font-label-md">Interactive Map Rendering...</p>
+</div>
+<!-- Simulating a stylized map with an image -->
+<img class="w-full h-full object-cover opacity-60 mix-blend-multiply grayscale" data-alt="A stylized aerial view of a clean, modern city grid at twilight. The map is rendered with a cool blue and silver color palette to match the clinical hygiene aesthetic of the brand. Subtle red markers indicate locations of premium butcher shops. The lighting is crisp and the overall mood is professional and high-tech." data-location="Uchipuli" src="https://maps.app.goo.gl/6J4X838Fuj9j8tk99"/>
+<!-- Floating Map Card -->
+<div class="absolute bottom-md left-md right-md bg-white p-md rounded-lg shadow-xl flex items-center justify-between">
+<div>
+<h4 class="font-label-md font-bold">Lakshmi Broliers Main Branch</h4>
+<p class="text-label-sm text-on-surface-variant">Located in the Fresh Market District</p>
+</div>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm active:scale-95 transition-transform" href="https://maps.app.goo.gl/6J4X838Fuj9j8tk99">Get Directions</button>
+</div>
+</div>
+</section>
+</main>
+{% endblock %}

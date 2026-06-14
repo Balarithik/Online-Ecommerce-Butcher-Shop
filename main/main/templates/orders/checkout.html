@@ -1,0 +1,174 @@
+{% extends "base/base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<body class="bg-background text-on-surface min-h-screen">
+
+<main class="px-margin-mobile py-lg checkout-container pb-xl">
+<!-- Header Section -->
+<section class="mb-xl">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile mb-xs">Checkout</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Complete your order as a guest. No account required.</p>
+</section>
+<form class="flex flex-col gap-xl" id="checkoutForm" method="POST" action="{% url 'orders' %}">
+{% csrf_token %}
+<!-- Delivery Details Section -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center gap-sm mb-md text-primary">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<h3 class="font-headline-md text-headline-md">Delivery Details</h3>
+</div>
+<div class="space-y-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant"  for = '{{ form.name.id_for_label }}'>Full Name</label>
+<input name="name" class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="e.g. John Doe" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="{{ form.mobile.id_for_label }}">Mobile Number</label>
+<input name="mobile" class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="+91 00000 00000" required="" type="tel" />
+</div>
+<div class="flex flex-col gap-xs" name="address">
+<label  class="font-label-md text-label-md text-on-surface-variant" for="{{ form.address.id_for_label }}">Delivery Address</label>
+<input name="address" class="input-focus-effect w-full p-md rounded-lg border border-outline-variant bg-surface-bright font-body-md resize-none" placeholder="Apartment, Street, Area, Landmark" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="{{ form.instructions.id_for_label }}">Special Instructions (Optional)</label>
+<input class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="e.g. Ring the bell twice" name="instructions" type="text"/>
+</div>
+</div>
+</div>
+<!-- Payment Options Section -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center gap-sm mb-md text-primary">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<h3 class="font-headline-md text-headline-md">Payment Method</h3>
+</div>
+<div class="flex flex-col gap-sm">
+<!-- COD (Default) -->
+<label class="relative flex items-center p-md border-2 border-primary-container bg-surface-container-low rounded-xl cursor-pointer transition-all duration-200">
+<input checked="" class="w-5 h-5 text-primary border-outline focus:ring-primary" name="payment" type="radio" value="cod"/>
+<div class="ml-md">
+<span class="block font-label-md text-label-md text-on-surface">Cash on Delivery</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Pay when you receive the order</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</label>
+<!-- UPI
+<label class="relative flex items-center p-md border border-outline-variant hover:border-primary-container bg-surface-bright rounded-xl cursor-pointer transition-all duration-200">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary" name="payment" type="radio" value="upi"/>
+<div class="ml-md">
+<span class="block font-label-md text-label-md text-on-surface">UPI Payment</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Google Pay, PhonePe, Paytm</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-on-surface-variant" data-icon="qr_code_2">qr_code_2</span>
+</label>
+</div>
+</div>-->
+<!-- Order Summary Section -->
+<div class="bg-surface-container-highest/30 p-lg rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-headline-md text-headline-md text-on-surface">Order Summary</h3>
+<span class="bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm px-sm py-1 rounded-full flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                        Freshness Guaranteed
+                    </span>
+</div>
+<div class="space-y-sm mb-lg">
+<!-- Product Item 1 -->
+<div class="flex items-center justify-between py-xs border-b border-outline-variant/30">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 rounded-lg bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A macro photograph of premium raw chicken breasts placed on a clinical white butcher's table. The lighting is bright and airy, reflecting a professional food safety environment. The chicken looks exceptionally fresh with a natural pink hue, highlighting the high-quality corporate meat shop aesthetic." src="{{ product.image1.url }}"/>
+</div>
+<div>
+<p class="font-label-md text-label-md">{{ product.name }}</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">{{ qty }} Kg × ₹{{ product.price|floatformat:2 }}</p>
+</div>
+</div>
+<p class="font-label-md text-label-md">₹{% widthratio qty 1 product.price %}  </p>
+</div>
+
+</div>
+<!-- Totals -->
+<div class="space-y-xs">
+<div class="flex justify-between font-label-md text-label-md text-on-surface-variant">
+<span>Subtotal</span>
+<span>₹{% widthratio qty 1 product.price %}</span>
+</div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface-variant">
+<span>Delivery Fee</span>
+<span class="text-tertiary">FREE</span>
+</div>
+<div class="flex justify-between font-headline-md text-headline-md text-on-surface pt-sm border-t border-outline-variant mt-sm">
+<span>Total Payable</span>
+<span class="text-primary">₹{% widthratio qty 1 product.price %}</span>
+<input type="hidden" name="product_id" value="{{ product.id }}">
+<input type="hidden" name="quantity" value="{{ qty }}">
+<input type="hidden" name="price" value="{% widthratio qty 1 product.price %}">
+</div>
+</div>
+</div>
+<!-- Place Order Button -->
+<button class="w-full h-[56px] bg-primary-container text-on-primary hover:bg-primary transition-all duration-200 active:scale-95 rounded-xl font-headline-md text-headline-md shadow-lg shadow-primary-container/20 flex items-center justify-center gap-md" type="submit">
+                Place Order
+                <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+<p class="text-center font-label-sm text-label-sm text-on-surface-variant px-md">
+                By placing this order, you agree to Lakshmi Broliers's 
+                <a class="text-primary underline" href="#">Terms of Service</a> and 
+                <a class="text-primary underline" href="#">Privacy Policy</a>.
+            </p>
+</form>
+</main>
+
+<script>
+        // Simple micro-interaction for payment selection
+        const paymentLabels = document.querySelectorAll('input[name="payment"]');
+        paymentLabels.forEach(input => {
+            input.addEventListener('change', (e) => {
+                // Reset all
+                paymentLabels.forEach(p => {
+                    const label = p.closest('label');
+                    label.classList.remove('border-primary-container', 'bg-surface-container-low', 'border-2');
+                    label.classList.add('border-outline-variant', 'bg-surface-bright', 'border');
+                    const icon = label.querySelector('.material-symbols-outlined');
+                    if (icon.getAttribute('data-icon') === 'check_circle') {
+                        icon.style.fontVariationSettings = "'FILL' 0";
+                        icon.classList.remove('text-primary');
+                        icon.classList.add('text-on-surface-variant');
+                    }
+                });
+
+                // Set active
+                const activeLabel = e.target.closest('label');
+                activeLabel.classList.add('border-primary-container', 'bg-surface-container-low', 'border-2');
+                activeLabel.classList.remove('border-outline-variant', 'bg-surface-bright', 'border');
+                const activeIcon = activeLabel.querySelector('.material-symbols-outlined');
+                if (activeIcon.getAttribute('data-icon') === 'check_circle' || activeIcon.getAttribute('data-icon') === 'qr_code_2') {
+                    // For demo, we switch icons or just highlight
+                    if (activeIcon.getAttribute('data-icon') === 'check_circle') {
+                        activeIcon.style.fontVariationSettings = "'FILL' 1";
+                        activeIcon.classList.add('text-primary');
+                    }
+                }
+            });
+        });
+
+        // Form Submission Logic
+        /*document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin" data-icon="progress_activity">progress_activity</span> Processing...`;
+            
+            setTimeout(() => {
+                alert('Order Placed Successfully! Thank you for shopping with PrimePoultry.');
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }, 2000);       });*/
+    </script>
+</body></html>
+{% endblock %}

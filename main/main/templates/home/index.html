@@ -1,0 +1,113 @@
+{% extends "base/base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<main class="pb-24">
+<!-- Hero Banner -->
+<section class="relative w-full h-[500px] flex items-center overflow-hidden">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A professional high-key food photography shot of a perfectly organized butcher's counter. The scene features fresh, raw chicken breasts on a clean white marble surface, garnished with sprigs of rosemary and scattered peppercorns. The lighting is bright and clinical yet inviting, reflecting a premium corporate modern aesthetic with a deep red and white color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3-kt3tbBjUES2JA1wgDQSxQjjqUg1F79OnRDSewY41M3x3Gv0wekovh3CTqgtw_X2XYdRT9_KcgoZ5d3nVkfxC0ztA6JY-czywpvFBqldlULVW-k2VwAOMA11gDA3CYgTSelftdz2tPE11_gpSkqcAembKUBCdmOvjyi5SjkcN3svkZvAHj1IB8ZhvHb7mrj2s_rsEmSFYxyAcb0oPQ3la83UlUoFSYW73sPgjd8DAu7QZioNVQ1rGwELXfRRldvDu-SEtBrcMV8s"/>
+<div class="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent"></div>
+<div class="relative z-10 px-margin-mobile md:px-margin-desktop max-w-2xl">
+<h1 class="font-headline-xl text-headline-xl md:text-headline-xl text-white mb-md">Farm Fresh Poultry Delivered to Your Door</h1>
+<p class="text-white/90 font-body-lg text-body-lg mb-lg">Experience the gold standard of hygiene and freshness with our premium cuts, processed daily for your kitchen.</p>
+<button class="bg-primary-container text-white px-xl py-md rounded-lg font-label-md text-label-md uppercase tracking-wider hover:bg-primary transition-all active:scale-95">
+                    Shop Now
+                </button>
+</div>
+</section>
+<!-- Categories Section -->
+<section class="py-xl px-margin-mobile md:px-margin-desktop">
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Categories</h2>
+<p class="text-on-surface-variant font-body-md text-body-md">Sourced responsibly, handled with care.</p>
+</div>
+<button class="text-primary font-label-md text-label-md hover:underline">View All</button>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-md">
+
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden mb-sm border border-outline-variant clean-shadow relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close-up of a raw organic chicken thigh on a minimalist white plate. The lighting is soft and bright, emphasizing the pink, fresh texture of the meat. The composition is clean, centered, and adheres to a high-end butcher shop aesthetic with plenty of negative space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2h94NhhaBnWHDxIMpKuAoEyUZ6qtUAAxeNOv4OvU8r2TV2OgQjrGM85VwF0xUjW1UhLcWih_c4JjXjBxxiEH2F2nW7-_okIQ-ip6pm9UcAa7m1YerxYLfblS_4ZkMEGeUqDLqeD2HticHxA3nIC5sD16xgoqRf1kW1XxWwREvqvqoOT80jocBVyyaFMcG_ZkCkS9sKJT0jDrp6VTEWSguh36COHDIn34jrqI2cKb_iHzPLxrvE96r4HRqF8NBsHdabN79PWnLEbUR"/>
+<div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-center">Chicken</h3>
+</div><!--
+ Category Card 2 
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden mb-sm border border-outline-variant clean-shadow relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A top-down view of premium special meat cuts arranged on a dark slate board but set against a bright, airy white kitchen background. The scene emphasizes clinical cleanliness and precision butchery, with a focus on vibrant red meat tones and sharp edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD161CzC8wviEk7qCNtm01IRFR4Rpy3GPNCqzCGA27D1w3-kzM3oIpGtKTJmpNv2ljJYgxwAB8vKkt2hJMbmzGaJEsYmx4fsPjxWYJEZR9ed6aTk0Kg9y_0TDZG_Ev2TwVyUFVxpwonkdfJlwAEwl5zHVp9DdiPDTPU07KtCeT2yUgn6KKIRnXy-BzUmWKI96IOsxqxipXS-1xZDqLjbmvA7oVx4GbaymJtsFY5tpNP_GmoZpfJQm6wDws8bltsbjGFXoYiY4G1g3q8"/>
+<div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-center">Special Cuts</h3>
+</div>
+
+<div class="group cursor-pointer hidden md:block">
+<div class="aspect-square rounded-xl overflow-hidden mb-sm border border-outline-variant clean-shadow relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A group of fresh white and brown farm eggs sitting in a modern, minimalist white ceramic carton. The lighting is crisp and even, highlighting the smooth texture of the shells. The image evokes a sense of farm-to-table freshness and pristine hygiene standards." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoZWSpwh2JQOglR92cVeLcaEEySoeK9p4Iy3y4JZeOcc9uewkR6vRU5hYdU05AsbpGUN2GVLJk4yrIQlV6xImbfbxhc1pT6UchT3QdDfe6HaH3bGWR-Ee6XIG-xmFs9xN5TyqGnprt2pGwcMg6mG2jOr7Yhqqr01lThiQ7duEGZYscF_O2SJ1KUYVB2cMuYdFk0bCgSD3RUjrhMIPE6k0oNTjv5v6xeYR0nsIT4fj7gzZjVjRk_BgP-oexq3uSu4DAjf-aT2i76kj7"/>
+<div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-center">Eggs</h3>
+</div> -->
+</div>
+</section>
+<!-- Featured Products -->
+<section class="py-xl px-margin-mobile md:px-margin-desktop bg-surface-container-low">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-lg">Top-Selling Chicken</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
+<!-- Product Card 1 -->
+ {% if products %}
+ <ul>
+    {% for product in products %}
+    <li>
+        <div class="bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant clean-shadow flex flex-col">
+        <div class="relative h-48">
+        <img class="w-full h-full object-cover" data-alt="Detailed close-up of skinless chicken breast fillets on a clean white surface. Small decorative rosemary leaves add a touch of color. The style is bright and airy, emphasizing the lean, high-quality nature of the poultry in a modern, professional culinary setting." src="{{ product.image1.url }}"/>
+        <span class="absolute top-2 left-2 bg-[#10B981]/10 text-[#10B981] px-2 py-1 rounded-full text-[10px] font-bold">100% FRESH</span>
+        </div>
+        <div class="p-sm flex flex-col flex-1">
+        <h4 class="font-headline-md text-headline-md mb-xs">{{ product.name }}</h4>
+        <p class="text-on-surface-variant font-label-sm text-label-sm mb-md">1.00 Kg | Cleaned &amp; Pre-cut</p>
+        <div class="mt-auto flex items-center justify-between">
+        <span class="font-headline-md text-headline-md text-primary">₹{{ product.price|floatformat:2 }}</span>
+        <button class="bg-primary-container text-white p-2 rounded-lg hover:bg-primary transition-all" onclick="window.location.href='{% url 'selected_product' product.id %}'">View Product</button>
+        </div>
+        </div>
+        </div>
+    </li>
+    {% endfor %}    
+</ul>
+    {% else %}
+    <p class="font-body-md text-body-md text-on-surface-variant">No products available at the moment. Please check back later.</p>
+    {% endif %}
+
+</section>
+<!-- Hygiene & Quality Section -->
+<section class="py-xl px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-xl text-center">
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full bg-primary-container/10 flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-primary text-3xl">content_cut</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-xs">Cleaned &amp; Pre-cut</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Ready to cook straight from the package, saving you time and effort.</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full bg-primary-container/10 flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-xs">100% Fresh</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Sourced daily from certified local farms to ensure maximum nutrition.</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full bg-primary-container/10 flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-primary text-3xl">inventory_2</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-xs">Delivery and Hygiene</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Fast Delivery to maintain freshness and prevent contamination.</p>
+</div>
+</div>
+</section>
+</main>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base/base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<main class="py-xl mx-auto px-margin-mobile md:px-margin-desktop pt-lg">
+
+
+<!-- Page Title -->
+<section class="mb-lg">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Our Products</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Premium quality cuts, delivered fresh to your kitchen.</p>
+</section>
+<!-- Category Pills -->
+<nav class="flex overflow-x-auto no-scrollbar gap-sm mb-xl py-xs">
+<button class="px-lg py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md transition-all border border-transparent whitespace-nowrap">All</button>
+<button class="px-lg py-2 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-all whitespace-nowrap">Chicken</button>
+<button class="px-lg py-2 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-all whitespace-nowrap">Special Cuts</button>
+<button class="px-lg py-2 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-all whitespace-nowrap">Eggs</button>
+<button class="px-lg py-2 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-all whitespace-nowrap">Marinated</button>
+</nav>
+<!-- Product Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-md md:gap-lg">
+<!-- Products Card  -->
+ {% if products %}
+ <ul>
+    {% for product in products %}
+    <li><br>
+        <article class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden group hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300" >
+        <div class="relative aspect-square overflow-hidden bg-surface-container">
+        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Premium boneless chicken breast fillets neatly arranged on a sterilized white surface. The lighting is professional and sharp, showcasing the smooth texture and fresh pink color of the meat. The composition is minimalist and structured, aligning with a high-end corporate butcher aesthetic. The background is a clean, out-of-focus professional kitchen environment with cool lighting." src="{{ product.image1.url }}"/>
+        <span class="absolute top-sm left-sm bg-[#10B981]/10 text-[#10B981] font-label-sm text-label-sm px-2 py-1 rounded-full backdrop-blur-md">Best Seller</span>
+        </div>
+        <div class="p-sm flex flex-col gap-xs">
+        <div class="flex justify-between items-start">
+        <h3 class="font-headline-md text-[16px] leading-tight text-on-surface">{{ product.name }}</h3>
+        <span class="material-symbols-outlined text-on-surface-variant text-[18px] cursor-pointer hover:text-primary transition-colors" data-icon="favorite">favorite</span>
+        </div>
+        <p class="font-label-sm text-label-sm text-on-surface-variant">1kg Pack</p>
+        <div class="flex items-center justify-between mt-sm">
+        <span class="font-headline-md text-primary text-[18px]">{{ product.price }}</span>
+        <div class="flex items-center gap-xs">
+        <div class="w-2 h-2 rounded-full bg-[#10B981]"></div>
+        <span class="font-label-sm text-label-sm text-secondary">In Stock</span>
+        </div>
+        </div>
+        <button class="w-full mt-md bg-primary-container text-on-primary-container h-10 rounded-lg font-label-md text-label-md active:scale-95 transition-transform" onclick="window.location.href='{% url 'selected_product' product.id %}'">View Product</button>
+        </div>
+        </article>
+        
+    </li>
+    {% endfor %}    
+</ul>
+    {% else %}
+    <p class="font-body-md text-body-md text-on-surface-variant">Please check the selected product.</p>
+    {% endif %}
+</div>
+</main>
+
+<script>
+        // Simple filter pill interaction
+        document.querySelectorAll('nav button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('nav button').forEach(btn => {
+                    btn.classList.remove('bg-primary-container', 'text-on-primary-container');
+                    btn.classList.add('bg-surface-container-lowest', 'border-outline-variant', 'text-on-surface-variant');
+                });
+                button.classList.add('bg-primary-container', 'text-on-primary-container');
+                button.classList.remove('bg-surface-container-lowest', 'border-outline-variant', 'text-on-surface-variant');
+            });
+        });
+
+        // Micro-interaction for add to favorite
+        document.querySelectorAll('[data-icon="favorite"]').forEach(icon => {
+            icon.addEventListener('click', function() {
+                this.classList.toggle('text-primary');
+                this.style.fontVariationSettings = this.style.fontVariationSettings.includes("'FILL' 1") 
+                    ? "'FILL' 0" 
+                    : "'FILL' 1";
+            });
+        });
+    </script>
+</body></html>
+{% endblock %}

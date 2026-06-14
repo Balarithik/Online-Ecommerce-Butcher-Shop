@@ -1,0 +1,130 @@
+{% extends "admin/base.html" %}
+{% block title %}Admin Dashboard - Products{% endblock %}
+
+{% block content %}
+<!-- Page Content Container -->
+<div class="p-margin-mobile md:p-margin-desktop max-w-[1280px] mx-auto space-y-lg">
+<!-- Stats / Summary Row (Bento Grid Style) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md">
+<div class="glass-card p-6 rounded-xl shadow-sm flex flex-col justify-between">
+<span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Total Skus</span>
+<div class="flex items-end justify-between mt-2">
+<span class="font-headline-lg text-headline-lg text-on-surface">142</span>
+<span class="text-primary font-bold text-label-sm">+4 this week</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl shadow-sm flex flex-col justify-between">
+<span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Low Stock Items</span>
+<div class="flex items-end justify-between mt-2">
+<span class="font-headline-lg text-headline-lg text-error">12</span>
+<span class="material-symbols-outlined text-error">warning</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl shadow-sm flex flex-col justify-between">
+<span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Active Categories</span>
+<div class="flex items-end justify-between mt-2">
+<span class="font-headline-lg text-headline-lg text-on-surface">8</span>
+<span class="material-symbols-outlined text-primary">category</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl shadow-sm flex flex-col justify-between">
+<span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Stock Valuation</span>
+<div class="flex items-end justify-between mt-2">
+<span class="font-headline-lg text-headline-lg text-on-surface">$12,450</span>
+<span class="text-on-tertiary-fixed-variant font-bold text-label-sm">Healthy</span>
+</div>
+</div>
+</div>
+<!-- Action Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-outline-variant">
+<div class="flex flex-wrap items-center gap-3">
+<div class="relative w-full md:w-80">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2.5 w-full bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-body-md" placeholder="Search by name, SKU or category..." type="text"/>
+</div>
+<button class="flex items-center gap-2 px-4 py-2.5 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">filter_list</span>
+<span class="font-label-md text-label-md">Filters</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2.5 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">export_notes</span>
+<span class="font-label-md text-label-md">Export</span>
+</button>
+</div>
+<button class="bg-primary text-white px-6 py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 shadow-md hover:brightness-110 active:scale-95 transition-all">
+
+<span class="material-symbols-outlined">add</span>
+          Add New Product
+        </button>
+</div>
+<!-- Product Table Container -->
+<div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Product</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Category</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Price</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Stock Status</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">ID</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+  {% if products %}
+  <tbody class="divide-y divide-outline-variant">
+    {% for product in products %}
+      <!-- Row 1 -->
+      <tr class="hover:bg-surface-container-lowest transition-colors">
+      <td class="px-6 py-4">
+      <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container-high flex-shrink-0">
+      <img alt="Fresh Chicken Breast" data-alt="High-resolution close-up shot of fresh, premium chicken breasts placed on a clean white marble slab. The lighting is clinical and bright, showcasing the pink, healthy texture of the meat. Minimalist shadows and a wide composition create a professional butcher shop aesthetic consistent with high-end food photography." src="{{ product.image1.url }}"/>
+      </div>
+      <div>
+      <p class="font-headline-md text-label-md font-bold text-on-surface">{{ product.name }}</p>
+      <p class="font-label-sm text-label-sm text-on-surface-variant">{{ product.description }} (1kg)</p>
+      </div>
+      </div>
+      </td>
+      <td class="px-6 py-4">
+      <span class="px-3 py-1 bg-surface-container-high text-on-surface-variant text-label-sm rounded-full">Poultry</span>
+      </td>
+      <td class="px-6 py-4 font-body-md text-body-md text-primary font-bold">${{ product.price }}</td>
+      <td class="px-6 py-4">
+      <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-green-500"></span>
+      <span class="font-label-md text-label-md text-on-tertiary-fixed-variant">In Stock (45)</span>
+      </div>
+      </td>
+      <td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-mono">{{ product.id }}</td>
+      <td class="px-6 py-4 text-right">
+      <div class="flex items-center justify-end gap-2">
+      <button class="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high rounded-lg" >
+      <span class="material-symbols-outlined text-[20px]">edit</span>
+      </button>
+      <button class="p-2 text-on-surface-variant hover:text-error transition-colors hover:bg-error-container/20 rounded-lg">
+      <span class="material-symbols-outlined text-[20px]">delete</span>
+      </button>
+      </div>
+      </td>
+      </tr>
+    {% endfor %}  
+    {% else %}
+    <p class="font-body-md text-body-md text-on-surface-variant">No orders available at the moment. Please check back later.</p>
+    {% endif %}  
+
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!--<script>
+  function addproduct() {
+  document.getElementById("addnewproductpopup");
+  }
+function editproduct() {
+  document.getElementById("editproductpopup");
+  }
+</script>-->
+{% endblock %}
