@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'main.wsgi.application'
 if os.environ.get("DATABASE_URL"):
     DATABASES = {
         "default": dj_database_url.parse(
-            os.environ.get("postgresql://lakshmi_broliers_user:mtAOZJHjUKQHD64Ya5aAxrYDq4fmOmpA@dpg-d8ncbi3tqb8s73d182s0-a.singapore-postgres.render.com/polutary_db"),
+            os.environ.get("postgresql://lakshmi_broliers_user:mtAOZJHjUKQHD64Ya5aAxrYDq4fmOmpA@dpg-d8ncbi3tqb8s73d182s0-a/polutary_db"),
             conn_max_age=600,
             ssl_require=True
         )
