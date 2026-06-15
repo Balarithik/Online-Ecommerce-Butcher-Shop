@@ -7,6 +7,6 @@ cd main
 
 python manage.py collectstatic --noinput
 
-python manage.py makemigration
+python manage.py makemigrations
 
 python manage.py migrate
