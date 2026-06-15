@@ -1,9 +1,12 @@
 services:
   - type: web
-    name: poultry-app
-    runtime: python
+    name: online-ecommerce-butcher-shop
+    env: python
     buildCommand: "./build.sh"
     startCommand: "gunicorn main.wsgi:application"
     envVars:
-      - key: DJANGO_SETTINGS_MODULE
-        value: main.settings
+      - key: DATABASE_URL
+        value: "postgresql://lakshmi_broliers_user:mtAOZJHjUKQHD64Ya5aAxrYDq4fmOmpA@dpg-d8ncbi3tqb8s73d182s0-a/polutary_db"
+      - key: PYTHON_VERSION
+        value: "3.14.3"
+    autoDeploy: true
