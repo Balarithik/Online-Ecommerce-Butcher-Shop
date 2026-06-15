@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-cd main 
 
 pip install -r requirements.txt
+
+cd main 
 
 python manage.py collectstatic --noinput
 
