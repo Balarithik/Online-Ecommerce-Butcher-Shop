@@ -3,10 +3,8 @@
 
 pip install -r requirements.txt
 
-cd main 
+python main/manage.py collectstatic --noinput
 
-python manage.py collectstatic --noinput
+python main/manage.py makemigrations
 
-python manage.py makemigrations
-
-python manage.py migrate
+python main/manage.py migrate

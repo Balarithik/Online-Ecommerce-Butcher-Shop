@@ -44,11 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'aboutus',
-    'orders',
-    'home',
-    'admin_dashboard',
-    'store'
+    'main.aboutus',
+    'main.orders',
+    'main.home',
+    'main.admin_dashboard',
+    'main.store'
   
 ]
 
