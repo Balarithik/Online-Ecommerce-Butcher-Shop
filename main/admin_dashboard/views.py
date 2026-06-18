@@ -18,12 +18,15 @@ def admin_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None and user.is_superuser:
             login(request, user)
-            return redirect("admin_dashboard")
+            # Look for next in POST first, then GET, fallback to dashboard
+            next_url = request.POST.get("next") or request.GET.get("next") or "admin_dashboard"
+            return redirect(next_url)
         else:
             messages.error(request, "Invalid credentials or not a superuser.")
     return render(request, "admin/admin_login.html")
 
-@login_required
+
+@login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_dashboard(request):
     products = Products.objects.all()
@@ -44,11 +47,13 @@ def admin_dashboard(request):
 
     return render(request, "admin/admin_dashboard.html", {'products': products, 'orders': orders, 'total_products': total_products, 'total_orders': total_orders, 'orders_delivered': orders_delivered, 'orders_pending': orders_pending})
 
-
+@login_required(login_url='/admin_login/')
+@user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_product(request):
     products = Products.objects.all()
     return render(request, "admin/products.html",{'products':products})
-
+@login_required(login_url='/admin_login/')
+@user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_orders(request):
     orders = Order.objects.all()
     return render(request, "admin/orders.html",{'orders':orders})

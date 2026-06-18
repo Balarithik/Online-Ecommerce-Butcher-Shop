@@ -2,3 +2,4 @@
 main/db.sqlite3
 __pycache__/
 *.pyc
+main/main/development_settings.py

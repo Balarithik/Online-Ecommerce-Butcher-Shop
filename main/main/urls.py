@@ -18,15 +18,17 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
+from admin_dashboard import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('admin_dashboard/', include('admin_dashboard.urls')),
+    path('admin_login/', views.admin_login, name='admin_login'),
     path('aboutus/', include('aboutus.urls')),
     path('products/', include('store.urls')),
-    path('', include('admin_dashboard.urls')),
-    path('products/', include('orders.urls')),
-    path('', include('orders.urls')),
-    path('',include('home.urls')),
+    path('orders/', include('orders.urls')),
+    path('', include('home.urls')),  # root goes to home
 ]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

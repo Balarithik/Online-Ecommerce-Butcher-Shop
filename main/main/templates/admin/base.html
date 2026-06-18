@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>PrimePoultry Admin Dashboard</title>
+<title>Lakshmi Broliers Admin Dashboard</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -126,12 +126,12 @@
 <span class="material-symbols-outlined" data-icon="dashboard"  style = "{% if request.path == '/admin_dashboard/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">dashboard</span>
 <span class="font-body-md text-body-md">Dashboard</span>
 </a>
-<a  href="{% url 'admin_products' %}" class="{% if request.path == '/admin_products/' %}bg-primary-container text-on-primary-container rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% else %}text-on-surface-variant hover:bg-surface-container-low rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% endif %}">
-<span class="material-symbols-outlined" data-icon="inventory_2" style = "{% if request.path == '/admin_products/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">inventory_2</span>
+<a  href="{% url 'admin_products' %}" class="{% if request.path == '/admin_dashboard/admin_products/' %}bg-primary-container text-on-primary-container rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% else %}text-on-surface-variant hover:bg-surface-container-low rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% endif %}">
+<span class="material-symbols-outlined" data-icon="inventory_2" style = "{% if request.path == '/admin_dashboard/admin_products/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">inventory_2</span>
 <span class="font-body-md text-body-md">Products</span>
 </a>
-<a class="{% if request.path == '/admin_orders/' %}bg-primary-container text-on-primary-container rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% else %}text-on-surface-variant hover:bg-surface-container-low rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% endif %}" href="{% url 'admin_orders' %}">
-<span class="material-symbols-outlined" data-icon="receipt_long" style = "{% if request.path == '/admin_orders/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">receipt_long</span>
+<a class="{% if request.path == '/admin_dashboard/admin_orders/' %}bg-primary-container text-on-primary-container rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% else %}text-on-surface-variant hover:bg-surface-container-low rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200{% endif %}" href="{% url 'admin_orders' %}">
+<span class="material-symbols-outlined" data-icon="receipt_long" style = "{% if request.path == '/admin_dashboard/admin_orders/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">receipt_long</span>
 <span class="font-body-md text-body-md">Orders</span>
 </a>
 <a class="text-on-surface-variant hover:bg-surface-container-low rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-all duration-200" href="#">
@@ -141,14 +141,7 @@
 </nav>
 <div class="px-4 mt-auto">
 <div class="p-4 bg-surface-container-low rounded-xl flex items-center gap-3">
-<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden">
-<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate manager in a crisp white shirt, photographed against a minimalist grey background. The lighting is clean and bright, reflecting a professional and authoritative atmosphere suited for a high-end corporate dashboard. The overall style is modern and minimalist with a focus on clarity and professionalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvkM3cW61gwQcjGlb7rWmMPvjAzpdnH-je1vc4bXDT9Sx-fMgMp1uFh_4h1dKHvxJ9j89MjJ1u9U_MWhmJOX2fTrm197iDPZw1TsAY9l7MwobFMECz7SOifAd7a6wbRgvnQ5XCF0rBpMaP84OhkKlfrh5IbIr87sf5sn_0ZVtTJtPpBvGApx8KMxr_NfYVJ-pMgOAOdWnxKKY5uGpwm3zF1jpANXi4fAKRrphq5CwEtWn1qbAfTvEQBLQ1w2wozQoSV6fQaHE_4zfs"/>
-</div>
-<div class="flex-1 min-w-0">
-<p class="font-label-md text-label-md font-bold truncate text-on-surface">Welcome Guest</p>
-<p class="font-label-sm text-label-sm truncate text-on-surface-variant">Freshness Guaranteed</p>
-</div>
-<button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">logout</button>
+
 </div>
 </div>
 </aside>
@@ -160,14 +153,7 @@
 <button class="md:hidden material-symbols-outlined text-primary" data-icon="menu">menu</button>
 <h2 class="font-headline-md text-headline-md font-bold text-primary">Dashboard Overview</h2>
 </div>
-<div class="flex items-center gap-gutter">
-<div class="relative hidden md:flex items-center">
-<span class="material-symbols-outlined absolute left-3 text-on-surface-variant" data-icon="search">search</span>
-<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-label-md focus:ring-2 focus:ring-primary-container focus:border-primary-container outline-none transition-all" placeholder="Search orders..." type="text"/>
-</div>
-<button class="material-symbols-outlined text-secondary hover:bg-surface-container-high p-2 rounded-full transition-colors" data-icon="notifications">notifications</button>
-<button class="material-symbols-outlined text-secondary hover:bg-surface-container-high p-2 rounded-full transition-colors" data-icon="shopping_cart">shopping_cart</button>
-</div>
+
 </header>
         {% block content %}
         <!-- Child templates will insert content here -->

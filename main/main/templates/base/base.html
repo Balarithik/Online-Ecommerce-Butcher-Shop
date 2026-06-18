@@ -127,7 +127,6 @@
 <!-- TopAppBar -->
 <header class="sticky top-0 z-50 flex items-center justify-between px-margin-mobile md:px-margin-desktop w-full bg-surface/95 backdrop-blur-sm border-b border-outline-variant shadow-sm h-16">
 <div class="flex items-center gap-md">
-<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="menu">menu</span>
 <h1 class="font-headline-md text-headline-md font-bold text-primary">Lakshmi Broliers</h1>
 </div>
 <div class="flex items-center gap-md">
@@ -174,15 +173,15 @@
 </footer>
 <!-- BottomNavBar (Mobile Only) -->
 <nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface border-t border-outline-variant md:hidden rounded-t-xl shadow-lg">
-<button class="flex flex-col items-center justify-center text-secondary" href="{% url 'home' %}">
+<button class="flex flex-col items-center justify-center text-secondary" onclick="window.location.href='{% url 'home' %}'">
 <span class="material-symbols-outlined" data-icon="home" style="{% if request.path == '/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">home</span>
 <span class="font-label-sm text-label-sm">Home</span>
 </button>
-<button class="flex flex-col items-center justify-center text-secondary" href="{% url 'products' %}">
+<button class="flex flex-col items-center justify-center text-secondary" onclick="window.location.href='{% url 'products' %}'">
 <span class="material-symbols-outlined" data-icon="rebase_edit" style="{% if request.path == '/products/products/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">rebase_edit</span>
 <span class="font-label-sm text-label-sm">Products</span>
 </button>
-<button class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1" href="{% url 'aboutus' %}">
+<button class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1" onclick="window.location.href='{% url 'aboutus' %}'">
 <span class="material-symbols-outlined" data-icon="info" style="{% if request.path == '/' %}font-variation-settings: 'FILL' 1;{% else %}''{% endif %}">info</span>
 <span class="font-label-sm text-label-sm">About</span>
 </button>

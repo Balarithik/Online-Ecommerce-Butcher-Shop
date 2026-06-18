@@ -88,6 +88,7 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
 if os.environ.get("DATABASE_URL"):
     DATABASES = {
         "default": dj_database_url.parse(
@@ -148,6 +149,8 @@ STATICFILES_STORAGE = (
     "whitenoise.storage.CompressedManifestStaticFilesStorage"
 )
 
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -156,6 +159,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'main/media')
-"""
-LOGIN_URL = '/admin_login/'
-LOGIN_REDIRECT_URL = '/admin_dashboard/' """
+
+LOGIN_URL = reverse_lazy('admin_login')
+LOGIN_REDIRECT_URL = '/admin_dashboard/' 
+
