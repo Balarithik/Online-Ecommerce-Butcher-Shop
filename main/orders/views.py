@@ -39,10 +39,10 @@ def Orders(request):
                 product = Products.objects.get(id=product_id)
             except Exception as e:
                 product = None
-            print(f'db error {e}')
+                print(f'db error {e}')
 
 
-            product_name = product.name
+            product_name = name
             
             orders = Order(
                 order_id=order_id,
