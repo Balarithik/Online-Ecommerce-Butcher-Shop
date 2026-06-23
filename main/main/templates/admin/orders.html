@@ -67,89 +67,40 @@
 <th class="px-md py-4 text-label-sm text-on-surface-variant font-bold uppercase">Order ID</th>
 <th class="px-md py-4 text-label-sm text-on-surface-variant font-bold uppercase">Customer Name</th>
 <th class="px-md py-4 text-label-sm text-on-surface-variant font-bold uppercase">Phone</th>
+<th class="px-md py-4 text-label-sm text-on-surface-variant font-bold uppercase">Product_ID(name)</th>
 <th class="px-md py-4 text-label-sm text-on-surface-variant font-bold uppercase">Amount</th>
 <th class="px-md py-4 text-label-sm text-on-surface-variant font-bold uppercase">Status</th>
 <th class="px-md py-4 text-label-sm text-on-surface-variant font-bold uppercase text-right">Actions</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-outline-variant bg-white">
-<!-- Order Row 1 -->
-<tr class="order-row-hover transition-colors">
-<td class="px-md py-4 text-body-md font-bold text-on-surface">#PO-8821</td>
-<td class="px-md py-4 text-body-md font-medium">Jonathan Wick</td>
-<td class="px-md py-4 text-body-md text-on-surface-variant">+1 555-0102</td>
-<td class="px-md py-4 text-body-md font-bold text-primary">$124.50</td>
-<td class="px-md py-4">
-<span class="px-3 py-1 rounded-full text-label-sm font-bold bg-primary/10 text-primary flex items-center w-fit gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Pending
-                                    </span>
-</td>
-<td class="px-md py-4 text-right">
-<button class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-white rounded-lg text-label-sm font-bold transition-all active:scale-95">Update</button>
-</td>
-</tr>
-<!-- Order Row 2 -->
-<tr class="order-row-hover transition-colors">
-<td class="px-md py-4 text-body-md font-bold text-on-surface">#PO-8819</td>
-<td class="px-md py-4 text-body-md font-medium">Sarah Connor</td>
-<td class="px-md py-4 text-body-md text-on-surface-variant">+1 555-0344</td>
-<td class="px-md py-4 text-body-md font-bold text-primary">$45.00</td>
-<td class="px-md py-4">
-<span class="px-3 py-1 rounded-full text-label-sm font-bold bg-secondary-container text-on-secondary-container flex items-center w-fit gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Confirmed
-                                    </span>
-</td>
-<td class="px-md py-4 text-right">
-<button class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-white rounded-lg text-label-sm font-bold transition-all active:scale-95">Update</button>
-</td>
-</tr>
-<!-- Order Row 3 -->
-<tr class="order-row-hover transition-colors">
-<td class="px-md py-4 text-body-md font-bold text-on-surface">#PO-8818</td>
-<td class="px-md py-4 text-body-md font-medium">Bruce Wayne</td>
-<td class="px-md py-4 text-body-md text-on-surface-variant">+1 555-0999</td>
-<td class="px-md py-4 text-body-md font-bold text-primary">$312.75</td>
-<td class="px-md py-4">
-<span class="px-3 py-1 rounded-full text-label-sm font-bold bg-tertiary-container/10 text-tertiary flex items-center w-fit gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Delivered
-                                    </span>
-</td>
-<td class="px-md py-4 text-right">
-<button class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-white rounded-lg text-label-sm font-bold transition-all active:scale-95">Update</button>
-</td>
-</tr>
-<!-- Order Row 4 -->
-<tr class="order-row-hover transition-colors">
-<td class="px-md py-4 text-body-md font-bold text-on-surface">#PO-8815</td>
-<td class="px-md py-4 text-body-md font-medium">Diana Prince</td>
-<td class="px-md py-4 text-body-md text-on-surface-variant">+1 555-0777</td>
-<td class="px-md py-4 text-body-md font-bold text-primary">$89.20</td>
-<td class="px-md py-4">
-<span class="px-3 py-1 rounded-full text-label-sm font-bold bg-primary/10 text-primary flex items-center w-fit gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Pending
-                                    </span>
-</td>
-<td class="px-md py-4 text-right">
-<button class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-white rounded-lg text-label-sm font-bold transition-all active:scale-95">Update</button>
-</td>
-</tr>
-<!-- Order Row 5 -->
-<tr class="order-row-hover transition-colors">
-<td class="px-md py-4 text-body-md font-bold text-on-surface">#PO-8814</td>
-<td class="px-md py-4 text-body-md font-medium">Barry Allen</td>
-<td class="px-md py-4 text-body-md text-on-surface-variant">+1 555-0111</td>
-<td class="px-md py-4 text-body-md font-bold text-primary">$15.99</td>
-<td class="px-md py-4">
-<span class="px-3 py-1 rounded-full text-label-sm font-bold bg-tertiary-container/10 text-tertiary flex items-center w-fit gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Delivered
-                                    </span>
-</td>
-<td class="px-md py-4 text-right">
-<button class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-white rounded-lg text-label-sm font-bold transition-all active:scale-95">Update</button>
-</td>
-</tr>
+    {% if orders %}
+        <tbody class="divide-y divide-outline-variant bg-white">
+            {% for orders in orders %}
+                <!-- Order Row 1 -->
+                <tr class="order-row-hover transition-colors">
+                <td class="px-md py-4 text-body-md font-bold text-on-surface">{{ order.order_id }}</td>
+                <td class="px-md py-4 text-body-md font-medium">{{ order.name }}</td>
+                <td class="px-md py-4 text-body-md text-on-surface-variant">{{ order.mobile }}</td>
+                <td class="px-md py-4 text-body-md text-on-surface-variant">{{ order.product_id }} ({{ order.product_name }})</td>
+                <td class="px-md py-4 text-body-md font-bold text-primary">₹{{ order.price }}</td>
+                <td class="px-md py-4">
+                <span class="px-3 py-1 rounded-full text-label-sm font-bold bg-primary/10 text-primary flex items-center w-fit gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Pending
+                                                    </span>
+                </td>
+                <td class="px-md py-4 text-right">
+                <button class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-white rounded-lg text-label-sm font-bold transition-all active:scale-95" hx-get="{% url 'update_order' %}" hx-target="#update_order-model" hx-trigger="click" >Update</button>
+                </td>
+                </tr>
+            {% endfor %}  
+    {% else %}
+    <p class="font-body-md text-body-md text-on-surface-variant">No orders available at the moment. Please check back later.</p>
+    {% endif %}  
+
 </tbody>
 </table>
+<div id="update_order-modal"></div>
+</div>
 </div>
 
 </div>

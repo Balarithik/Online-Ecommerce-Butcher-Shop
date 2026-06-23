@@ -56,7 +56,7 @@ def admin_product(request):
 @login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_orders(request):
-    orders = Order.objects.all()
+    orders = Order.objects.all().order_by('-order_id')
     return render(request, "admin/orders.html",{'orders':orders})
 
 
@@ -96,17 +96,32 @@ def add_product_modal(request):
 
 
 
-
 def edit_product_modal(request, product_id):
     product = get_object_or_404(Products, id=product_id)
 
     if request.method == "POST":
-        form = ProductForm(request.POST, request.FILES)
+        form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            form.save()
+            form.save()   # ✅ updates product directly
             print("Product Updated")
-            return redirect('admin_products')  # adjust to your product list view
+            return redirect('admin_products')
     else:
-        form = ProductForm()
+        form = ProductForm(instance=product)
 
     return render(request, "admin/editproductpopup.html", {"form": form, "product": product})
+
+
+def delete_product(request, product_id):
+    product = get_object_or_404(Products, id=product_id)
+    product.delete()
+    print(f"Product {product_id} deleted")
+    return redirect('admin_products')
+
+    # HTMX expects a response it can swap into the DOM.
+    # Returning an empty response tells HTMX to remove the row.
+    return HttpResponse(status=204)
+
+
+
+def update_order(request):
+    return render('admin/order_updation.html')

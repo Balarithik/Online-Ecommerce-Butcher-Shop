@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Order Details &amp; Status Update - PrimePoultry</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Shared Component Styling & Design System tokens are integrated via the Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#454747",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "surface-container-highest": "#d9e3f6",
+                    "on-background": "#121c2a",
+                    "tertiary-container": "#006a48",
+                    "on-surface-variant": "#5a403e",
+                    "error-container": "#ffdad6",
+                    "secondary": "#5d5f5f",
+                    "outline-variant": "#e2beba",
+                    "surface-container-high": "#dee9fc",
+                    "primary-fixed": "#ffdad6",
+                    "primary": "#8f000d",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-dim": "#d0dbed",
+                    "on-primary-container": "#ffc8c2",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "background": "#f8f9ff",
+                    "surface-bright": "#f8f9ff",
+                    "primary-container": "#b22222",
+                    "secondary-container": "#dfe0e0",
+                    "error": "#ba1a1a",
+                    "surface-variant": "#d9e3f6",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-tint": "#b52424",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#002113",
+                    "tertiary": "#004f35",
+                    "on-primary-fixed": "#410003",
+                    "outline": "#8e706d",
+                    "tertiary-fixed": "#6ffbbe",
+                    "on-tertiary-container": "#60eeb1",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#ffb4ac",
+                    "surface": "#f8f9ff",
+                    "on-primary-fixed-variant": "#92030f",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#e6eeff",
+                    "inverse-surface": "#27313f",
+                    "on-surface": "#121c2a",
+                    "on-secondary-container": "#616363",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "primary-fixed-dim": "#ffb4ac"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "16px",
+                    "margin-mobile": "16px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "margin-desktop": "48px",
+                    "base": "8px",
+                    "sm": "12px",
+                    "md": "16px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .modal-overlay {
+            background-color: rgba(18, 28, 42, 0.4);
+            backdrop-filter: blur(4px);
+        }
+        .clinical-shadow {
+            shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%235a403e'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen">
+<!-- Background Content Simulation (Orders Table) -->
+<main class="p-margin-desktop opacity-30 pointer-events-none">
+<header class="mb-xl flex justify-between items-center">
+<h1 class="font-headline-lg text-headline-lg text-primary">Orders Dashboard</h1>
+<div class="w-12 h-12 rounded-full bg-surface-container-high"></div>
+</header>
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden clinical-shadow">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="p-md font-label-md">Order ID</th>
+<th class="p-md font-label-md">Customer</th>
+<th class="p-md font-label-md">Status</th>
+<th class="p-md font-label-md">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant">
+<td class="p-md">#PO-8821</td>
+<td class="p-md">Sarah Jenkins</td>
+<td class="p-md text-primary font-bold">Shipped</td>
+<td class="p-md">$142.50</td>
+</tr>
+</tbody>
+</table>
+</div>
+</main>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+<!-- Desktop Modal Container -->
+<div class="bg-surface-container-lowest w-full max-w-2xl rounded-xl shadow-xl overflow-hidden border border-outline-variant animate-in fade-in zoom-in duration-300">
+<!-- Modal Header -->
+<header class="sticky top-0 z-10 flex items-center justify-between px-lg py-md bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface">Order Details</h2>
+<span class="px-sm py-xs bg-surface-container-high rounded-full font-label-sm text-on-surface-variant">#PO-8821</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</header>
+<!-- Modal Content (Scrollable if needed) -->
+<div class="px-lg py-lg max-h-[819px] overflow-y-auto space-y-lg">
+<!-- Section 1: Customer & Product Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Customer Information -->
+<div class="space-y-sm">
+<div class="flex items-center gap-xs text-primary">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Customer Information</h3>
+</div>
+<div class="p-md border border-outline-variant rounded-lg bg-surface-bright">
+<p class="font-headline-md text-on-surface">Sarah Jenkins</p>
+<p class="text-on-surface-variant font-body-md">+1 (555) 234-9812</p>
+<div class="mt-sm flex items-start gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mt-1" data-icon="location_on">location_on</span>
+<p class="text-sm">42 Fresh Harvest Lane, Oak Creek Estate, Suite 102, Metro City, 54001</p>
+</div>
+</div>
+</div>
+<!-- Product Details -->
+<div class="space-y-sm">
+<div class="flex items-center gap-xs text-primary">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Product Details</h3>
+</div>
+<div class="p-md border border-outline-variant rounded-lg bg-surface-bright">
+<div class="flex justify-between items-center">
+<p class="font-headline-md text-on-surface">Premium Organic Chicken</p>
+<span class="px-sm py-xs bg-tertiary/10 text-tertiary rounded-full font-label-sm">Fresh</span>
+</div>
+<div class="flex justify-between mt-xs text-on-surface-variant">
+<span class="font-body-md">Quantity: 2.5 kg</span>
+<span class="font-headline-md text-primary">$142.50</span>
+</div>
+<div class="mt-sm pt-sm border-t border-outline-variant flex gap-sm overflow-x-auto">
+<div class="w-12 h-12 rounded bg-surface-container-high flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A macro photograph of fresh organic chicken breast on a marble butcher's block with clinical white lighting. The image emphasizes cleanliness and high quality, with a subtle soft shadow and neutral color palette that highlights the pink freshness of the poultry meat." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKsH47jOKxQyoIyZtuAcRO_rD2HIgwnVtQPtVPRepK4OTA5X-IZFeVIhkr9Koc1L2vFegi8PHKkR1rCe1Y7U-IwwL3-gDTebH3Foug28ryOFRrQAqAHOYL1xK6XsMxDg93RFWp6vydbA3BEpOGtKwkeZ-blKaNS7IlArHOsu6zinsw5CsX4enqWLQVj_ugr25Sa1ZgneGIwoMKpPBNgvnYEAHzPIQSTRrQcPQdI865SHVWobJonEblM9jRKjFxntAguvv5MdyxL_7R"/>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight italic">Part of the 'Spring Harvest' seasonal selection.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 2: Delivery Instructions -->
+<div class="space-y-sm">
+<div class="flex items-center gap-xs text-primary">
+<span class="material-symbols-outlined" data-icon="notes">notes</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Delivery Instructions</h3>
+</div>
+<div class="p-md border border-outline-variant rounded-lg bg-surface-container-low/50 italic text-on-surface-variant">
+                        "Please leave the package with the concierge at the front desk. Ensure the cooling packs are intact as I will be arriving late in the evening. Thank you!"
+                    </div>
+</div>
+<!-- Section 3: Order Status Update -->
+<div class="space-y-sm">
+<div class="flex items-center gap-xs text-primary">
+<span class="material-symbols-outlined" data-icon="update">update</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Order Status</h3>
+</div>
+<div class="relative">
+<label class="sr-only" for="status-dropdown">Update Status</label>
+<select class="w-full h-12 px-md bg-white border border-outline rounded-lg text-on-surface font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" id="status-dropdown">
+<option value="pending">Pending</option>
+<option value="confirmed">Confirmed</option>
+<option selected="" value="shipped">Shipped</option>
+<option value="delivered">Delivered</option>
+<option value="cancelled">Cancelled</option>
+</select>
+<div class="mt-xs flex items-center gap-xs px-xs">
+<div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></div>
+<span class="text-xs text-on-surface-variant">Current status is Shipped. Last updated 2 hours ago.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Footer (Actions) -->
+<footer class="flex items-center justify-end gap-md px-lg py-md bg-surface-container-low border-t border-outline-variant">
+<button class="px-lg h-12 font-label-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors active:scale-95 duration-150">
+                    Cancel
+                </button>
+<button class="px-xl h-12 bg-primary text-on-primary font-label-md rounded-lg clinical-shadow hover:brightness-110 transition-all active:scale-95 duration-150 flex items-center gap-xs">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+                    Update Order
+                </button>
+</footer>
+</div>
+</div>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('button, select').forEach(el => {
+            el.addEventListener('click', () => {
+                // Light feedback simulation
+                if (el.tagName === 'BUTTON' && el.innerText.includes('Update')) {
+                    const originalContent = el.innerHTML;
+                    el.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Processing...';
+                    el.disabled = true;
+                    setTimeout(() => {
+                        el.innerHTML = '<span class="material-symbols-outlined" data-icon="done_all">done_all</span> Updated';
+                        el.classList.replace('bg-primary', 'bg-tertiary');
+                    }, 1200);
+                }
+            });
+        });
+    </script>
+</body></html>

@@ -141,7 +141,7 @@
 <h2 class="font-headline-lg text-headline-lg text-on-background">Add New Product</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">Fill in the clinical details for the new poultry inventory item.</p>
 </div>
-<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-95" onclick="window.history.back()">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-95" onclick="closeModal()">
 <span class="material-symbols-outlined text-secondary">close</span>
 </button>
 </div>
@@ -159,8 +159,8 @@
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="price">Price</label>
 <div class="relative">
-<span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">$</span>
-<input name = "price" class="w-full h-12 pl-xl pr-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md"  id="price" placeholder="0.00" type="number"/>
+<span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">₹</span>
+<input name = "price" class="w-full h-12 pl-xl pr-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" min="0" step="10" id="price" placeholder="0.00" type="number"/>
 </div>
 </div>
 <div>
@@ -261,7 +261,7 @@
 
 <!-- Modal Footer -->
 <div class="px-xl py-lg border-t border-outline-variant flex justify-end items-center gap-md bg-surface-container-lowest">
-<button class="px-xl h-12 rounded-lg border border-secondary text-secondary font-label-md hover:bg-surface-container-high transition-all active:scale-95" onclick="window.location.href=''"  type="button">
+<button class="px-xl h-12 rounded-lg border border-secondary text-secondary font-label-md hover:bg-surface-container-high transition-all active:scale-95" onclick="closeModal()"  type="button">
           Cancel
         </button>
 <button class="px-xl h-12 rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary-container shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center gap-sm" type="submit">
