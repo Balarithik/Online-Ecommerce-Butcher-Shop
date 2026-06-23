@@ -2,6 +2,7 @@
 {% block title %}Admin Dashboard - Products{% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <!-- Page Content Container -->
 <div class="p-margin-mobile md:p-margin-desktop max-w-[1280px] mx-auto space-y-lg">
 <!-- Stats / Summary Row (Bento Grid Style) -->
@@ -51,12 +52,13 @@
 <span class="font-label-md text-label-md">Export</span>
 </button>
 </div>
-<button class="bg-primary text-white px-6 py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 shadow-md hover:brightness-110 active:scale-95 transition-all">
+<button class="bg-primary text-white px-6 py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 shadow-md hover:brightness-110 active:scale-95 transition-all" hx-get="{% url 'add_product_modal' %}" hx-target="#add_product_modal-container" hx-trigger="click">
 
 <span class="material-symbols-outlined">add</span>
           Add New Product
         </button>
 </div>
+<div id="add_product_modal-container"></div>
 <!-- Product Table Container -->
 <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
 <div class="overflow-x-auto">
@@ -100,7 +102,8 @@
       <td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant font-mono">{{ product.id }}</td>
       <td class="px-6 py-4 text-right">
       <div class="flex items-center justify-end gap-2">
-      <button class="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high rounded-lg" >
+      <button class="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high rounded-lg" hx-get="{% url 'edit_product_modal' product.id %}" hx-target="#edit_product_modal-container" hx-trigger="click" >
+        <div id="edit_product_modal-container"></div>
       <span class="material-symbols-outlined text-[20px]">edit</span>
       </button>
       <button class="p-2 text-on-surface-variant hover:text-error transition-colors hover:bg-error-container/20 rounded-lg">
@@ -119,12 +122,11 @@
 </div>
 </div>
 </div>
-<!--<script>
-  function addproduct() {
-  document.getElementById("addnewproductpopup");
-  }
-function editproduct() {
-  document.getElementById("editproductpopup");
-  }
-</script>-->
+<script>
+  function closeModal() {
+  document.getElementById("add_product_modal-container" || "edit_product_modal-container").innerHTML = "";
+}
+
+  
+</script>
 {% endblock %}

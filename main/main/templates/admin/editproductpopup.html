@@ -3,273 +3,328 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Edit Product - PrimePoultry</title>
+<title>Add New Product - Lakshmi Broliers</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .modal-overlay {
-            background-color: rgba(18, 28, 42, 0.4);
-            backdrop-filter: blur(4px);
-        }
-    </style>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface-variant": "#d9e3f6",
-                        "primary": "#8f000d",
-                        "primary-container": "#b22222",
-                        "on-surface-variant": "#5a403e",
-                        "on-primary": "#ffffff",
-                        "primary-fixed-dim": "#ffb4ac",
-                        "background": "#f8f9ff",
-                        "error": "#ba1a1a",
-                        "surface-dim": "#d0dbed",
-                        "on-tertiary-fixed-variant": "#005236",
-                        "on-background": "#121c2a",
-                        "tertiary-fixed-dim": "#4edea3",
-                        "on-tertiary-container": "#60eeb1",
-                        "surface-container-highest": "#d9e3f6",
-                        "secondary": "#5d5f5f",
-                        "on-secondary": "#ffffff",
-                        "tertiary": "#004f35",
-                        "primary-fixed": "#ffdad6",
-                        "on-primary-container": "#ffc8c2",
-                        "on-secondary-container": "#616363",
-                        "outline": "#8e706d",
-                        "on-surface": "#121c2a",
-                        "surface-container-high": "#dee9fc",
-                        "secondary-fixed-dim": "#c6c6c7",
-                        "secondary-fixed": "#e2e2e2",
-                        "on-secondary-fixed-variant": "#454747",
-                        "tertiary-container": "#006a48",
-                        "on-error": "#ffffff",
-                        "surface-tint": "#b52424",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-bright": "#f8f9ff",
-                        "on-tertiary": "#ffffff",
-                        "on-primary-fixed-variant": "#92030f",
-                        "tertiary-fixed": "#6ffbbe",
-                        "on-tertiary-fixed": "#002113",
-                        "surface-container-low": "#eff4ff",
-                        "error-container": "#ffdad6",
-                        "on-primary-fixed": "#410003",
-                        "on-secondary-fixed": "#1a1c1c",
-                        "surface": "#f8f9ff",
-                        "secondary-container": "#dfe0e0",
-                        "inverse-on-surface": "#eaf1ff",
-                        "surface-surface": "#27313f",
-                        "outline-variant": "#e2beba"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "margin-desktop": "48px",
-                        "md": "16px",
-                        "lg": "24px",
-                        "base": "8px",
-                        "sm": "12px",
-                        "margin-mobile": "16px",
-                        "xs": "4px",
-                        "xl": "32px",
-                        "gutter": "16px"
-                    },
-                    "fontFamily": {
-                        "headline-xl": ["Inter"],
-                        "headline-md": ["Inter"],
-                        "body-md": ["Inter"],
-                        "body-lg": ["Inter"],
-                        "headline-lg": ["Inter"],
-                        "label-sm": ["Inter"],
-                        "label-md": ["Inter"],
-                        "headline-lg-mobile": ["Inter"]
-                    },
-                    "fontSize": {
-                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
-                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
-                    }
-                }
-            }
-        }
-    </script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "surface-variant": "#d9e3f6",
+                  "primary": "#8f000d",
+                  "primary-container": "#b22222",
+                  "on-surface-variant": "#5a403e",
+                  "on-primary": "#ffffff",
+                  "primary-fixed-dim": "#ffb4ac",
+                  "background": "#f8f9ff",
+                  "error": "#ba1a1a",
+                  "surface-dim": "#d0dbed",
+                  "on-tertiary-fixed-variant": "#005236",
+                  "on-background": "#121c2a",
+                  "tertiary-fixed-dim": "#4edea3",
+                  "on-tertiary-container": "#60eeb1",
+                  "surface-container-highest": "#d9e3f6",
+                  "secondary": "#5d5f5f",
+                  "on-secondary": "#ffffff",
+                  "tertiary": "#004f35",
+                  "primary-fixed": "#ffdad6",
+                  "on-primary-container": "#ffc8c2",
+                  "on-secondary-container": "#616363",
+                  "outline": "#8e706d",
+                  "on-surface": "#121c2a",
+                  "surface-container-high": "#dee9fc",
+                  "secondary-fixed-dim": "#c6c6c7",
+                  "secondary-fixed": "#e2e2e2",
+                  "on-secondary-fixed-variant": "#454747",
+                  "tertiary-container": "#006a48",
+                  "on-error": "#ffffff",
+                  "surface-tint": "#b52424",
+                  "surface-container-lowest": "#ffffff",
+                  "surface-bright": "#f8f9ff",
+                  "on-tertiary": "#ffffff",
+                  "on-primary-fixed-variant": "#92030f",
+                  "tertiary-fixed": "#6ffbbe",
+                  "on-tertiary-fixed": "#002113",
+                  "surface-container-low": "#eff4ff",
+                  "error-container": "#ffdad6",
+                  "on-primary-fixed": "#410003",
+                  "on-secondary-fixed": "#1a1c1c",
+                  "surface": "#f8f9ff",
+                  "secondary-container": "#dfe0e0",
+                  "inverse-on-surface": "#eaf1ff",
+                  "surface-container": "#e6eeff",
+                  "on-error-container": "#93000a",
+                  "inverse-primary": "#ffb4ac",
+                  "inverse-surface": "#27313f",
+                  "outline-variant": "#e2beba"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "margin-desktop": "48px",
+                  "md": "16px",
+                  "lg": "24px",
+                  "base": "8px",
+                  "sm": "12px",
+                  "margin-mobile": "16px",
+                  "xs": "4px",
+                  "xl": "32px",
+                  "gutter": "16px"
+          },
+          "fontFamily": {
+                  "headline-xl": ["Inter"],
+                  "headline-md": ["Inter"],
+                  "body-md": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "headline-lg": ["Inter"],
+                  "label-sm": ["Inter"],
+                  "label-md": ["Inter"],
+                  "headline-lg-mobile": ["Inter"]
+          },
+          "fontSize": {
+                  "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                  "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                  "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                  "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                  "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                  "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8f9ff;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .modal-backdrop {
+      background-color: rgba(18, 28, 42, 0.4);
+      backdrop-filter: blur(8px);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #8f000d;
+    }
+  </style>
 </head>
-<body class="bg-surface text-on-surface min-h-screen">
-<!-- Dashboard Shell Background (to provide context for the modal) -->
-<div class="fixed inset-0 z-0 bg-surface flex flex-col">
-<header class="sticky top-0 z-50 flex items-center justify-between px-margin-desktop w-full h-16 bg-surface/95 backdrop-blur-sm border-b border-outline-variant shadow-sm">
-<span class="font-headline-md text-headline-md font-bold text-primary">PrimePoultry</span>
-<div class="flex items-center gap-lg">
-<span class="material-symbols-outlined text-secondary">search</span>
-<span class="material-symbols-outlined text-secondary">shopping_cart</span>
-<div class="w-8 h-8 rounded-full bg-surface-container-high"></div>
-</div>
-</header>
-<main class="flex-grow p-margin-desktop opacity-20 pointer-events-none">
-<div class="max-w-7xl mx-auto">
-<h1 class="font-headline-lg text-headline-lg mb-xl">Inventory Management</h1>
-<div class="grid grid-cols-3 gap-lg">
-<div class="h-64 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm"></div>
-<div class="h-64 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm"></div>
-<div class="h-64 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm"></div>
-</div>
-</div>
-</main>
-</div>
-<!-- Modal Overlay -->
-<div class="modal-overlay fixed inset-0 z-[70] flex items-center justify-center p-margin-mobile md:p-margin-desktop overflow-y-auto" id="edit-modal">
-<!-- Modal Container -->
-<section class="bg-surface-container-lowest w-full max-w-4xl rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<body class="bg-background text-on-background min-h-screen">
+
+<!-- Modal Component -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-margin-mobile md:p-margin-desktop modal-backdrop">
+<div class="bg-surface-container-lowest w-full max-w-4xl w-[90vw] h-[90vw] max-w-[600px] max-h-[600px] rounded-xl shadow-xl flex flex-col overflow-hidden border border-outline-variant">
 <!-- Modal Header -->
-<div class="px-xl py-lg border-b border-outline-variant flex items-center justify-between">
+<div class="px-xl py-lg border-b border-outline-variant flex justify-between items-center bg-white">
 <div>
-<h2 class="font-headline-md text-headline-md text-on-surface">Edit Product</h2>
-<p class="font-label-md text-label-md text-secondary">Modify existing poultry product details and inventory</p>
+<h2 class="font-headline-lg text-headline-lg text-on-background">Add New Product</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Fill in the clinical details for the new poultry inventory item.</p>
 </div>
-<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors group" onclick="window.history.back()">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">close</span>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-95" onclick="window.history.back()">
+<span class="material-symbols-outlined text-secondary">close</span>
 </button>
 </div>
-<!-- Modal Content (Scrollable) -->
-<div class="p-xl grid grid-cols-1 md:grid-cols-12 gap-xl max-h-[716px] overflow-y-auto">
-<!-- Left Column: Primary Details -->
-<div class="md:col-span-7 space-y-lg">
-<!-- Product Name -->
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant">Product Name</label>
-<input class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/10 font-body-md transition-all outline-none" placeholder="e.g. Skinless Chicken Thighs" type="text" value="Fresh Chicken Breast"/>
+<!-- Modal Body -->
+<form class="flex-1 overflow-y-auto p-xl custom-scrollbar space-y-xl" method="POST" action="{% url 'edit_product_modal' product.id %}" enctype="multipart/form-data">
+  {% csrf_token %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
+<!-- Left Column: Basic Info -->
+<div class="space-y-lg">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="name">Product Name</label>
+<input name='name' value="{{ product.name }}" class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" id="name" placeholder="e.g., Organic Whole Chicken" type="text"/>
 </div>
-<!-- Price & Category Row -->
-<div class="grid grid-cols-2 gap-lg">
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant">Price (per kg)</label>
+<div class="grid grid-cols-2 gap-md">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="price">Price</label>
 <div class="relative">
-<span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
-<input class="w-full h-12 pl-xl pr-md bg-surface border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/10 font-body-md transition-all outline-none" type="text" value="12.50"/>
+<span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">$</span>
+<input name = "price" value="{{ product.price }}" class="w-full h-12 pl-xl pr-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md"  id="price" placeholder="0.00" type="number"/>
 </div>
 </div>
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant">Category</label>
-<select class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/10 font-body-md transition-all outline-none appearance-none">
-<option selected="">Fresh Poultry</option>
-<option>Organic Cuts</option>
-<option>Value Packs</option>
-<option>Marinated</option>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="category">Category</label>
+<select  class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md appearance-none" id="category">
+<option value="">Select Category</option>
+<option value="whole">Whole Poultry</option>
+<option value="cuts">Fresh Cuts</option>
+<option value="marinated">Marinated Items</option>
+<option value="specialty">Specialty Meats</option>
 </select>
 </div>
 </div>
-<!-- Description -->
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant">Description</label>
-<textarea class="w-full p-md bg-surface border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/10 font-body-md transition-all outline-none resize-none" rows="4">Premium, farm-fresh chicken breast, vacuum-sealed for maximum freshness. High in protein and ethically sourced from local farms maintaining strict hygiene standards.</textarea>
-</div>
-<!-- Freshness Badge Toggle -->
-<div class="flex items-center gap-md p-md bg-tertiary/5 border border-tertiary/10 rounded-lg">
-<div class="flex-grow">
-<h4 class="font-label-md text-label-md text-tertiary">Promote as "Fresh Arrival"</h4>
-<p class="text-[12px] text-tertiary/70">Display a green badge on the storefront</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-secondary/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"></div>
-</label>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="description">Description</label>
+<textarea name = "description" class="w-full p-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md resize-none" id="description" placeholder="Describe the origin, weight, and storage instructions..." rows="4">{{ product.description }}</textarea>
 </div>
 </div>
-<!-- Right Column: Media -->
-<div class="md:col-span-5 space-y-lg">
-<label class="font-label-md text-label-md text-on-surface-variant block">Product Media (4 Slots)</label>
-<div class="grid grid-cols-2 gap-sm">
-<!-- Image Slot 1 -->
-<div class="group relative aspect-square bg-surface-container-high rounded-lg border border-outline-variant overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A professional studio photograph of fresh, raw chicken breasts resting on a clean white marble slab. The lighting is bright and clinical, emphasizing the pink, healthy texture of the meat. The background is a minimalist, white-washed kitchen setting with high-key lighting that reflects the brand's commitment to hygiene and freshness. The color palette is dominated by pure white and soft flesh tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd4cg6Q1hqmvgfD7sZfCElaQ63n2G3kHGovoEY8XKr0xrbg3UjbbLwHmys6I1WkvYtnJgdE99RWmoaO9uckWMUTDFbbjDUus-iVwTdlfdHKr8Agk4nICAdLA8jqLxLi52lTr86v5OMYGhc4gQ5F7pb4XhK0zDPkNVyZdf7waUi_bS4U6ymUpt6sSGUcWQypctw3n-R03cZtHKdkTTHt-VwSfuINdjzy97SskvJiuYmG3Hu6C9mkR34xxVQEXF9yuofsqsCduBL8ul9"/>
-<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-xs">
-<span class="material-symbols-outlined text-white">edit</span>
-<span class="text-white text-[10px] font-bold uppercase tracking-wider">Change</span>
-</div>
-</div>
-<!-- Image Slot 2 -->
-<div class="group relative aspect-square bg-surface-container-high rounded-lg border border-outline-variant overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A close-up shot of a butcher's hand holding a high-quality stainless steel knife next to fresh poultry. The scene is illuminated by soft, diffused daylight, highlighting the cleanliness of the butchery process. The aesthetic is corporate minimalist with a focus on precision and food safety. The background features a subtle, out-of-focus white tiled wall. The overall mood is professional and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwilNIiqyk4kO3LVK5GuE4iSp7EOfTBxqED7f4QzLC0JOWoQwB0NZepSZD1EE__5iCH9bj4D8oGRBMAIU5I6hXhiLtYdo_x4dHCjuHt4EUNdZxItvvO9pbD-foVHydZL38gD7iXSIu6UFMUQ0Zi93HBCIw0XM6MATu429TjkUCBK7kJ0drVXZQBRXp28Yq5i_o_Vn-SZS7HDiqDNmYJ_mWfq5onL3XB8GJfuvaRk6s5JhvSLEcTwntvr0a1Dz6pQ-_eoOHAxABQDCm"/>
-<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-xs">
-<span class="material-symbols-outlined text-white">edit</span>
-<span class="text-white text-[10px] font-bold uppercase tracking-wider">Change</span>
-</div>
-</div>
-<!-- Image Slot 3 (Empty/Placeholder) -->
-<button class="aspect-square bg-surface border-2 border-dashed border-outline-variant rounded-lg hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-xs group">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">add_a_photo</span>
-<span class="text-[10px] font-bold text-on-surface-variant group-hover:text-primary uppercase">Add</span>
-</button>
-<!-- Image Slot 4 (Empty/Placeholder) -->
-<button class="aspect-square bg-surface border-2 border-dashed border-outline-variant rounded-lg hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-xs group">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">add_a_photo</span>
-<span class="text-[10px] font-bold text-on-surface-variant group-hover:text-primary uppercase">Add</span>
-</button>
-</div>
-<div class="p-md bg-surface-container rounded-lg border border-outline-variant">
-<div class="flex items-center gap-sm mb-xs">
-<span class="material-symbols-outlined text-secondary scale-75">info</span>
-<span class="font-label-sm text-label-sm text-on-surface">Image Guidelines</span>
-</div>
-<p class="text-[11px] text-secondary leading-tight">Use JPG or PNG, max 5MB. Recommended resolution 1200x1200px for best customer viewing experience.</p>
-</div>
-</div>
-</div>
-<!-- Modal Footer -->
-<div class="px-xl py-lg border-t border-outline-variant bg-surface-container-low flex flex-col-reverse md:flex-row items-center justify-between gap-md">
-<div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-error text-[20px]">delete</span>
-<button class="font-label-md text-label-md text-error hover:underline">Archive Product</button>
-</div>
-<div class="flex flex-col md:flex-row items-center gap-md w-full md:w-auto">
-<button class="w-full md:w-auto min-h-[48px] px-xl bg-surface border border-outline font-label-md text-label-md text-on-surface rounded-lg hover:bg-surface-container-high active:scale-95 transition-all">
-                        Cancel
-                    </button>
-<button class="w-full md:w-auto min-h-[48px] px-xl bg-primary-container font-label-md text-label-md text-on-primary rounded-lg hover:brightness-110 shadow-md active:scale-95 transition-all">
-                        Update Changes
-                    </button>
-</div>
-</div>
-</section>
-</div>
-<!-- Micro-interactions Script -->
-<script>
-        // Simple input focus effects already handled by tailwind but could add logic here
-        document.querySelectorAll('input, select, textarea').forEach(el => {
-            el.addEventListener('focus', () => {
-                el.parentElement.querySelector('label')?.classList.add('text-primary');
-            });
-            el.addEventListener('blur', () => {
-                el.parentElement.querySelector('label')?.classList.remove('text-primary');
-            });
-        });
+<!-- Right Column: Image Uploads -->
+<div class="space-y-lg">
+<label class="block font-label-md text-label-md text-on-surface-variant">Product Images (Clinical standard photography preferred)</label>
+<div class="grid grid-cols-2 gap-md h-full">
+<!-- Slot 1 (Main) -->
+<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
+    <!-- File input -->
+    <input type="file" name="image1" accept="image/*"
+           class="absolute inset-0 opacity-0 cursor-pointer"
+           onchange="previewImage(event, 'preview1', 'placeholder1')" />
 
-        // Close modal on escape key
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                // Logic to close or navigate back
-                console.log('Close request via Escape');
-            }
-        });
-    </script>
+    <!-- Preview image -->
+    {% if product.image1 %}
+      <img id="preview1" src="{{ product.image1.url }}" class="absolute inset-0 w-full h-full object-cover rounded-xl" />
+    {% else %}
+      <img id="preview1" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+    {% endif %}
+
+    <!-- Placeholder icon + label -->
+    <div id="placeholder1" class="flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 1 (Main)</span>
+    </div>
+</div>
+<!-- Slot 2 -->
+<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
+    <!-- File input -->
+    <input type="file" name="image2" accept="image/*"
+           class="absolute inset-0 opacity-0 cursor-pointer"
+           onchange="previewImage(event, 'preview2', 'placeholder2')" />
+
+    <!-- Preview image -->
+    {% if product.image2 %}
+      <img id="preview2" src="{{ product.image2.url }}" class="absolute inset-0 w-full h-full object-cover rounded-xl" />
+    {% else %}
+      <img id="preview2" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+    {% endif %}
+
+    <!-- Placeholder icon + label -->
+    <div id="placeholder2" class="flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 2</span>
+    </div>
+</div>
+<!-- Slot 3 -->
+<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
+    <!-- File input -->
+    <input type="file" name="image3" accept="image/*"
+           class="absolute inset-0 opacity-0 cursor-pointer"
+           onchange="previewImage(event, 'preview3', 'placeholder3')" />
+
+    <!-- Preview image -->
+    {% if product.image3 %}
+      <img id="preview3" src="{{ product.image3.url }}" class="absolute inset-0 w-full h-full object-cover rounded-xl" />
+    {% else %}
+      <img id="preview3" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+    {% endif %}
+
+    <!-- Placeholder icon + label -->
+    <div id="placeholder3" class="flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 3</span>
+    </div>
+</div>
+<!-- Slot 4 -->
+<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
+    <!-- File input -->
+    <input type="file" name="image4" accept="image/*"
+           class="absolute inset-0 opacity-0 cursor-pointer"
+           onchange="previewImage(event, 'preview4', 'placeholder4')" />
+
+    <!-- Preview image -->
+    {% if product.image4 %}
+      <img id="preview4" src="{{ product.image4.url }}" class="absolute inset-0 w-full h-full object-cover rounded-xl" />
+    {% else %}
+      <img id="preview4" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+    {% endif %}
+
+    <!-- Placeholder icon + label -->
+    <div id="placeholder4" class="flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 4</span>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Hygiene Badge Preview -->
+<div class="bg-tertiary-container/5 border border-tertiary/20 p-md rounded-lg flex items-center gap-md">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">verified</span>
+<div>
+<p class="font-label-md text-label-md text-tertiary font-bold">Standard Safety Protocol</p>
+<p class="font-label-sm text-label-sm text-on-tertiary-fixed-variant">Items added via this portal are automatically tagged with the 'Freshness Guaranteed' clinical badge.</p>
+</div>
+</div>
+
+<!-- Modal Footer -->
+<div class="px-xl py-lg border-t border-outline-variant flex justify-end items-center gap-md bg-surface-container-lowest">
+<button class="px-xl h-12 rounded-lg border border-secondary text-secondary font-label-md hover:bg-surface-container-high transition-all active:scale-95" onclick="window.location.href='#'"  type="button">
+          Cancel
+        </button>
+<button class="px-xl h-12 rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary-container shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center gap-sm" type="submit">
+<span class="material-symbols-outlined text-body-md">save</span>
+          Save Product
+        </button>
+</div>
+</form>
+</div>
+</div>
+<script>
+    // Micro-interaction for input focus
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        input.parentElement.classList.add('scale-[1.01]');
+      });
+      input.addEventListener('blur', () => {
+        input.parentElement.classList.remove('scale-[1.01]');
+      });
+    });
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        console.log('Modal closed via escape');
+      }
+    });
+    function previewImage(event, previewId, placeholderId) {
+      const file = event.target.files[0];
+      const preview = document.getElementById(previewId);
+      const placeholder = document.getElementById(placeholderId);
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.classList.remove("hidden");
+            placeholder.classList.add("hidden");
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Reset if no file selected
+        preview.src = "";
+        preview.classList.add("hidden");
+        placeholder.classList.remove("hidden");
+      }
+    }
+  </script>
 </body></html>

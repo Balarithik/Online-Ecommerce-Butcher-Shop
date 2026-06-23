@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Add New Product - PrimePoultry</title>
+<title>Add New Product - Lakshmi Broliers</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -131,46 +131,10 @@
   </style>
 </head>
 <body class="bg-background text-on-background min-h-screen">
-<!-- Admin Dashboard Background Mockup (Blurred) -->
-<main class="fixed inset-0 overflow-hidden pointer-events-none select-none">
-<header class="flex items-center justify-between px-margin-desktop py-md bg-surface border-b border-outline-variant">
-<div class="flex items-center gap-md">
-<span class="material-symbols-outlined text-primary text-3xl">restaurant_menu</span>
-<h1 class="font-headline-md text-headline-md text-primary font-bold">PrimePoultry Admin</h1>
-</div>
-<div class="flex items-center gap-lg">
-<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center">
-<span class="material-symbols-outlined">person</span>
-</div>
-</div>
-</header>
-<div class="p-margin-desktop grid grid-cols-12 gap-lg">
-<aside class="col-span-2 space-y-md">
-<div class="p-md rounded-xl bg-primary-container/10 text-primary font-bold flex items-center gap-sm">
-<span class="material-symbols-outlined">dashboard</span> Dashboard
-        </div>
-<div class="p-md rounded-xl text-on-surface-variant flex items-center gap-sm">
-<span class="material-symbols-outlined">inventory_2</span> Inventory
-        </div>
-<div class="p-md rounded-xl text-on-surface-variant flex items-center gap-sm">
-<span class="material-symbols-outlined">shopping_cart</span> Orders
-        </div>
-</aside>
-<section class="col-span-10 space-y-lg">
-<div class="h-64 rounded-2xl border border-outline-variant bg-surface overflow-hidden">
-<img class="w-full h-full object-cover opacity-20 grayscale" data-alt="A sophisticated data analytics dashboard with blurred charts and graphs in the background. The aesthetic is clinical and professional, featuring a clean white space and subtle grey UI elements that emphasize the high-end corporate butchery management system. Soft, diffused lighting suggests an early morning office environment focused on efficiency and fresh meat logistics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdS5LIvswZml2IkUfZTOkmiKuFZWJ9THKOUzMdz_ip5zSdNChL4Z8i5_DqIx5iwGgeOVIG3O7n65ce708nM5jC4R4Iz6i6OOecqAPRQ_HD8ChZ8odCXK_O3LuGe0_MvTkcBRjrmUvqzgKE2CdfdU1Oo6dXik5w2YzWY2_9HrOTiHGuz9bleAltJLYYwWS6ncnLuhKtZz0tSD0_oAcOh-BqUrKWW5NDnYT2Sqc16Tg5OARSv_iNhvwu6NZ7JZCJT8IxHhEHmCP7A6t3"/>
-</div>
-<div class="grid grid-cols-3 gap-lg">
-<div class="h-32 rounded-xl bg-surface border border-outline-variant opacity-50"></div>
-<div class="h-32 rounded-xl bg-surface border border-outline-variant opacity-50"></div>
-<div class="h-32 rounded-xl bg-surface border border-outline-variant opacity-50"></div>
-</div>
-</section>
-</div>
-</main>
+
 <!-- Modal Component -->
 <div class="fixed inset-0 z-50 flex items-center justify-center p-margin-mobile md:p-margin-desktop modal-backdrop">
-<div class="bg-surface-container-lowest w-full max-w-4xl max-h-[921px] rounded-xl shadow-xl flex flex-col overflow-hidden border border-outline-variant">
+<div class="bg-surface-container-lowest w-full max-w-4xl w-[90vw] h-[90vw] max-w-[600px] max-h-[600px] rounded-xl shadow-xl flex flex-col overflow-hidden border border-outline-variant">
 <!-- Modal Header -->
 <div class="px-xl py-lg border-b border-outline-variant flex justify-between items-center bg-white">
 <div>
@@ -182,25 +146,26 @@
 </button>
 </div>
 <!-- Modal Body -->
-<form class="flex-1 overflow-y-auto p-xl custom-scrollbar space-y-xl">
+<form class="flex-1 overflow-y-auto p-xl custom-scrollbar space-y-xl" method="POST" action="{% url 'add_product_modal' %}" enctype="multipart/form-data">
+  {% csrf_token %}
 <div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
 <!-- Left Column: Basic Info -->
 <div class="space-y-lg">
 <div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="product_name">Product Name</label>
-<input class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" id="product_name" placeholder="e.g., Organic Whole Chicken" type="text"/>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="name">Product Name</label>
+<input name='name' class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" id="name" placeholder="e.g., Organic Whole Chicken" type="text"/>
 </div>
 <div class="grid grid-cols-2 gap-md">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="price">Price</label>
 <div class="relative">
 <span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">$</span>
-<input class="w-full h-12 pl-xl pr-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" id="price" placeholder="0.00" type="number"/>
+<input name = "price" class="w-full h-12 pl-xl pr-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md"  id="price" placeholder="0.00" type="number"/>
 </div>
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="category">Category</label>
-<select class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md appearance-none" id="category">
+<select  class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md appearance-none" id="category">
 <option value="">Select Category</option>
 <option value="whole">Whole Poultry</option>
 <option value="cuts">Fresh Cuts</option>
@@ -211,7 +176,7 @@
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="description">Description</label>
-<textarea class="w-full p-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md resize-none" id="description" placeholder="Describe the origin, weight, and storage instructions..." rows="4"></textarea>
+<textarea name = "description" class="w-full p-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md resize-none" id="description" placeholder="Describe the origin, weight, and storage instructions..." rows="4"></textarea>
 </div>
 </div>
 <!-- Right Column: Image Uploads -->
@@ -219,24 +184,68 @@
 <label class="block font-label-md text-label-md text-on-surface-variant">Product Images (Clinical standard photography preferred)</label>
 <div class="grid grid-cols-2 gap-md h-full">
 <!-- Slot 1 (Main) -->
-<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center hover:border-primary/50 transition-all cursor-pointer group relative overflow-hidden">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Image 1 (Main)</span>
+<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
+    <!-- File input -->
+    <input type="file" name="image1" accept="image/*"
+           class="absolute inset-0 opacity-0 cursor-pointer"
+           onchange="previewImage(event, 'preview1', 'placeholder1')" />
+
+    <!-- Preview image -->
+    <img id="preview1" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+
+    <!-- Placeholder icon + label -->
+    <div id="placeholder1" class="flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 1 (Main)</span>
+    </div>
 </div>
 <!-- Slot 2 -->
-<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center hover:border-primary/50 transition-all cursor-pointer group relative overflow-hidden">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Image 2</span>
+<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
+    <!-- File input -->
+    <input type="file" name="image2" accept="image/*"
+           class="absolute inset-0 opacity-0 cursor-pointer"
+           onchange="previewImage(event, 'preview2', 'placeholder2')" />
+
+    <!-- Preview image -->
+    <img id="preview2" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+
+    <!-- Placeholder icon + label -->
+    <div id="placeholder2" class="flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 2</span>
+    </div>
 </div>
 <!-- Slot 3 -->
-<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center hover:border-primary/50 transition-all cursor-pointer group relative overflow-hidden">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Image 3</span>
+<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
+    <!-- File input -->
+    <input type="file" name="image3" accept="image/*"
+           class="absolute inset-0 opacity-0 cursor-pointer"
+           onchange="previewImage(event, 'preview3', 'placeholder3')" />
+
+    <!-- Preview image -->
+    <img id="preview3" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+
+    <!-- Placeholder icon + label -->
+    <div id="placeholder3" class="flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 3</span>
+    </div>
 </div>
 <!-- Slot 4 -->
-<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center hover:border-primary/50 transition-all cursor-pointer group relative overflow-hidden">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Image 4</span>
+<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
+    <!-- File input -->
+    <input type="file" name="image4" accept="image/*"
+           class="absolute inset-0 opacity-0 cursor-pointer"
+           onchange="previewImage(event, 'preview4', 'placeholder4')" />
+
+    <!-- Preview image -->
+    <img id="preview4" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+
+    <!-- Placeholder icon + label -->
+    <div id="placeholder4" class="flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 4</span>
+    </div>
 </div>
 </div>
 </div>
@@ -249,10 +258,10 @@
 <p class="font-label-sm text-label-sm text-on-tertiary-fixed-variant">Items added via this portal are automatically tagged with the 'Freshness Guaranteed' clinical badge.</p>
 </div>
 </div>
-</form>
+
 <!-- Modal Footer -->
 <div class="px-xl py-lg border-t border-outline-variant flex justify-end items-center gap-md bg-surface-container-lowest">
-<button class="px-xl h-12 rounded-lg border border-secondary text-secondary font-label-md hover:bg-surface-container-high transition-all active:scale-95" type="button">
+<button class="px-xl h-12 rounded-lg border border-secondary text-secondary font-label-md hover:bg-surface-container-high transition-all active:scale-95" onclick="window.location.href=''"  type="button">
           Cancel
         </button>
 <button class="px-xl h-12 rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary-container shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center gap-sm" type="submit">
@@ -260,6 +269,7 @@
           Save Product
         </button>
 </div>
+</form>
 </div>
 </div>
 <script>
@@ -280,5 +290,25 @@
         console.log('Modal closed via escape');
       }
     });
+    function previewImage(event, previewId, placeholderId) {
+      const file = event.target.files[0];
+      const preview = document.getElementById(previewId);
+      const placeholder = document.getElementById(placeholderId);
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.classList.remove("hidden");
+            placeholder.classList.add("hidden");
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Reset if no file selected
+        preview.src = "";
+        preview.classList.add("hidden");
+        placeholder.classList.remove("hidden");
+      }
+    }
   </script>
 </body></html>

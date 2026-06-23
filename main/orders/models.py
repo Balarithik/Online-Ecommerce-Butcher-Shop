@@ -13,6 +13,7 @@ class Order(models.Model):
 
     order_id = models.IntegerField(primary_key=True)
     product_id = models.IntegerField(null=True, blank=True)
+    product_name = models.CharField(max_length=100,null=True)
     name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=13,null=True, blank=True)
     quantity = models.FloatField(default=1  )

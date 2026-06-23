@@ -64,36 +64,38 @@
 <tr class="bg-surface-container-low">
 <th class="px-lg py-sm font-label-sm text-label-sm text-secondary uppercase tracking-wider">Order ID</th>
 <th class="px-lg py-sm font-label-sm text-label-sm text-secondary uppercase tracking-wider">Customer</th>
+<th class="px-lg py-sm font-label-sm text-label-sm text-secondary uppercase tracking-wider">Product ID</th>
 <th class="px-lg py-sm font-label-sm text-label-sm text-secondary uppercase tracking-wider">Amount</th>
 <th class="px-lg py-sm font-label-sm text-label-sm text-secondary uppercase tracking-wider">Status</th>
 <th class="px-lg py-sm font-label-sm text-label-sm text-secondary uppercase tracking-wider">Actions</th>
 </tr>
 </thead>
-{% if orders %}
-    <tbody class="divide-y divide-outline-variant">
-    {% for order in orders %}
-        {% if order.status == "pending" %}
-            <!-- Order Row 1 -->
-            <tr class="hover:bg-surface-container-low transition-colors">
-            <td class="px-lg py-md font-label-md text-label-md text-primary font-bold">{{ order.order_id }}</td>
-            <td class="px-lg py-md">
-            <div class="flex items-center gap-sm">
-            <div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center font-bold text-on-secondary-fixed text-[10px]">JS</div>
-            <span class="font-body-md text-body-md text-on-surface">{{ order.name }}</span>
-            </div>
-            </td>
-            <td class="px-lg py-md font-body-md text-body-md text-on-surface">₹{{ order.price|floatformat:2 }}</td>
-            <td class="px-lg py-md">
-            <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 font-label-sm text-[11px] inline-flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span> {{ order.status }}</span>
-            </td>
-            <td class="px-lg py-md">
-            <button class="material-symbols-outlined text-secondary hover:text-primary transition-all p-1 rounded-md hover:bg-surface-container-high" data-icon="visibility">visibility</button>
-            <button class="material-symbols-outlined text-secondary hover:text-error transition-all p-1 rounded-md hover:bg-error-container" data-icon="delete">delete</button>
-            </td>
-            </tr>
-        {% endif %}
-    {% endfor %}  
+    {% if orders %}
+        <tbody class="divide-y divide-outline-variant">
+        {% for order in orders %}
+            {% if order.status == "pending" %}
+                <!-- Order Row 1 -->
+                <tr class="hover:bg-surface-container-low transition-colors">
+                <td class="px-lg py-md font-label-md text-label-md text-primary font-bold">{{ order.order_id }}</td>
+                <td class="px-lg py-md">
+                <div class="flex items-center gap-sm">
+                <div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center font-bold text-on-secondary-fixed text-[10px]">JS</div>
+                <span class="font-body-md text-body-md text-on-surface">{{ order.name }}</span>
+                </div>
+                </td>
+                <td class="px-lg py-md font-body-md text-body-md text-on-surface">{{ order.product_id }}({{ order.product_name}}) </td>
+                <td class="px-lg py-md font-body-md text-body-md text-on-surface">₹{{ order.price|floatformat:2 }}</td>
+                <td class="px-lg py-md">
+                <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 font-label-sm text-[11px] inline-flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span> {{ order.status }}</span>
+                </td>
+                <td class="px-lg py-md">
+                <button class="material-symbols-outlined text-secondary hover:text-primary transition-all p-1 rounded-md hover:bg-surface-container-high" data-icon="visibility">visibility</button>
+                <button class="material-symbols-outlined text-secondary hover:text-error transition-all p-1 rounded-md hover:bg-error-container" data-icon="delete">delete</button>
+                </td>
+                </tr>
+            {% endif %}
+        {% endfor %}  
     {% else %}
     <p class="font-body-md text-body-md text-on-surface-variant">No orders available at the moment. Please check back later.</p>
     {% endif %}  

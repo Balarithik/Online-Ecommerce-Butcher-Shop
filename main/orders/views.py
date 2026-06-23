@@ -34,8 +34,19 @@ def Orders(request):
             price = request.POST.get('price', 0)
             order_id = Order.objects.latest('order_id').order_id + 1 if Order.objects.exists() else 1
 
+
+            try:
+                product = Products.objects.get(id=product_id)
+            except Exception as e:
+                product = None
+            print(f'db error {e}')
+
+
+            product_name = product.name
+            
             orders = Order(
                 order_id=order_id,
+                product_name=product_name,
                 name=name,
                 mobile=mobile,
                 location=location,

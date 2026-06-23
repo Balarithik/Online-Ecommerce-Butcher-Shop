@@ -1,14 +1,11 @@
 # Create your views here.
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect , HttpResponse ,get_object_or_404
 from django.contrib import messages
 from store.models import Products
 from orders.models import Order
-
-
-
-
+from .forms import ProductForm
 
 
 def admin_login(request):
@@ -26,11 +23,12 @@ def admin_login(request):
     return render(request, "admin/admin_login.html")
 
 
+
 @login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_dashboard(request):
     products = Products.objects.all()
-    orders = Order.objects.all()
+    orders = Order.objects.all().order_by('-order_id')
 
 
 
@@ -52,8 +50,63 @@ def admin_dashboard(request):
 def admin_product(request):
     products = Products.objects.all()
     return render(request, "admin/products.html",{'products':products})
+
+
+
 @login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_orders(request):
     orders = Order.objects.all()
     return render(request, "admin/orders.html",{'orders':orders})
+
+
+
+def add_product_modal(request):
+    if request.method == "GET":
+
+        return render(request,"admin/addnewproductpopup.html")
+    elif request.method == "POST":
+        form = ProductForm(request.POST,request.FILES)
+        if form.is_valid():
+
+            name = request.POST.get('name', '').strip()
+            price = request.POST.get('price', '').strip()
+            description = request.POST.get('description', '').strip()
+            image1 = request.FILES.get('image1')
+            image2 = request.FILES.get('image2')
+            image3 = request.FILES.get('image3')
+            image4 = request.FILES.get('image4')
+
+            Products.objects.create(
+                name=name,
+                price=price,
+                description=description,
+                image1=image1,
+                image2=image2,
+                image3=image3,
+                image4=image4
+            )
+
+            
+            print(f"Product Added {name}")
+            return redirect("admin_products")
+    else :
+        return HttpResponse("Error")
+
+
+
+
+
+def edit_product_modal(request, product_id):
+    product = get_object_or_404(Products, id=product_id)
+
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            print("Product Updated")
+            return redirect('admin_products')  # adjust to your product list view
+    else:
+        form = ProductForm()
+
+    return render(request, "admin\editproductpopup.html", {"form": form, "product": product})
