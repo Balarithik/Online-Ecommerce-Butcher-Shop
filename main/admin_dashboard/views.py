@@ -109,4 +109,4 @@ def edit_product_modal(request, product_id):
     else:
         form = ProductForm()
 
-    return render(request, "admin\editproductpopup.html", {"form": form, "product": product})
+    return render(request, "admin/editproductpopup.html", {"form": form, "product": product})
