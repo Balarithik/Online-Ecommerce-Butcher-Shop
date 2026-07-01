@@ -75,31 +75,50 @@
 </thead>
     {% if orders %}
         <tbody class="divide-y divide-outline-variant bg-white">
-            {% for orders in orders %}
-                <!-- Order Row 1 -->
-                <tr class="order-row-hover transition-colors">
-                <td class="px-md py-4 text-body-md font-bold text-on-surface">{{ order.order_id }}</td>
-                <td class="px-md py-4 text-body-md font-medium">{{ order.name }}</td>
-                <td class="px-md py-4 text-body-md text-on-surface-variant">{{ order.mobile }}</td>
-                <td class="px-md py-4 text-body-md text-on-surface-variant">{{ order.product_id }} ({{ order.product_name }})</td>
-                <td class="px-md py-4 text-body-md font-bold text-primary">₹{{ order.price }}</td>
-                <td class="px-md py-4">
-                <span class="px-3 py-1 rounded-full text-label-sm font-bold bg-primary/10 text-primary flex items-center w-fit gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Pending
-                                                    </span>
-                </td>
-                <td class="px-md py-4 text-right">
-                <button class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-white rounded-lg text-label-sm font-bold transition-all active:scale-95" hx-get="{% url 'update_order' %}" hx-target="#update_order-model" hx-trigger="click" >Update</button>
-                </td>
-                </tr>
+            {% for order in orders %}
+                {% if order.status == "pending" %}
+                    <!-- Order Row 1 -->
+                    <tr class="order-row-hover transition-colors">
+                    <td class="px-md py-4 text-body-md font-bold text-on-surface">{{ order.order_id }}</td>
+                    <td class="px-md py-4 text-body-md font-medium">{{ order.name }}</td>
+                    <td class="px-md py-4 text-body-md text-on-surface-variant">{{ order.mobile }}</td>
+                    <td class="px-md py-4 text-body-md text-on-surface-variant">{{ order.product_id }} ({{ order.product_name }})</td>
+                    <td class="px-md py-4 text-body-md font-bold text-primary">₹{{ order.price }}</td>
+                    <td class="px-md py-4">
+                    <span class="px-3 py-1 rounded-full text-label-sm font-bold bg-primary/10 text-primary flex items-center w-fit gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary"></span> {{ order.status }}
+                                                        </span>
+                    </td>
+                    <td class="px-md py-4 text-right">
+                    <button class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-white rounded-lg text-label-sm font-bold transition-all active:scale-95" hx-get="{% url 'update_order' order.order_id %}" hx-target="#update_order-model" hx-trigger="click" >Update</button>
+                    </td>
+                    </tr>
+                {% else %}
+                    <tr class="order-row-hover transition-colors">
+                    <td class="px-md py-4 text-body-md font-bold text-on-surface">{{ order.order_id }}</td>
+                    <td class="px-md py-4 text-body-md font-medium">{{ order.name }}</td>
+                    <td class="px-md py-4 text-body-md text-on-surface-variant">{{ order.mobile }}</td>
+                    <td class="px-md py-4 text-body-md text-on-surface-variant">{{ order.product_id }} ({{ order.product_name }})</td>
+                    <td class="px-md py-4 text-body-md font-bold text-primary">₹{{ order.price }}</td>
+                    <td class="px-md py-4">
+                    <span class="px-3 py-1 rounded-full text-label-sm font-bold bg-primary/10 text-primary flex items-center w-fit gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary"></span> {{ order.status }}
+                                                        </span>
+                    </td>
+                    <td class="px-md py-4 text-right">
+                    <button class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-white rounded-lg text-label-sm font-bold transition-all active:scale-95" hx-get="{% url 'update_order' order.order_id %}" hx-target="#update_order_modal-container" hx-trigger="click" type="button" >Update</button>
+                    </td>
+                    </tr>
+                {% endif %}
             {% endfor %}  
     {% else %}
     <p class="font-body-md text-body-md text-on-surface-variant">No orders available at the moment. Please check back later.</p>
     {% endif %}  
 
 </tbody>
+<div id="update_order_modal-container"></div>
+
 </table>
-<div id="update_order-modal"></div>
 </div>
 </div>
 
@@ -109,6 +128,8 @@
     function callme(current_status){
         alert(current_status);
     };
-    
+    function closeModal() {
+        document.getElementById("update_order_modal-container" ).innerHTML = "";
+    }
 </script>
 {% endblock %}

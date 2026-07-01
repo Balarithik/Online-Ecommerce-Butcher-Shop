@@ -123,5 +123,14 @@ def delete_product(request, product_id):
 
 
 
-def update_order(request):
-    return render('admin/order_updation.html')
+def update_order(request,order_id):
+    if request.method == "GET":
+        try :
+            order = get_object_or_404(Order, pk=order_id)
+            product_id = order.order_id
+            product=get_object_or_404(Products, id=product_id)
+        except Exception as e:
+            print(f"An error occured {e}")
+        return render(request, "admin/order_updation.html", {"order": order},{"product":product})
+    else :
+        return HttpResponse(f"{request.method}")

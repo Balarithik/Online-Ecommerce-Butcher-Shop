@@ -7,7 +7,6 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <!-- Shared Component Styling & Design System tokens are integrated via the Tailwind Config -->
 <script id="tailwind-config">
       tailwind.config = {
@@ -114,14 +113,14 @@
             backdrop-filter: blur(4px);
         }
         .clinical-shadow {
-            shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
         select {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%235a403e'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238f000d'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 1rem;
+            background-position: right 1rem center;
+            background-size: 1.25rem;
         }
     </style>
 </head>
@@ -144,131 +143,170 @@
 </thead>
 <tbody>
 <tr class="border-b border-outline-variant">
-<td class="p-md">#PO-8821</td>
-<td class="p-md">Sarah Jenkins</td>
-<td class="p-md text-primary font-bold">Shipped</td>
-<td class="p-md">$142.50</td>
+<td class="p-md">{{ order.order_id }}</td>
+<td class="p-md">{{ order.name }}</td>
+<td class="p-md text-primary font-bold">{{ order.status }}</td>
+<td class="p-md">${{ order.price }}</td>
 </tr>
 </tbody>
 </table>
 </div>
 </main>
 <!-- Modal Overlay -->
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-lg modal-overlay">
 <!-- Desktop Modal Container -->
-<div class="bg-surface-container-lowest w-full max-w-2xl rounded-xl shadow-xl overflow-hidden border border-outline-variant animate-in fade-in zoom-in duration-300">
-<!-- Modal Header -->
-<header class="sticky top-0 z-10 flex items-center justify-between px-lg py-md bg-surface border-b border-outline-variant">
+<div class="bg-surface-container-lowest w-full max-w-4xl max-h-[90vh] flex flex-col rounded-xl shadow-xl overflow-hidden border border-outline-variant animate-in fade-in zoom-in duration-300">
+<!-- Modal Header (Sticky) -->
+<header class="flex-shrink-0 flex items-center justify-between px-lg py-md bg-surface border-b border-outline-variant">
 <div class="flex items-center gap-sm">
 <h2 class="font-headline-md text-headline-md text-on-surface">Order Details</h2>
-<span class="px-sm py-xs bg-surface-container-high rounded-full font-label-sm text-on-surface-variant">#PO-8821</span>
+<span class="px-sm py-xs bg-surface-container-high rounded-full font-label-sm text-on-surface-variant"></span>
 </div>
-<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="close">close</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant group" onclick="closeModal()"  type="button" >
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform" data-icon="close">close</span>
 </button>
 </header>
-<!-- Modal Content (Scrollable if needed) -->
-<div class="px-lg py-lg max-h-[819px] overflow-y-auto space-y-lg">
-<!-- Section 1: Customer & Product Bento Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Modal Content (Scrollable) -->
+<div class="flex-grow overflow-y-auto px-lg py-lg space-y-xl">
+<!-- Section 1: Customer & Product Two-Column Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
 <!-- Customer Information -->
-<div class="space-y-sm">
+<div class="space-y-md">
 <div class="flex items-center gap-xs text-primary">
 <span class="material-symbols-outlined" data-icon="person">person</span>
 <h3 class="font-label-md text-label-md uppercase tracking-wider">Customer Information</h3>
 </div>
-<div class="p-md border border-outline-variant rounded-lg bg-surface-bright">
-<p class="font-headline-md text-on-surface">Sarah Jenkins</p>
-<p class="text-on-surface-variant font-body-md">+1 (555) 234-9812</p>
-<div class="mt-sm flex items-start gap-xs text-on-surface-variant">
-<span class="material-symbols-outlined text-sm mt-1" data-icon="location_on">location_on</span>
-<p class="text-sm">42 Fresh Harvest Lane, Oak Creek Estate, Suite 102, Metro City, 54001</p>
+<div class="p-lg border border-outline-variant rounded-xl bg-surface-bright clinical-shadow">
+<div class="space-y-sm">
+<div>
+<p class="text-xs font-label-sm text-on-surface-variant uppercase">Full Name</p>
+<p class="font-headline-md text-on-surface">{{ order.name }}</p>
+</div>
+<div>
+<p class="text-xs font-label-sm text-on-surface-variant uppercase">Mobile Number</p>
+<p class="text-on-surface font-body-md">{{ order.mobile }}</p>
+</div>
+<div>
+<p class="text-xs font-label-sm text-on-surface-variant uppercase">Delivery Address</p>
+<div class="mt-xs flex items-start gap-xs text-on-surface">
+<span class="material-symbols-outlined text-primary-container mt-1" data-icon="location_on">location_on</span>
+<p class="text-body-md">{{ order.location }}</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 <!-- Product Details -->
-<div class="space-y-sm">
+<div class="space-y-md">
 <div class="flex items-center gap-xs text-primary">
 <span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
 <h3 class="font-label-md text-label-md uppercase tracking-wider">Product Details</h3>
 </div>
-<div class="p-md border border-outline-variant rounded-lg bg-surface-bright">
-<div class="flex justify-between items-center">
-<p class="font-headline-md text-on-surface">Premium Organic Chicken</p>
-<span class="px-sm py-xs bg-tertiary/10 text-tertiary rounded-full font-label-sm">Fresh</span>
+<div class="p-lg border border-outline-variant rounded-xl bg-surface-bright clinical-shadow">
+<div class="flex justify-between items-start mb-md">
+<div>
+<p class="text-xs font-label-sm text-on-surface-variant uppercase">Item</p>
+<p class="font-headline-md text-on-surface">{{ product.name }}</p>
 </div>
-<div class="flex justify-between mt-xs text-on-surface-variant">
-<span class="font-body-md">Quantity: 2.5 kg</span>
-<span class="font-headline-md text-primary">$142.50</span>
 </div>
-<div class="mt-sm pt-sm border-t border-outline-variant flex gap-sm overflow-x-auto">
-<div class="w-12 h-12 rounded bg-surface-container-high flex-shrink-0 overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A macro photograph of fresh organic chicken breast on a marble butcher's block with clinical white lighting. The image emphasizes cleanliness and high quality, with a subtle soft shadow and neutral color palette that highlights the pink freshness of the poultry meat." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKsH47jOKxQyoIyZtuAcRO_rD2HIgwnVtQPtVPRepK4OTA5X-IZFeVIhkr9Koc1L2vFegi8PHKkR1rCe1Y7U-IwwL3-gDTebH3Foug28ryOFRrQAqAHOYL1xK6XsMxDg93RFWp6vydbA3BEpOGtKwkeZ-blKaNS7IlArHOsu6zinsw5CsX4enqWLQVj_ugr25Sa1ZgneGIwoMKpPBNgvnYEAHzPIQSTRrQcPQdI865SHVWobJonEblM9jRKjFxntAguvv5MdyxL_7R"/>
+<div class="grid grid-cols-2 gap-md border-t border-outline-variant pt-md">
+<div>
+<p class="text-xs font-label-sm text-on-surface-variant uppercase">Quantity</p>
+<p class="font-headline-md text-on-surface">{{ order.quantity }} kg</p>
 </div>
-<p class="text-xs text-on-surface-variant leading-tight italic">Part of the 'Spring Harvest' seasonal selection.</p>
+<div class="text-right">
+<p class="text-xs font-label-sm text-on-surface-variant uppercase">Unit Price</p>
+<p class="font-headline-md text-primary">₹{{ order.price }}</p>
+</div>
+</div>
+<div class="mt-md pt-md border-t border-outline-variant flex items-center gap-md">
+<div class="w-16 h-16 rounded-lg bg-surface-container-high flex-shrink-0 overflow-hidden border border-outline-variant">
+<img alt="Premium organic chicken display" class="w-full h-full object-cover" src="{{ product.image1.url }}"/>
+</div>
+<p class="text-sm text-on-surface-variant italic leading-relaxed">Verified 'Spring Harvest' batch. Triple-checked for quality and temperature standards.</p>
 </div>
 </div>
 </div>
 </div>
 <!-- Section 2: Delivery Instructions -->
-<div class="space-y-sm">
+<div class="space-y-md">
 <div class="flex items-center gap-xs text-primary">
 <span class="material-symbols-outlined" data-icon="notes">notes</span>
-<h3 class="font-label-md text-label-md uppercase tracking-wider">Delivery Instructions</h3>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Special Delivery Instructions</h3>
 </div>
-<div class="p-md border border-outline-variant rounded-lg bg-surface-container-low/50 italic text-on-surface-variant">
-                        "Please leave the package with the concierge at the front desk. Ensure the cooling packs are intact as I will be arriving late in the evening. Thank you!"
-                    </div>
+<div class="p-lg border border-outline-variant rounded-xl bg-surface-container-low/40 relative">
+<span class="material-symbols-outlined absolute top-4 left-4 text-outline-variant/30 text-4xl" data-icon="format_quote">format_quote</span>
+<p class="relative z-10 italic text-on-surface-variant text-body-md pl-6">
+                        {{ order.instructions }}
+                    </p>
+</div>
 </div>
 <!-- Section 3: Order Status Update -->
-<div class="space-y-sm">
+<div class="space-y-md">
 <div class="flex items-center gap-xs text-primary">
-<span class="material-symbols-outlined" data-icon="update">update</span>
-<h3 class="font-label-md text-label-md uppercase tracking-wider">Order Status</h3>
+<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Order Management</h3>
 </div>
+<div class="bg-surface-container-low/30 border border-outline-variant rounded-xl p-lg">
+<div class="max-w-md">
+<label class="block font-label-md text-on-surface-variant mb-2" for="status-dropdown">Update Order Status</label>
 <div class="relative">
-<label class="sr-only" for="status-dropdown">Update Status</label>
-<select class="w-full h-12 px-md bg-white border border-outline rounded-lg text-on-surface font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" id="status-dropdown">
+<select class="w-full h-12 pl-md pr-12 bg-white border border-outline rounded-lg text-on-surface font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer hover:border-primary/50" id="status-dropdown">
 <option value="pending">Pending</option>
 <option value="confirmed">Confirmed</option>
 <option selected="" value="shipped">Shipped</option>
 <option value="delivered">Delivered</option>
 <option value="cancelled">Cancelled</option>
 </select>
-<div class="mt-xs flex items-center gap-xs px-xs">
-<div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></div>
-<span class="text-xs text-on-surface-variant">Current status is Shipped. Last updated 2 hours ago.</span>
+</div>
+<div class="mt-md flex items-center gap-sm bg-white/50 p-sm rounded-lg border border-outline-variant/50">
+<div class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim animate-pulse"></div>
+<p class="text-sm text-on-surface-variant">Current status: <span class="font-bold text-on-surface">Shipped</span>. Handed over to logistics 2 hours ago.</p>
 </div>
 </div>
 </div>
 </div>
-<!-- Modal Footer (Actions) -->
-<footer class="flex items-center justify-end gap-md px-lg py-md bg-surface-container-low border-t border-outline-variant">
-<button class="px-lg h-12 font-label-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors active:scale-95 duration-150">
-                    Cancel
-                </button>
-<button class="px-xl h-12 bg-primary text-on-primary font-label-md rounded-lg clinical-shadow hover:brightness-110 transition-all active:scale-95 duration-150 flex items-center gap-xs">
+</div>
+<!-- Modal Footer (Sticky Actions) -->
+<footer class="flex-shrink-0 flex items-center justify-end gap-md px-lg py-md bg-surface-container-low border-t border-outline-variant">
+<button class="px-lg h-12 font-label-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150" onclick="closeModal()"  type="button">
+                Cancel
+            </button>
+<button class="px-xl h-12 bg-primary text-on-primary font-label-md rounded-lg shadow-md hover:brightness-110 hover:shadow-lg transition-all active:scale-95 duration-150 flex items-center gap-xs" id="update-btn">
 <span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
-                    Update Order
-                </button>
+                Update Order
+            </button>
 </footer>
 </div>
 </div>
 <!-- Micro-interaction Script -->
 <script>
-        document.querySelectorAll('button, select').forEach(el => {
-            el.addEventListener('click', () => {
-                // Light feedback simulation
-                if (el.tagName === 'BUTTON' && el.innerText.includes('Update')) {
-                    const originalContent = el.innerHTML;
-                    el.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Processing...';
-                    el.disabled = true;
-                    setTimeout(() => {
-                        el.innerHTML = '<span class="material-symbols-outlined" data-icon="done_all">done_all</span> Updated';
-                        el.classList.replace('bg-primary', 'bg-tertiary');
-                    }, 1200);
-                }
-            });
+    const updateBtn = document.getElementById('update-btn');
+    if (updateBtn) {
+        updateBtn.addEventListener('click', function() {
+            const originalContent = this.innerHTML;
+            this.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Processing...';
+            this.disabled = true;
+            this.classList.add('opacity-90', 'cursor-not-allowed');
+            
+            setTimeout(() => {
+                this.innerHTML = '<span class="material-symbols-outlined" data-icon="done_all">done_all</span> Updated Successfully';
+                this.classList.remove('bg-primary');
+                this.classList.add('bg-tertiary');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.classList.add('bg-primary');
+                    this.classList.remove('bg-tertiary', 'opacity-90', 'cursor-not-allowed');
+                    this.disabled = false;
+                }, 2000);
+            }, 1200);
         });
-    </script>
+    }
+
+    function closeModal() {
+    document.getElementById("update_order_modal-container").innerHTML = "";
+    }
+
+</script>
 </body></html>

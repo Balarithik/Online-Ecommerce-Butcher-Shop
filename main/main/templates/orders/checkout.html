@@ -11,7 +11,7 @@
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile mb-xs">Checkout</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">Complete your order as a guest. No account required.</p>
 </section>
-<form class="flex flex-col gap-xl" id="checkoutForm" method="POST" action="{% url 'orders' %}">
+<form class="flex flex-col gap-xl" id="checkoutForm" method="POST" action="{% url 'Orders' product.id %}">
 {% csrf_token %}
 <!-- Delivery Details Section -->
 <div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm">
@@ -26,7 +26,7 @@
 </div>
 <div class="flex flex-col gap-xs">
 <label class="font-label-md text-label-md text-on-surface-variant" for="{{ form.mobile.id_for_label }}">Mobile Number</label>
-<input name="mobile" class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="+91 00000 00000" required="" type="tel" />
+<div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">+91</span><input name="mobile" id="mobile" type="tel" placeholder="00000 00000" maxlength="10" required class="input-focus-effect w-full h-12 pl-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" /></div>
 </div>
 <div class="flex flex-col gap-xs" name="address">
 <label  class="font-label-md text-label-md text-on-surface-variant" for="{{ form.address.id_for_label }}">Delivery Address</label>

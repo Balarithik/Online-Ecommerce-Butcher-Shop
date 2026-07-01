@@ -138,7 +138,7 @@
 <!-- Modal Header -->
 <div class="px-xl py-lg border-b border-outline-variant flex justify-between items-center bg-white">
 <div>
-<h2 class="font-headline-lg text-headline-lg text-on-background">Add New Product</h2>
+<h2 class="font-headline-lg text-headline-lg text-on-background">Edit Product</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">Fill in the clinical details for the new poultry inventory item.</p>
 </div>
 <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-95" onclick="closeModal()">
@@ -301,7 +301,7 @@
     });
 
     function closeModal() {
-      document.getElementById("add_product_modal-container" || "edit_product_modal-container").innerHTML = "";
+      document.getElementById("edit_product_modal-container").innerHTML = "";
     }
 
     function previewImage(event, previewId, placeholderId) {

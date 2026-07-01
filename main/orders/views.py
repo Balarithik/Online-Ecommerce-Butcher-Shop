@@ -17,7 +17,7 @@ def Checkout(request, product_id, qty):
         print(f'db error {e}')
     return render(request, 'orders/checkout.html', {'product': product, 'form': form, 'qty': qty})
 
-def Orders(request):
+def Orders(request,product_id):
     if request.method == "POST":
         form = OrderForm(request.POST)
         if form.is_valid():
@@ -42,7 +42,7 @@ def Orders(request):
                 print(f'db error {e}')
 
 
-            product_name = name
+            product_name = product.name
             
             orders = Order(
                 order_id=order_id,
