@@ -242,41 +242,37 @@
 </div>
 </div>
 <!-- Section 3: Order Status Update -->
-<div class="space-y-md">
-<div class="flex items-center gap-xs text-primary">
-<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
-<h3 class="font-label-md text-label-md uppercase tracking-wider">Order Management</h3>
-</div>
-<div class="bg-surface-container-low/30 border border-outline-variant rounded-xl p-lg">
-<div class="max-w-md">
-<label class="block font-label-md text-on-surface-variant mb-2" for="status-dropdown">Update Order Status</label>
-<div class="relative">
-<select class="w-full h-12 pl-md pr-12 bg-white border border-outline rounded-lg text-on-surface font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer hover:border-primary/50" id="status-dropdown">
-<option value="pending">Pending</option>
-<option value="confirmed">Confirmed</option>
-<option selected="" value="shipped">Shipped</option>
-<option value="delivered">Delivered</option>
-<option value="cancelled">Cancelled</option>
-</select>
-</div>
-<div class="mt-md flex items-center gap-sm bg-white/50 p-sm rounded-lg border border-outline-variant/50">
-<div class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim animate-pulse"></div>
-<p class="text-sm text-on-surface-variant">Current status: <span class="font-bold text-on-surface">Shipped</span>. Handed over to logistics 2 hours ago.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Modal Footer (Sticky Actions) -->
-<footer class="flex-shrink-0 flex items-center justify-end gap-md px-lg py-md bg-surface-container-low border-t border-outline-variant">
-<button class="px-lg h-12 font-label-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150" onclick="closeModal()"  type="button">
-                Cancel
-            </button>
-<button class="px-xl h-12 bg-primary text-on-primary font-label-md rounded-lg shadow-md hover:brightness-110 hover:shadow-lg transition-all active:scale-95 duration-150 flex items-center gap-xs" id="update-btn">
-<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
-                Update Order
-            </button>
-</footer>
+<form method="POST" action="{% url 'update_order' order.order_id %}">
+    {% csrf_token %}
+    <div class="space-y-md">
+        <div class="flex items-center gap-xs text-primary">
+            <span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+            <h3 class="font-label-md text-label-md uppercase tracking-wider">Order Management</h3>
+        </div>
+        <div class="bg-surface-container-low/30 border border-outline-variant rounded-xl p-lg">
+            <div class="max-w-md">
+                <label class="block font-label-md text-on-surface-variant mb-2" for="status-dropdown">Update Order Status</label>
+                <div class="relative">
+                    <select name="status" class="w-full h-12 pl-md pr-12 bg-white border border-outline rounded-lg text-on-surface font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer hover:border-primary/50" id="status-dropdown">
+                        {% for value,label in status_choices %}     
+                        <option value="{{ value }}" >{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Footer (Sticky Actions) -->
+    <footer class="flex-shrink-0 flex items-center justify-end gap-md px-lg py-md bg-surface-container-low border-t border-outline-variant">
+        <button class="px-lg h-12 font-label-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150"   type="button">
+                        Cancel
+                    </button>
+        <button class="px-xl h-12 bg-primary text-on-primary font-label-md rounded-lg shadow-md hover:brightness-110 hover:shadow-lg transition-all active:scale-95 duration-150 flex items-center gap-xs" onclick="closeModal()" type="submit" id="update-btn">
+        <span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+                        Update Order
+                    </button>
+    </footer>
+</form>
 </div>
 </div>
 <!-- Micro-interaction Script -->

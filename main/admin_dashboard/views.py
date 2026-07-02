@@ -123,14 +123,26 @@ def delete_product(request, product_id):
 
 
 
-def update_order(request,order_id):
-    if request.method == "GET":
-        try :
-            order = get_object_or_404(Order, pk=order_id)
-            product_id = order.order_id
-            product=get_object_or_404(Products, id=product_id)
-        except Exception as e:
-            print(f"An error occured {e}")
-        return render(request, "admin/order_updation.html", {"order": order},{"product":product})
-    else :
-        return HttpResponse(f"{request.method}")
+
+def update_order(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    product = get_object_or_404(Products, id=order.product_id)
+
+    if request.method == "POST":
+        new_status = request.POST.get("status")
+        valid_choices = [choice[0] for choice in Order.status_choices]
+        if new_status in valid_choices:
+            order.status = new_status
+            order.save()
+            print(f"Order {order_id} status updated to {new_status}")
+            return redirect('admin_orders')  # or wherever you want to go
+
+    return render(
+        request,
+        "admin/order_updation.html",
+        {
+            "order": order,
+            "product": product,
+            "status_choices": Order.status_choices,
+        }
+    )
