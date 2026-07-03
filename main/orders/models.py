@@ -5,10 +5,8 @@ from django.db import models
 class Order(models.Model):
     status_choices = [
         ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('shipped', 'Shipped'),
         ('delivered', 'Delivered'),
-        ('cancelled', 'Cancelled'),
+        ('cancelled', 'Cancelled')
     ]
 
     order_id = models.IntegerField(primary_key=True)

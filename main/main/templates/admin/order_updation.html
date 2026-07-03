@@ -255,7 +255,7 @@
                 <div class="relative">
                     <select name="status" class="w-full h-12 pl-md pr-12 bg-white border border-outline rounded-lg text-on-surface font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer hover:border-primary/50" id="status-dropdown">
                         {% for value,label in status_choices %}     
-                        <option value="{{ value }}" >{{ label }}</option>
+                        <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -264,10 +264,10 @@
     </div>
     <!-- Modal Footer (Sticky Actions) -->
     <footer class="flex-shrink-0 flex items-center justify-end gap-md px-lg py-md bg-surface-container-low border-t border-outline-variant">
-        <button class="px-lg h-12 font-label-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150"   type="button">
+        <button class="px-lg h-12 font-label-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150" onclick="closeModal()"  type="button">
                         Cancel
                     </button>
-        <button class="px-xl h-12 bg-primary text-on-primary font-label-md rounded-lg shadow-md hover:brightness-110 hover:shadow-lg transition-all active:scale-95 duration-150 flex items-center gap-xs" onclick="closeModal()" type="submit" id="update-btn">
+        <button class="px-xl h-12 bg-primary text-on-primary font-label-md rounded-lg shadow-md hover:brightness-110 hover:shadow-lg transition-all active:scale-95 duration-150 flex items-center gap-xs"  type="submit" id="update-btn">
         <span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
                         Update Order
                     </button>
@@ -277,32 +277,35 @@
 </div>
 <!-- Micro-interaction Script -->
 <script>
+    const form = document.querySelector('form');   // target the update_order form
     const updateBtn = document.getElementById('update-btn');
-    if (updateBtn) {
-        updateBtn.addEventListener('click', function() {
-            const originalContent = this.innerHTML;
-            this.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Processing...';
-            this.disabled = true;
-            this.classList.add('opacity-90', 'cursor-not-allowed');
-            
+
+    if (form && updateBtn) {
+        form.addEventListener('submit', function () {
+            const originalContent = updateBtn.innerHTML;
+            updateBtn.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Processing...';
+            updateBtn.disabled = true;
+            updateBtn.classList.add('opacity-90', 'cursor-not-allowed');
+
+            // optional: restore button state after a delay
             setTimeout(() => {
-                this.innerHTML = '<span class="material-symbols-outlined" data-icon="done_all">done_all</span> Updated Successfully';
-                this.classList.remove('bg-primary');
-                this.classList.add('bg-tertiary');
-                
+                updateBtn.innerHTML = '<span class="material-symbols-outlined" data-icon="done_all">done_all</span> Updated Successfully';
+                updateBtn.classList.remove('bg-primary');
+                updateBtn.classList.add('bg-tertiary');
+
                 setTimeout(() => {
-                    this.innerHTML = originalContent;
-                    this.classList.add('bg-primary');
-                    this.classList.remove('bg-tertiary', 'opacity-90', 'cursor-not-allowed');
-                    this.disabled = false;
+                    updateBtn.innerHTML = originalContent;
+                    updateBtn.classList.add('bg-primary');
+                    updateBtn.classList.remove('bg-tertiary', 'opacity-90', 'cursor-not-allowed');
+                    updateBtn.disabled = false;
                 }, 2000);
             }, 1200);
         });
     }
 
     function closeModal() {
-    document.getElementById("update_order_modal-container").innerHTML = "";
+        document.getElementById("update_order_modal-container").innerHTML = "";
     }
-
 </script>
+
 </body></html>

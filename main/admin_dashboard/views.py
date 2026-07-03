@@ -28,7 +28,7 @@ def admin_login(request):
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_dashboard(request):
     products = Products.objects.all()
-    orders = Order.objects.all().order_by('-order_id')
+    orders = Order.objects.all()
 
 
 
@@ -56,19 +56,18 @@ def admin_product(request):
 @login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_orders(request):
-    orders = Order.objects.all().order_by('-order_id')
+    orders = Order.objects.all()
     return render(request, "admin/orders.html",{'orders':orders})
 
 
-
+@login_required(login_url='/admin_login/')
 def add_product_modal(request):
     if request.method == "GET":
+        return render(request, "admin/addnewproductpopup.html")
 
-        return render(request,"admin/addnewproductpopup.html")
     elif request.method == "POST":
-        form = ProductForm(request.POST,request.FILES)
+        form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-
             name = request.POST.get('name', '').strip()
             price = request.POST.get('price', '').strip()
             description = request.POST.get('description', '').strip()
@@ -86,16 +85,16 @@ def add_product_modal(request):
                 image3=image3,
                 image4=image4
             )
-
-            
             print(f"Product Added {name}")
             return redirect("admin_products")
-    else :
-        return HttpResponse("Error")
+        else:
+            # re-render the modal with validation errors
+            return HttpResponse("you've missed some required fields", status=400)
+
+    return HttpResponse(f"Invalid request method ({request.method})", status=405)
 
 
-
-
+@login_required(login_url='/admin_login/')
 def edit_product_modal(request, product_id):
     product = get_object_or_404(Products, id=product_id)
 
@@ -110,7 +109,7 @@ def edit_product_modal(request, product_id):
 
     return render(request, "admin/editproductpopup.html", {"form": form, "product": product})
 
-
+@login_required(login_url='/admin_login/')
 def delete_product(request, product_id):
     product = get_object_or_404(Products, id=product_id)
     product.delete()
@@ -123,7 +122,7 @@ def delete_product(request, product_id):
 
 
 
-
+@login_required(login_url='/admin_login/')
 def update_order(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     product = get_object_or_404(Products, id=order.product_id)
