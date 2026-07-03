@@ -1,9 +1,6 @@
 from . import views
 from django.urls import path
 
-from main import settings
-from django.conf.urls.static import static
-
 
 urlpatterns = [
     path('', views.admin_dashboard, name='admin_dashboard'),
@@ -15,4 +12,3 @@ urlpatterns = [
     path('update_order/<int:order_id>/',views.update_order,name='update_order')
 ] 
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
