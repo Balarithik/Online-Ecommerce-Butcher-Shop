@@ -52,7 +52,9 @@ INSTALLED_APPS = [
     'orders',
     'home',
     'admin_dashboard',
-    'store'
+    'store',
+    'cloudinary',
+    'cloudinary_storage',
   
 ]
 
@@ -148,9 +150,14 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 
-STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"
-)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'peppedvp',
+    'API_KEY': '554548285174496',
+    'API_SECRET': 'GFeQpCzYJlsfQNpQnT0PI7xFiHI',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
 
 
@@ -159,9 +166,6 @@ STATICFILES_STORAGE = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = '/opt/render/project/media'
 
 
 LOGIN_URL = reverse_lazy('admin_login')
