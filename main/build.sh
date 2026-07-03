@@ -10,5 +10,4 @@ python manage.py makemigrations
 
 python manage.py migrate
 
-python manage.py flush --no-input
-
+python manage.py auto_createsuperuser --username admin --password admin123
