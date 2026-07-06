@@ -56,14 +56,11 @@
 <section class="py-xl px-margin-mobile md:px-margin-desktop bg-surface-container-low">
 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-lg">Top-Selling Chicken</h2>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
-<!-- Product Card 1 -->
- {% if products %}
- <ul>
+  {% if products %}
     {% for product in products %}
-    <li>
         <div class="bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant clean-shadow flex flex-col">
         <div class="relative h-48">
-        <img class="w-full h-full object-cover" data-alt="Detailed close-up of skinless chicken breast fillets on a clean white surface. Small decorative rosemary leaves add a touch of color. The style is bright and airy, emphasizing the lean, high-quality nature of the poultry in a modern, professional culinary setting." src="{{ product.image1.url }}"/>
+        <img class="w-full h-full object-cover" data-alt="Detailed close-up of skinless chicken breast fillets on a clean white surface. Small decorative rosemary leaves add a touch of color." src="{{ product.image1.url }}"/>
         <span class="absolute top-2 left-2 bg-[#10B981]/10 text-[#10B981] px-2 py-1 rounded-full text-[10px] font-bold">100% FRESH</span>
         </div>
         <div class="p-sm flex flex-col flex-1">
@@ -75,13 +72,11 @@
         </div>
         </div>
         </div>
-    </li>
     {% endfor %}    
-</ul>
-    {% else %}
-    <p class="font-body-md text-body-md text-on-surface-variant">No products available at the moment. Please check back later.</p>
-    {% endif %}
-
+  {% else %}
+    <p class="font-body-md text-body-md text-on-surface-variant col-span-full">No products available at the moment. Please check back later.</p>
+  {% endif %}
+</div>
 </section>
 <!-- Hygiene & Quality Section -->
 <section class="py-xl px-margin-mobile md:px-margin-desktop">

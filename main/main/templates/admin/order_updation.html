@@ -1,168 +1,14 @@
-<!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Order Details &amp; Status Update - PrimePoultry</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Shared Component Styling & Design System tokens are integrated via the Tailwind Config -->
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "on-secondary-fixed-variant": "#454747",
-                    "tertiary-fixed-dim": "#4edea3",
-                    "surface-container-highest": "#d9e3f6",
-                    "on-background": "#121c2a",
-                    "tertiary-container": "#006a48",
-                    "on-surface-variant": "#5a403e",
-                    "error-container": "#ffdad6",
-                    "secondary": "#5d5f5f",
-                    "outline-variant": "#e2beba",
-                    "surface-container-high": "#dee9fc",
-                    "primary-fixed": "#ffdad6",
-                    "primary": "#8f000d",
-                    "on-tertiary": "#ffffff",
-                    "secondary-fixed-dim": "#c6c6c7",
-                    "secondary-fixed": "#e2e2e2",
-                    "surface-dim": "#d0dbed",
-                    "on-primary-container": "#ffc8c2",
-                    "surface-container-lowest": "#ffffff",
-                    "on-tertiary-fixed-variant": "#005236",
-                    "background": "#f8f9ff",
-                    "surface-bright": "#f8f9ff",
-                    "primary-container": "#b22222",
-                    "secondary-container": "#dfe0e0",
-                    "error": "#ba1a1a",
-                    "surface-variant": "#d9e3f6",
-                    "on-error-container": "#93000a",
-                    "inverse-on-surface": "#eaf1ff",
-                    "surface-tint": "#b52424",
-                    "surface-container-low": "#eff4ff",
-                    "on-secondary": "#ffffff",
-                    "on-tertiary-fixed": "#002113",
-                    "tertiary": "#004f35",
-                    "on-primary-fixed": "#410003",
-                    "outline": "#8e706d",
-                    "tertiary-fixed": "#6ffbbe",
-                    "on-tertiary-container": "#60eeb1",
-                    "on-error": "#ffffff",
-                    "inverse-primary": "#ffb4ac",
-                    "surface": "#f8f9ff",
-                    "on-primary-fixed-variant": "#92030f",
-                    "on-primary": "#ffffff",
-                    "surface-container": "#e6eeff",
-                    "inverse-surface": "#27313f",
-                    "on-surface": "#121c2a",
-                    "on-secondary-container": "#616363",
-                    "on-secondary-fixed": "#1a1c1c",
-                    "primary-fixed-dim": "#ffb4ac"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px"
-            },
-            "spacing": {
-                    "gutter": "16px",
-                    "margin-mobile": "16px",
-                    "lg": "24px",
-                    "xs": "4px",
-                    "margin-desktop": "48px",
-                    "base": "8px",
-                    "sm": "12px",
-                    "md": "16px",
-                    "xl": "32px"
-            },
-            "fontFamily": {
-                    "headline-lg": ["Inter"],
-                    "label-sm": ["Inter"],
-                    "body-md": ["Inter"],
-                    "body-lg": ["Inter"],
-                    "label-md": ["Inter"],
-                    "headline-xl": ["Inter"],
-                    "headline-md": ["Inter"],
-                    "headline-lg-mobile": ["Inter"]
-            },
-            "fontSize": {
-                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
-                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
-            }
-          },
-        },
-      }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-        .modal-overlay {
-            background-color: rgba(18, 28, 42, 0.4);
-            backdrop-filter: blur(4px);
-        }
-        .clinical-shadow {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238f000d'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1.25rem;
-        }
-    </style>
-</head>
-<body class="bg-surface text-on-surface font-body-md min-h-screen">
-<!-- Background Content Simulation (Orders Table) -->
-<main class="p-margin-desktop opacity-30 pointer-events-none">
-<header class="mb-xl flex justify-between items-center">
-<h1 class="font-headline-lg text-headline-lg text-primary">Orders Dashboard</h1>
-<div class="w-12 h-12 rounded-full bg-surface-container-high"></div>
-</header>
-<div class="bg-white border border-outline-variant rounded-xl overflow-hidden clinical-shadow">
-<table class="w-full text-left">
-<thead class="bg-surface-container-low border-b border-outline-variant">
-<tr>
-<th class="p-md font-label-md">Order ID</th>
-<th class="p-md font-label-md">Customer</th>
-<th class="p-md font-label-md">Status</th>
-<th class="p-md font-label-md">Total</th>
-</tr>
-</thead>
-<tbody>
-<tr class="border-b border-outline-variant">
-<td class="p-md">{{ order.order_id }}</td>
-<td class="p-md">{{ order.name }}</td>
-<td class="p-md text-primary font-bold">{{ order.status }}</td>
-<td class="p-md">${{ order.price }}</td>
-</tr>
-</tbody>
-</table>
-</div>
-</main>
 <!-- Modal Overlay -->
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-lg modal-overlay">
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-lg modal-overlay" style="background-color: rgba(18, 28, 42, 0.4); backdrop-filter: blur(4px);">
 <!-- Desktop Modal Container -->
 <div class="bg-surface-container-lowest w-full max-w-4xl max-h-[90vh] flex flex-col rounded-xl shadow-xl overflow-hidden border border-outline-variant animate-in fade-in zoom-in duration-300">
 <!-- Modal Header (Sticky) -->
 <header class="flex-shrink-0 flex items-center justify-between px-lg py-md bg-surface border-b border-outline-variant">
 <div class="flex items-center gap-sm">
 <h2 class="font-headline-md text-headline-md text-on-surface">Order Details</h2>
-<span class="px-sm py-xs bg-surface-container-high rounded-full font-label-sm text-on-surface-variant"></span>
+<span class="px-sm py-xs bg-surface-container-high rounded-full font-label-sm text-on-surface-variant">Order #{{ order.order_id }}</span>
 </div>
-<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant group" onclick="closeModal()"  type="button" >
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant group" onclick="closeModal()"  type="button">
 <span class="material-symbols-outlined group-hover:scale-110 transition-transform" data-icon="close">close</span>
 </button>
 </header>
@@ -206,7 +52,7 @@
 <div class="flex justify-between items-start mb-md">
 <div>
 <p class="text-xs font-label-sm text-on-surface-variant uppercase">Item</p>
-<p class="font-headline-md text-on-surface">{{ product.name }}</p>
+<p class="font-headline-md text-on-surface">{% if product %}{{ product.name }}{% else %}{{ order.product_name }}{% endif %}</p>
 </div>
 </div>
 <div class="grid grid-cols-2 gap-md border-t border-outline-variant pt-md">
@@ -215,20 +61,23 @@
 <p class="font-headline-md text-on-surface">{{ order.quantity }} kg</p>
 </div>
 <div class="text-right">
-<p class="text-xs font-label-sm text-on-surface-variant uppercase">Unit Price</p>
+<p class="text-xs font-label-sm text-on-surface-variant uppercase">Total Price</p>
 <p class="font-headline-md text-primary">₹{{ order.price }}</p>
 </div>
 </div>
 <div class="mt-md pt-md border-t border-outline-variant flex items-center gap-md">
+{% if product and product.image1 %}
 <div class="w-16 h-16 rounded-lg bg-surface-container-high flex-shrink-0 overflow-hidden border border-outline-variant">
 <img alt="Premium organic chicken display" class="w-full h-full object-cover" src="{{ product.image1.url }}"/>
 </div>
-<p class="text-sm text-on-surface-variant italic leading-relaxed">Verified 'Spring Harvest' batch. Triple-checked for quality and temperature standards.</p>
+{% endif %}
+<p class="text-sm text-on-surface-variant italic leading-relaxed">Verified quality poultry batch. Cleaned and processed daily under strict temperature standards.</p>
 </div>
 </div>
 </div>
 </div>
 <!-- Section 2: Delivery Instructions -->
+{% if order.instructions %}
 <div class="space-y-md">
 <div class="flex items-center gap-xs text-primary">
 <span class="material-symbols-outlined" data-icon="notes">notes</span>
@@ -241,6 +90,7 @@
                     </p>
 </div>
 </div>
+{% endif %}
 <!-- Section 3: Order Status Update -->
 <form method="POST" action="{% url 'update_order' order.order_id %}">
     {% csrf_token %}
@@ -263,7 +113,7 @@
         </div>
     </div>
     <!-- Modal Footer (Sticky Actions) -->
-    <footer class="flex-shrink-0 flex items-center justify-end gap-md px-lg py-md bg-surface-container-low border-t border-outline-variant">
+    <footer class="flex-shrink-0 flex items-center justify-end gap-md px-lg py-md bg-surface-container-low border-t border-outline-variant mt-lg">
         <button class="px-lg h-12 font-label-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150" onclick="closeModal()"  type="button">
                         Cancel
                     </button>
@@ -275,37 +125,24 @@
 </form>
 </div>
 </div>
-<!-- Micro-interaction Script -->
+</div>
+
 <script>
-    const form = document.querySelector('form');   // target the update_order form
-    const updateBtn = document.getElementById('update-btn');
+    (function() {
+        const form = document.querySelector('#update_order_modal-container form');
+        const updateBtn = document.getElementById('update-btn');
 
-    if (form && updateBtn) {
-        form.addEventListener('submit', function () {
-            const originalContent = updateBtn.innerHTML;
-            updateBtn.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Processing...';
-            updateBtn.disabled = true;
-            updateBtn.classList.add('opacity-90', 'cursor-not-allowed');
-
-            // optional: restore button state after a delay
-            setTimeout(() => {
-                updateBtn.innerHTML = '<span class="material-symbols-outlined" data-icon="done_all">done_all</span> Updated Successfully';
-                updateBtn.classList.remove('bg-primary');
-                updateBtn.classList.add('bg-tertiary');
-
-                setTimeout(() => {
-                    updateBtn.innerHTML = originalContent;
-                    updateBtn.classList.add('bg-primary');
-                    updateBtn.classList.remove('bg-tertiary', 'opacity-90', 'cursor-not-allowed');
-                    updateBtn.disabled = false;
-                }, 2000);
-            }, 1200);
-        });
-    }
+        if (form && updateBtn) {
+            form.addEventListener('submit', function () {
+                const originalContent = updateBtn.innerHTML;
+                updateBtn.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Processing...';
+                updateBtn.disabled = true;
+                updateBtn.classList.add('opacity-90', 'cursor-not-allowed');
+            });
+        }
+    })();
 
     function closeModal() {
         document.getElementById("update_order_modal-container").innerHTML = "";
     }
 </script>
-
-</body></html>

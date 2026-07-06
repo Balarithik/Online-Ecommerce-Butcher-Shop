@@ -21,20 +21,35 @@
 </div>
 <div class="space-y-md">
 <div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant"  for = '{{ form.name.id_for_label }}'>Full Name</label>
-<input name="name" class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="e.g. John Doe" required="" type="text"/>
+<label class="font-label-md text-label-md text-on-surface-variant" for='{{ form.name.id_for_label }}'>Full Name</label>
+<input name="name" value="{{ form.name.value|default:'' }}" class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="e.g. John Doe" required="" type="text"/>
+{% if form.name.errors %}
+<p class="text-red-600 text-xs font-medium mt-1">{{ form.name.errors.0 }}</p>
+{% endif %}
 </div>
 <div class="flex flex-col gap-xs">
 <label class="font-label-md text-label-md text-on-surface-variant" for="{{ form.mobile.id_for_label }}">Mobile Number</label>
-<div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">+91</span><input name="mobile" id="mobile" type="tel" placeholder="00000 00000" maxlength="10" required class="input-focus-effect w-full h-12 pl-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" /></div>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">+91</span>
+<input name="mobile" id="mobile" type="tel" placeholder="00000 00000" maxlength="10" required value="{{ form.mobile.value|default:'' }}" class="input-focus-effect w-full h-12 pl-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" />
+</div>
+{% if form.mobile.errors %}
+<p class="text-red-600 text-xs font-medium mt-1">{{ form.mobile.errors.0 }}</p>
+{% endif %}
 </div>
 <div class="flex flex-col gap-xs" name="address">
-<label  class="font-label-md text-label-md text-on-surface-variant" for="{{ form.address.id_for_label }}">Delivery Address</label>
-<input name="address" class="input-focus-effect w-full p-md rounded-lg border border-outline-variant bg-surface-bright font-body-md resize-none" placeholder="Apartment, Street, Area, Landmark" required="" type="text"/>
+<label class="font-label-md text-label-md text-on-surface-variant" for="{{ form.address.id_for_label }}">Delivery Address</label>
+<input name="address" value="{{ form.address.value|default:'' }}" class="input-focus-effect w-full p-md rounded-lg border border-outline-variant bg-surface-bright font-body-md resize-none" placeholder="Apartment, Street, Area, Landmark" required="" type="text"/>
+{% if form.address.errors %}
+<p class="text-red-600 text-xs font-medium mt-1">{{ form.address.errors.0 }}</p>
+{% endif %}
 </div>
 <div class="flex flex-col gap-xs">
 <label class="font-label-md text-label-md text-on-surface-variant" for="{{ form.instructions.id_for_label }}">Special Instructions (Optional)</label>
-<input class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="e.g. Ring the bell twice" name="instructions" type="text"/>
+<input class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="e.g. Ring the bell twice" name="instructions" value="{{ form.instructions.value|default:'' }}" type="text"/>
+{% if form.instructions.errors %}
+<p class="text-red-600 text-xs font-medium mt-1">{{ form.instructions.errors.0 }}</p>
+{% endif %}
 </div>
 </div>
 </div>

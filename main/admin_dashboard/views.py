@@ -34,12 +34,12 @@ def admin_dashboard(request):
 
     total_products = products.count()
     total_orders = orders.count()
-    try :
-        orders_delivered = orders.filter(status='Delivered').count()
+    try:
+        orders_delivered = orders.filter(status='delivered').count()
     except:
         orders_delivered = None 
     try:
-        orders_pending = orders.filter(status='Pending').count()
+        orders_pending = orders.filter(status='pending').count()
     except:
         orders_pending = None
 
@@ -61,6 +61,7 @@ def admin_orders(request):
 
 
 @login_required(login_url='/admin_login/')
+@user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def add_product_modal(request):
     if request.method == "GET":
         return render(request, "admin/addnewproductpopup.html")
@@ -68,13 +69,13 @@ def add_product_modal(request):
     elif request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            name = request.POST.get('name', '').strip()
-            price = request.POST.get('price', '').strip()
-            description = request.POST.get('description', '').strip()
-            image1 = request.FILES.get('image1')
-            image2 = request.FILES.get('image2')
-            image3 = request.FILES.get('image3')
-            image4 = request.FILES.get('image4')
+            name = form.cleaned_data.get('name', '').strip()
+            price = form.cleaned_data.get('price')
+            description = form.cleaned_data.get('description', '').strip()
+            image1 = form.cleaned_data.get('image1')
+            image2 = form.cleaned_data.get('image2')
+            image3 = form.cleaned_data.get('image3')
+            image4 = form.cleaned_data.get('image4')
 
             Products.objects.create(
                 name=name,
@@ -95,6 +96,7 @@ def add_product_modal(request):
 
 
 @login_required(login_url='/admin_login/')
+@user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def edit_product_modal(request, product_id):
     product = get_object_or_404(Products, id=product_id)
 
@@ -110,22 +112,29 @@ def edit_product_modal(request, product_id):
     return render(request, "admin/editproductpopup.html", {"form": form, "product": product})
 
 @login_required(login_url='/admin_login/')
+@user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def delete_product(request, product_id):
     product = get_object_or_404(Products, id=product_id)
     product.delete()
     print(f"Product {product_id} deleted")
+    
+    # Return 204 response for HTMX or redirect for standard delete
+    if request.headers.get('HX-Request'):
+        return HttpResponse(status=204)
     return redirect('admin_products')
-
-    # HTMX expects a response it can swap into the DOM.
-    # Returning an empty response tells HTMX to remove the row.
-    return HttpResponse(status=204)
 
 
 
 @login_required(login_url='/admin_login/')
+@user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def update_order(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
-    product = get_object_or_404(Products, id=order.product_id)
+    product = None
+    if order.product_id:
+        try:
+            product = Products.objects.get(id=order.product_id)
+        except Products.DoesNotExist:
+            pass
 
     if request.method == "POST":
         new_status = request.POST.get("status")

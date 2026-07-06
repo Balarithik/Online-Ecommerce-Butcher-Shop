@@ -1,145 +1,11 @@
-<!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Add New Product - Lakshmi Broliers</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          "colors": {
-                  "surface-variant": "#d9e3f6",
-                  "primary": "#8f000d",
-                  "primary-container": "#b22222",
-                  "on-surface-variant": "#5a403e",
-                  "on-primary": "#ffffff",
-                  "primary-fixed-dim": "#ffb4ac",
-                  "background": "#f8f9ff",
-                  "error": "#ba1a1a",
-                  "surface-dim": "#d0dbed",
-                  "on-tertiary-fixed-variant": "#005236",
-                  "on-background": "#121c2a",
-                  "tertiary-fixed-dim": "#4edea3",
-                  "on-tertiary-container": "#60eeb1",
-                  "surface-container-highest": "#d9e3f6",
-                  "secondary": "#5d5f5f",
-                  "on-secondary": "#ffffff",
-                  "tertiary": "#004f35",
-                  "primary-fixed": "#ffdad6",
-                  "on-primary-container": "#ffc8c2",
-                  "on-secondary-container": "#616363",
-                  "outline": "#8e706d",
-                  "on-surface": "#121c2a",
-                  "surface-container-high": "#dee9fc",
-                  "secondary-fixed-dim": "#c6c6c7",
-                  "secondary-fixed": "#e2e2e2",
-                  "on-secondary-fixed-variant": "#454747",
-                  "tertiary-container": "#006a48",
-                  "on-error": "#ffffff",
-                  "surface-tint": "#b52424",
-                  "surface-container-lowest": "#ffffff",
-                  "surface-bright": "#f8f9ff",
-                  "on-tertiary": "#ffffff",
-                  "on-primary-fixed-variant": "#92030f",
-                  "tertiary-fixed": "#6ffbbe",
-                  "on-tertiary-fixed": "#002113",
-                  "surface-container-low": "#eff4ff",
-                  "error-container": "#ffdad6",
-                  "on-primary-fixed": "#410003",
-                  "on-secondary-fixed": "#1a1c1c",
-                  "surface": "#f8f9ff",
-                  "secondary-container": "#dfe0e0",
-                  "inverse-on-surface": "#eaf1ff",
-                  "surface-container": "#e6eeff",
-                  "on-error-container": "#93000a",
-                  "inverse-primary": "#ffb4ac",
-                  "inverse-surface": "#27313f",
-                  "outline-variant": "#e2beba"
-          },
-          "borderRadius": {
-                  "DEFAULT": "0.25rem",
-                  "lg": "0.5rem",
-                  "xl": "0.75rem",
-                  "full": "9999px"
-          },
-          "spacing": {
-                  "margin-desktop": "48px",
-                  "md": "16px",
-                  "lg": "24px",
-                  "base": "8px",
-                  "sm": "12px",
-                  "margin-mobile": "16px",
-                  "xs": "4px",
-                  "xl": "32px",
-                  "gutter": "16px"
-          },
-          "fontFamily": {
-                  "headline-xl": ["Inter"],
-                  "headline-md": ["Inter"],
-                  "body-md": ["Inter"],
-                  "body-lg": ["Inter"],
-                  "headline-lg": ["Inter"],
-                  "label-sm": ["Inter"],
-                  "label-md": ["Inter"],
-                  "headline-lg-mobile": ["Inter"]
-          },
-          "fontSize": {
-                  "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                  "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                  "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                  "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                  "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                  "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
-                  "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                  "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
-          }
-        },
-      },
-    }
-  </script>
-<style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f8f9ff;
-    }
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-    .modal-backdrop {
-      background-color: rgba(18, 28, 42, 0.4);
-      backdrop-filter: blur(8px);
-    }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #d1d5db;
-      border-radius: 10px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #8f000d;
-    }
-  </style>
-</head>
-<body class="bg-background text-on-background min-h-screen">
-
 <!-- Modal Component -->
-<div class="fixed inset-0 z-50 flex items-center justify-center p-margin-mobile md:p-margin-desktop modal-backdrop">
+<div class="fixed inset-0 z-50 flex items-center justify-center p-margin-mobile md:p-margin-desktop modal-backdrop" style="background-color: rgba(18, 28, 42, 0.4); backdrop-filter: blur(8px);">
 <div class="bg-surface-container-lowest w-full max-w-4xl w-[90vw] h-[90vw] max-w-[600px] max-h-[600px] rounded-xl shadow-xl flex flex-col overflow-hidden border border-outline-variant">
 <!-- Modal Header -->
 <div class="px-xl py-lg border-b border-outline-variant flex justify-between items-center bg-white">
 <div>
 <h2 class="font-headline-lg text-headline-lg text-on-background">Edit Product</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">Fill in the clinical details for the new poultry inventory item.</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Update the details for this poultry inventory item.</p>
 </div>
 <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-95" onclick="closeModal()">
 <span class="material-symbols-outlined text-secondary">close</span>
@@ -153,14 +19,14 @@
 <div class="space-y-lg">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="name">Product Name</label>
-<input name='name' value="{{ product.name }}" class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" id="name" placeholder="e.g., Organic Whole Chicken" type="text"/>
+<input name='name' value="{{ product.name }}" required class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" id="name" placeholder="e.g., Organic Whole Chicken" type="text"/>
 </div>
 <div class="grid grid-cols-2 gap-md">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="price">Price</label>
 <div class="relative">
-<span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">$</span>
-<input name = "price" value="{{ product.price }}" class="w-full h-12 pl-xl pr-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md"  id="price" placeholder="0.00" type="number"/>
+<span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">₹</span>
+<input name = "price" value="{{ product.price }}" required class="w-full h-12 pl-xl pr-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" id="price" placeholder="0.00" type="number" step="1" min="0"/>
 </div>
 </div>
 <div>
@@ -168,7 +34,7 @@
 <select  class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md appearance-none" id="category">
 <option value="">Select Category</option>
 <option value="whole">Whole Poultry</option>
-<option value="cuts">Fresh Cuts</option>
+<option value="cuts" selected>Fresh Cuts</option>
 <option value="marinated">Marinated Items</option>
 <option value="specialty">Specialty Meats</option>
 </select>
@@ -176,7 +42,7 @@
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="description">Description</label>
-<textarea name = "description" class="w-full p-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md resize-none" id="description" placeholder="Describe the origin, weight, and storage instructions..." rows="4">{{ product.description }}</textarea>
+<textarea name = "description" required class="w-full p-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md resize-none" id="description" placeholder="Describe the origin, weight, and storage instructions..." rows="4">{{ product.description }}</textarea>
 </div>
 </div>
 <!-- Right Column: Image Uploads -->
@@ -198,7 +64,7 @@
     {% endif %}
 
     <!-- Placeholder icon + label -->
-    <div id="placeholder1" class="flex flex-col items-center justify-center">
+    <div id="placeholder1" class="flex flex-col items-center justify-center {% if product.image1 %}hidden{% endif %}">
         <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
         <span class="font-label-sm text-label-sm text-on-surface-variant">Image 1 (Main)</span>
     </div>
@@ -218,7 +84,7 @@
     {% endif %}
 
     <!-- Placeholder icon + label -->
-    <div id="placeholder2" class="flex flex-col items-center justify-center">
+    <div id="placeholder2" class="flex flex-col items-center justify-center {% if product.image2 %}hidden{% endif %}">
         <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
         <span class="font-label-sm text-label-sm text-on-surface-variant">Image 2</span>
     </div>
@@ -238,7 +104,7 @@
     {% endif %}
 
     <!-- Placeholder icon + label -->
-    <div id="placeholder3" class="flex flex-col items-center justify-center">
+    <div id="placeholder3" class="flex flex-col items-center justify-center {% if product.image3 %}hidden{% endif %}">
         <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
         <span class="font-label-sm text-label-sm text-on-surface-variant">Image 3</span>
     </div>
@@ -258,7 +124,7 @@
     {% endif %}
 
     <!-- Placeholder icon + label -->
-    <div id="placeholder4" class="flex flex-col items-center justify-center">
+    <div id="placeholder4" class="flex flex-col items-center justify-center {% if product.image4 %}hidden{% endif %}">
         <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
         <span class="font-label-sm text-label-sm text-on-surface-variant">Image 4</span>
     </div>
@@ -288,17 +154,20 @@
 </form>
 </div>
 </div>
+
 <script>
     // Micro-interaction for input focus
-    const inputs = document.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-      input.addEventListener('focus', () => {
-        input.parentElement.classList.add('scale-[1.01]');
+    (function() {
+      const inputs = document.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+          input.parentElement.classList.add('scale-[1.01]');
+        });
+        input.addEventListener('blur', () => {
+          input.parentElement.classList.remove('scale-[1.01]');
+        });
       });
-      input.addEventListener('blur', () => {
-        input.parentElement.classList.remove('scale-[1.01]');
-      });
-    });
+    })();
 
     function closeModal() {
       document.getElementById("edit_product_modal-container").innerHTML = "";
@@ -317,15 +186,10 @@
           placeholder.classList.add("hidden");
         };
         reader.readAsDataURL(file);
-
-        // Reset the input so user can re-select the same file later
-        event.target.value = "";
       } else {
         preview.src = "";
         preview.classList.add("hidden");
         placeholder.classList.remove("hidden");
       }
     }
-
-  </script>
-</body></html>
+</script>

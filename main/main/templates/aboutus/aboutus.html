@@ -125,21 +125,17 @@
 </div>
 </div>
 </div>
-<!-- Map Placeholder -->
+<!-- Map Container -->
 <div class="relative w-full aspect-square md:aspect-video lg:aspect-auto lg:h-full min-h-[400px] rounded-xl overflow-hidden border border-outline-variant bg-surface-container shadow-inner">
-<div class="absolute inset-0 flex items-center justify-center flex-col text-on-surface-variant/40">
-<span class="material-symbols-outlined text-6xl mb-md" data-icon="map">map</span>
-<p class="font-label-md">Interactive Map Rendering...</p>
-</div>
-<!-- Simulating a stylized map with an image -->
-<img class="w-full h-full object-cover opacity-60 mix-blend-multiply grayscale" data-alt="A stylized aerial view of a clean, modern city grid at twilight. The map is rendered with a cool blue and silver color palette to match the clinical hygiene aesthetic of the brand. Subtle red markers indicate locations of premium butcher shops. The lighting is crisp and the overall mood is professional and high-tech." data-location="Uchipuli" src="https://maps.app.goo.gl/6J4X838Fuj9j8tk99"/>
+<!-- Interactive Map Embed -->
+<iframe src="https://maps.google.com/maps?q=Lakshmi%20Broilers,%20Uchipuli&t=&z=15&ie=UTF8&iwloc=&output=embed" class="w-full h-full border-0 min-h-[400px] absolute inset-0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 <!-- Floating Map Card -->
-<div class="absolute bottom-md left-md right-md bg-white p-md rounded-lg shadow-xl flex items-center justify-between">
+<div class="absolute bottom-md left-md right-md bg-white p-md rounded-lg shadow-xl flex items-center justify-between z-10">
 <div>
-<h4 class="font-label-md font-bold">Lakshmi Broliers Main Branch</h4>
-<p class="text-label-sm text-on-surface-variant">Located in the Fresh Market District</p>
+<h4 class="font-label-md font-bold text-on-surface">Lakshmi Broilers Main Branch</h4>
+<p class="text-label-sm text-on-surface-variant">Uchipuli, Ramanathapuram District, Tamil Nadu</p>
 </div>
-<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm active:scale-95 transition-transform" href="https://maps.app.goo.gl/6J4X838Fuj9j8tk99">Get Directions</button>
+<a class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm active:scale-95 transition-transform inline-flex items-center justify-center text-center font-bold" href="https://maps.app.goo.gl/6J4X838Fuj9j8tk99" target="_blank" rel="noopener noreferrer">Get Directions</a>
 </div>
 </div>
 </section>
