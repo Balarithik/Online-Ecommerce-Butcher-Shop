@@ -151,9 +151,9 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'peppedvp',
-    'API_KEY': '554548285174496',
-    'API_SECRET': 'GFeQpCzYJlsfQNpQnT0PI7xFiHI',
+    'CLOUD_NAME': "CLOUD_NAME",
+    'API_KEY': "CLOUD_API_KEY",
+    'API_SECRET': "CLOUD_API_SECRET",
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
@@ -166,7 +166,8 @@ STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'main/media')
 
 LOGIN_URL = reverse_lazy('admin_login')
 LOGIN_REDIRECT_URL = '/admin_dashboard/' 
