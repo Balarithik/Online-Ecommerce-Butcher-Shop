@@ -43,14 +43,7 @@
 <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant">search</span>
 <input class="pl-10 pr-4 py-2.5 w-full bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-body-md" placeholder="Search by name, SKU or category..." type="text"/>
 </div>
-<button class="flex items-center gap-2 px-4 py-2.5 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined">filter_list</span>
-<span class="font-label-md text-label-md">Filters</span>
-</button>
-<button class="flex items-center gap-2 px-4 py-2.5 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined">export_notes</span>
-<span class="font-label-md text-label-md">Export</span>
-</button>
+
 </div>
 <button class="bg-primary text-white px-6 py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 shadow-md hover:brightness-110 active:scale-95 transition-all" hx-get="{% url 'add_product_modal' %}" hx-target="#add_product_modal-container" hx-trigger="click">
 
