@@ -149,6 +149,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': "CLOUD_NAME",
