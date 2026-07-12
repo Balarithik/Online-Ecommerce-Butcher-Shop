@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import dj_database_url
 from django.urls import reverse_lazy
+import cloudinary
 from django.core.management.utils import get_random_secret_key
 
 
@@ -153,6 +154,11 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+cloudinary.config( 
+  cloud_name = "CLOUD_NAME", 
+  api_key = "CLOUD_API_KEY", 
+  api_secret = "CLOUD_API_SECRET" 
+)
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
