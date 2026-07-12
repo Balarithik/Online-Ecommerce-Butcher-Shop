@@ -153,11 +153,6 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': "CLOUD_NAME",
-    'API_KEY': "CLOUD_API_KEY",
-    'API_SECRET': "CLOUD_API_SECRET",
-}
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
