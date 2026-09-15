@@ -11,11 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 import dj_database_url
 from django.urls import reverse_lazy
 import cloudinary
-from django.core.management.utils import get_random_secret_key
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,18 +26,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-local-development-only-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-#DEBUG = os.environ.get("DEBUG", "False") == "True"
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
+if not DEBUG and "SECRET_KEY" not in os.environ:
+    raise RuntimeError("SECRET_KEY must be set when DEBUG=False.")
 
 ALLOWED_HOSTS = [
     ".onrender.com",
     "localhost",
     "127.0.0.1",
     ]
+if os.environ.get("ALLOWED_HOSTS"):
+    ALLOWED_HOSTS = [host.strip() for host in os.environ["ALLOWED_HOSTS"].split(",") if host.strip()]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip() for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if origin.strip()
+]
 
 
 # Application definition
@@ -67,7 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware"
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 
 ]
 
@@ -148,20 +155,36 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-cloudinary.config( 
-  cloud_name = "CLOUD_NAME", 
-  api_key = "CLOUD_API_KEY", 
-  api_secret = "CLOUD_API_SECRET" 
-)
+# Cloudinary is optional. Placeholder credentials must never be used in production.
+if all(os.environ.get(key) for key in ("CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET")):
+    cloudinary.config(
+        cloud_name=os.environ["CLOUDINARY_CLOUD_NAME"],
+        api_key=os.environ["CLOUDINARY_API_KEY"],
+        api_secret=os.environ["CLOUDINARY_API_SECRET"],
+    )
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+if all(os.environ.get(key) for key in ("CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET")):
+    STORAGES["default"] = {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"}
+if 'test' in sys.argv:
+    # Tests render templates before collectstatic; production still uses hashed assets.
+    STORAGES['staticfiles'] = {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'}
+# Development and test environments may not have run collectstatic yet.
+WHITENOISE_MANIFEST_STRICT = False
 
 
 
@@ -175,4 +198,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'main/media')
 
 LOGIN_URL = reverse_lazy('admin_login')
 LOGIN_REDIRECT_URL = '/admin_dashboard/' 
+
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = "same-origin"
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "True").lower() == "true"
+    SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "31536000"))
 

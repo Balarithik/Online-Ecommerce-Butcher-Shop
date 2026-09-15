@@ -2,6 +2,7 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect , HttpResponse ,get_object_or_404
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 from store.models import Products
 from orders.models import Order
@@ -16,7 +17,9 @@ def admin_login(request):
         if user is not None and user.is_superuser:
             login(request, user)
             # Look for next in POST first, then GET, fallback to dashboard
-            next_url = request.POST.get("next") or request.GET.get("next") or "admin_dashboard"
+            next_url = request.POST.get("next") or request.GET.get("next")
+            if not next_url or not next_url.startswith('/') or next_url.startswith('//'):
+                next_url = "admin_dashboard"
             return redirect(next_url)
         else:
             messages.error(request, "Invalid credentials or not a superuser.")
@@ -113,6 +116,7 @@ def edit_product_modal(request, product_id):
 
 @login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
+@require_POST
 def delete_product(request, product_id):
     product = get_object_or_404(Products, id=product_id)
     product.delete()

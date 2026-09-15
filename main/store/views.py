@@ -1,20 +1,12 @@
 
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Products
 # Create your views here.
 
 def product(request):
-    try :
-        products = Products.objects.all()
-    except Exception as e :
-        products = []
-        print(f'db error {e}')
+    products = Products.objects.filter(is_available=True)
     return render(request, 'store/product.html',{'products':products})
 def selected_product(request, product_id):
-    try :
-        product = Products.objects.get(id=product_id)
-    except Exception as e :
-        product = None
-        print(f'db error {e}')
+    product = get_object_or_404(Products, id=product_id, is_available=True)
     return render(request, 'store/product_info.html',{'product':product})

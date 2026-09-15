@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from store.models import Products
 from orders.models import Order
 from orders.forms import OrderForm
+from decimal import Decimal
 
 class OrderTestCase(TestCase):
     def setUp(self):
@@ -67,7 +68,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(response.status_code, 200) # Order placement successful
         # Verify the saved price is calculated server-side: 200.0 * 2.5 = 500.0 (not 10.0)
         order = Order.objects.latest('order_id')
-        self.assertEqual(order.price, 500.0)
+        self.assertEqual(order.price, Decimal('500.00'))
         self.assertEqual(order.product_name, "Test Chicken")
 
     def test_admin_permissions_superuser_only(self):
@@ -92,3 +93,27 @@ class OrderTestCase(TestCase):
         client.login(username="admin", password="adminpassword")
         response = client.get(dashboard_url)
         self.assertEqual(response.status_code, 200)
+
+    def test_negative_quantity_is_rejected(self):
+        response = Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+            'name': 'Bala Test', 'mobile': '7397511387', 'address': 'Test address', 'quantity': '-1',
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Order.objects.exists())
+
+    def test_unavailable_product_cannot_be_ordered(self):
+        self.product.is_available = False
+        self.product.save()
+        response = Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+            'name': 'Bala Test', 'mobile': '7397511387', 'address': 'Test address', 'quantity': '1',
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Order.objects.exists())
+
+    def test_order_total_remains_historical_after_price_change(self):
+        Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+            'name': 'Bala Test', 'mobile': '7397511387', 'address': 'Test address', 'quantity': '1',
+        })
+        self.product.price = Decimal('300.00')
+        self.product.save()
+        self.assertEqual(Order.objects.get().price, Decimal('200.00'))
