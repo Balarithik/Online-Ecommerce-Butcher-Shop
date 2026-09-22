@@ -16,7 +16,7 @@
 <!-- Product Image Section (Bento Style Layout) -->
 <div class="col-span-12 md:col-span-7 space-y-md">
 <div class="relative product-image-container aspect-square md:aspect-[4/3] rounded-xl overflow-hidden bg-white border border-outline-variant shadow-sm group">
-<img alt="Premium Chicken Breast" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="{{ product.name }}" src="{{ product.image1.url }}"/>
+<img id="product-main-image" alt="{{ product.name }}" class="w-full h-full object-cover transition-opacity duration-300 group-hover:scale-105" src="{{ product.image1.url }}"/>
 <div class="absolute top-md left-md">
 <div class="bg-[#10B981]/10 text-[#10B981] px-md py-xs rounded-full font-label-sm text-label-sm flex items-center gap-xs backdrop-blur-sm border border-[#10B981]/20">
 <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
@@ -24,19 +24,25 @@
                         </div>
 </div>
 </div>
-<div class="grid grid-cols-4 gap-sm">
-<div class="aspect-square rounded-lg overflow-hidden border-2 border-primary bg-white cursor-pointer shadow-sm">
-<img class="w-full h-full object-cover" data-alt="Close-up of premium raw chicken breast texture on a white surface, bright minimalist studio lighting." src="{{ product.image1.url }}"/>
-</div>
-<div class="aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors">
-<img class="w-full h-full object-cover" data-alt="A clean white ceramic bowl containing fresh boneless chicken breast slices, high-key clinical photography." src="{{ product.image2.url }}"/>
-</div>
-<div class="aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors">
-<img class="w-full h-full object-cover" data-alt="A chef preparing fresh chicken breast on a clean wooden cutting board, minimalist aesthetic, white background." src="{{ product.image3.url }}"/>
-</div>
-<div class="aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors">
-<img class="w-full h-full object-cover" data-alt="A chef preparing fresh chicken breast on a clean wooden cutting board, minimalist aesthetic, white background." src="{{ product.image4.url }}"/>
-</div>
+<div id="product-image-thumbnails" class="grid grid-cols-4 gap-sm" aria-label="Product images">
+<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden border-2 border-primary bg-white cursor-pointer shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image1.url }}" data-image-alt="{{ product.name }} image 1" aria-label="Show image 1 of {{ product.name }}" aria-current="true">
+<img class="w-full h-full object-cover" alt="" src="{{ product.image1.url }}"/>
+</button>
+{% if product.image2 %}
+<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image2.url }}" data-image-alt="{{ product.name }} image 2" aria-label="Show image 2 of {{ product.name }}" aria-current="false">
+<img class="w-full h-full object-cover" alt="" src="{{ product.image2.url }}"/>
+</button>
+{% endif %}
+{% if product.image3 %}
+<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image3.url }}" data-image-alt="{{ product.name }} image 3" aria-label="Show image 3 of {{ product.name }}" aria-current="false">
+<img class="w-full h-full object-cover" alt="" src="{{ product.image3.url }}"/>
+</button>
+{% endif %}
+{% if product.image4 %}
+<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image4.url }}" data-image-alt="{{ product.name }} image 4" aria-label="Show image 4 of {{ product.name }}" aria-current="false">
+<img class="w-full h-full object-cover" alt="" src="{{ product.image4.url }}"/>
+</button>
+{% endif %}
 </div>
 </div>
 <!-- Product Details Section -->
@@ -137,6 +143,52 @@ function changeQty(delta) {
     if (val < min) val = min;
     input.value = val.toFixed(3);                // keep decimal precision
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const mainImage = document.getElementById('product-main-image');
+    const thumbnails = Array.from(document.querySelectorAll('.product-thumbnail'));
+    const changeInterval = 5000;
+    let activeIndex = 0;
+    let carouselTimer;
+
+    if (!mainImage || thumbnails.length < 2) return;
+
+    function selectImage(index) {
+        activeIndex = (index + thumbnails.length) % thumbnails.length;
+        const thumbnail = thumbnails[activeIndex];
+
+        mainImage.classList.add('opacity-0');
+        window.setTimeout(() => {
+            mainImage.src = thumbnail.dataset.imageSrc;
+            mainImage.alt = thumbnail.dataset.imageAlt;
+            mainImage.classList.remove('opacity-0');
+        }, 150);
+
+        thumbnails.forEach((item, itemIndex) => {
+            const isSelected = itemIndex === activeIndex;
+            item.classList.toggle('border-2', isSelected);
+            item.classList.toggle('border-primary', isSelected);
+            item.classList.toggle('shadow-sm', isSelected);
+            item.classList.toggle('border', !isSelected);
+            item.classList.toggle('border-outline-variant', !isSelected);
+            item.setAttribute('aria-current', String(isSelected));
+        });
+    }
+
+    function restartCarousel() {
+        window.clearInterval(carouselTimer);
+        carouselTimer = window.setInterval(() => selectImage(activeIndex + 1), changeInterval);
+    }
+
+    thumbnails.forEach((thumbnail, index) => {
+        thumbnail.addEventListener('click', () => {
+            selectImage(index);
+            restartCarousel();
+        });
+    });
+
+    restartCarousel();
+});
 
 // Add a subtle scroll reveal effect
 window.addEventListener('scroll', () => {

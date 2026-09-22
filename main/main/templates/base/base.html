@@ -137,6 +137,11 @@
 <a class="{% if request.path == '/products/' %}text-primary font-label-md font-bold underline decoration-2 underline-offset-4{% else %}text-on-surface-variant font-label-md hover:text-primary transition-colors{% endif %}" href="{% url 'products' %}">Products</a>
 <a class="{% if request.path == '/aboutus/' %}text-primary font-label-md font-bold underline decoration-2 underline-offset-4{% else %}text-on-surface-variant font-label-md hover:text-primary transition-colors{% endif %}" href="{% url 'aboutus' %}">About Us/Contact</a>
 </nav>
+{% if request.user.is_authenticated %}
+<div class="hidden md:flex items-center gap-sm"><span class="text-label-md text-on-surface-variant">Hi, {{ request.user.username }}</span><form method="post" action="{% url 'customer_logout' %}">{% csrf_token %}<button class="text-primary font-label-md">Logout</button></form></div>
+{% else %}
+<a href="{% url 'customer_login' %}" class="hidden md:inline-flex px-4 py-2 rounded-lg border border-primary text-primary font-label-md hover:bg-primary hover:text-white transition-colors">Sign in</a>
+{% endif %}
 </div>
 </header>
 <main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-xl"></main>

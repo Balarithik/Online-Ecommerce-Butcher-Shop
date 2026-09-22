@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect , HttpResponse ,get_object_or_404
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.db.models import Sum
 from store.models import Products
 from orders.models import Order
 from .forms import ProductForm
@@ -31,36 +32,47 @@ def admin_login(request):
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_dashboard(request):
     products = Products.objects.all()
-    orders = Order.objects.all()
-
-
-
+    orders = Order.objects.all().order_by('-order_id')
     total_products = products.count()
     total_orders = orders.count()
-    try:
-        orders_delivered = orders.filter(status='delivered').count()
-    except:
-        orders_delivered = None 
-    try:
-        orders_pending = orders.filter(status='pending').count()
-    except:
-        orders_pending = None
+    orders_delivered = orders.filter(status='delivered').count()
+    orders_pending = orders.filter(status='pending').count()
+    total_revenue = orders.exclude(status='cancelled').aggregate(total=Sum('price'))['total'] or 0
 
-    return render(request, "admin/admin_dashboard.html", {'products': products, 'orders': orders, 'total_products': total_products, 'total_orders': total_orders, 'orders_delivered': orders_delivered, 'orders_pending': orders_pending})
+    return render(request, "admin/admin_dashboard.html", {
+        'total_products': total_products,
+        'available_products': products.filter(is_available=True).count(),
+        'total_orders': total_orders,
+        'orders_delivered': orders_delivered,
+        'orders_pending': orders_pending,
+        'total_revenue': total_revenue,
+        'recent_orders': orders[:8],
+    })
 
 @login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_product(request):
-    products = Products.objects.all()
-    return render(request, "admin/products.html",{'products':products})
+    products = Products.objects.all().order_by('name')
+    return render(request, "admin/products.html", {
+        'products': products,
+        'total_products': products.count(),
+        'available_products': products.filter(is_available=True).count(),
+        'unavailable_products': products.filter(is_available=False).count(),
+    })
 
 
 
 @login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_orders(request):
-    orders = Order.objects.all()
-    return render(request, "admin/orders.html",{'orders':orders})
+    orders = Order.objects.all().order_by('-order_id')
+    return render(request, "admin/orders.html", {
+        'orders': orders,
+        'total_orders': orders.count(),
+        'pending_orders': orders.filter(status='pending').count(),
+        'delivered_orders': orders.filter(status='delivered').count(),
+        'cancelled_orders': orders.filter(status='cancelled').count(),
+    })
 
 
 @login_required(login_url='/admin_login/')
@@ -79,6 +91,7 @@ def add_product_modal(request):
             image2 = form.cleaned_data.get('image2')
             image3 = form.cleaned_data.get('image3')
             image4 = form.cleaned_data.get('image4')
+            is_available = form.cleaned_data.get('is_available')
 
             Products.objects.create(
                 name=name,
@@ -87,7 +100,8 @@ def add_product_modal(request):
                 image1=image1,
                 image2=image2,
                 image3=image3,
-                image4=image4
+                image4=image4,
+                is_available=is_available,
             )
             print(f"Product Added {name}")
             return redirect("admin_products")
