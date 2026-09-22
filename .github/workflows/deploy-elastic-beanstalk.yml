@@ -31,8 +31,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: ${{ vars.EB_APPLICATION_NAME || 'AramCutsV1' }}
-          environment_name: ${{ vars.EB_ENVIRONMENT_NAME || 'AramCutsV1-env' }}
+          application_name: ${{ vars.EB_APPLICATION_NAME }}
+          environment_name: ${{ vars.EB_ENVIRONMENT_NAME }}
           version_label: ${{ github.sha }}
-          region: ${{ vars.AWS_REGION || 'ap-south-1' }}
+          region: ${{ vars.AWS_REGION }}
           deployment_package: deploy.zip
