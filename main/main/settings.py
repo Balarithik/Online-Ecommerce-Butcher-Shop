@@ -36,9 +36,16 @@ if not DEBUG and "SECRET_KEY" not in os.environ:
 
 ALLOWED_HOSTS = [
     ".onrender.com",
+    ".elasticbeanstalk.com",
+    ".amazonaws.com",
     "localhost",
     "127.0.0.1",
     ]
+try:
+    import socket
+    ALLOWED_HOSTS.append(socket.gethostbyname(socket.gethostname()))
+except OSError:
+    pass
 if os.environ.get("ALLOWED_HOSTS"):
     ALLOWED_HOSTS = [host.strip() for host in os.environ["ALLOWED_HOSTS"].split(",") if host.strip()]
 

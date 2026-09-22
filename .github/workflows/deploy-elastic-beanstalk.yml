@@ -1,0 +1,38 @@
+name: Deploy to Elastic Beanstalk
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: main
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Package Elastic Beanstalk source
+        working-directory: .
+        run: |
+          cd main
+          zip -r ../deploy.zip . \
+            -x "*.pyc" \
+            -x "*__pycache__*" \
+            -x "db.sqlite3" \
+            -x "*.git*"
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ vars.EB_APPLICATION_NAME || 'AramCutsV1' }}
+          environment_name: ${{ vars.EB_ENVIRONMENT_NAME || 'AramCutsV1-env' }}
+          version_label: ${{ github.sha }}
+          region: ${{ vars.AWS_REGION || 'ap-south-1' }}
+          deployment_package: deploy.zip

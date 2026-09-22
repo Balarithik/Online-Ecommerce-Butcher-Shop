@@ -1,0 +1,9 @@
+*.pyc
+__pycache__/
+db.sqlite3
+.venv/
+venv/
+media/
+.audit-venv/
+development_manage.py
+main/development_settings.py
