@@ -3,6 +3,28 @@
 
 {% block content %}
 
+<style>
+    #product-main-image.is-fading {
+        opacity: 0;
+    }
+    .product-thumbnail {
+        border: 2px solid transparent;
+    }
+    .product-thumbnail.is-active {
+        border-color: #8f000d;
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+    .product-thumbnail:not(.is-active) {
+        border-color: #e2beba;
+    }
+    .product-thumbnail:not(.is-active):hover {
+        border-color: #8f000d;
+    }
+    .product-thumbnail img {
+        pointer-events: none;
+    }
+</style>
+
 <main class="max-w-[1280px] mx-auto pb-xl">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-lg p-margin-mobile md:p-margin-desktop">
 <!-- Breadcrumbs (Mobile Hidden) -->
@@ -25,21 +47,21 @@
 </div>
 </div>
 <div id="product-image-thumbnails" class="grid grid-cols-4 gap-sm" aria-label="Product images">
-<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden border-2 border-primary bg-white cursor-pointer shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image1.url }}" data-image-alt="{{ product.name }} image 1" aria-label="Show image 1 of {{ product.name }}" aria-current="true">
+<button type="button" class="product-thumbnail is-active aspect-square rounded-lg overflow-hidden bg-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image1.url }}" data-image-alt="{{ product.name }} image 1" aria-label="Show image 1 of {{ product.name }}" aria-current="true">
 <img class="w-full h-full object-cover" alt="" src="{{ product.image1.url }}"/>
 </button>
 {% if product.image2 %}
-<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image2.url }}" data-image-alt="{{ product.name }} image 2" aria-label="Show image 2 of {{ product.name }}" aria-current="false">
+<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden bg-white cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image2.url }}" data-image-alt="{{ product.name }} image 2" aria-label="Show image 2 of {{ product.name }}" aria-current="false">
 <img class="w-full h-full object-cover" alt="" src="{{ product.image2.url }}"/>
 </button>
 {% endif %}
 {% if product.image3 %}
-<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image3.url }}" data-image-alt="{{ product.name }} image 3" aria-label="Show image 3 of {{ product.name }}" aria-current="false">
+<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden bg-white cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image3.url }}" data-image-alt="{{ product.name }} image 3" aria-label="Show image 3 of {{ product.name }}" aria-current="false">
 <img class="w-full h-full object-cover" alt="" src="{{ product.image3.url }}"/>
 </button>
 {% endif %}
 {% if product.image4 %}
-<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden border border-outline-variant bg-white cursor-pointer hover:border-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image4.url }}" data-image-alt="{{ product.name }} image 4" aria-label="Show image 4 of {{ product.name }}" aria-current="false">
+<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden bg-white cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image4.url }}" data-image-alt="{{ product.name }} image 4" aria-label="Show image 4 of {{ product.name }}" aria-current="false">
 <img class="w-full h-full object-cover" alt="" src="{{ product.image4.url }}"/>
 </button>
 {% endif %}
@@ -107,7 +129,7 @@
 </div>
 <!-- "Why Buy From Us" Section -->
 <section class="col-span-12 mt-xl border-t border-outline-variant pt-xl">
-<h2 class="font-headline-md text-headline-md mb-lg text-center">Why Trust Lakshmi Broliers?</h2>
+<h2 class="font-headline-md text-headline-md mb-lg text-center">Why Trust AramCuts?</h2>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
 <div class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
 <div class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
@@ -146,48 +168,73 @@ function changeQty(delta) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const mainImage = document.getElementById('product-main-image');
-    const thumbnails = Array.from(document.querySelectorAll('.product-thumbnail'));
+    const gallery = document.getElementById('product-image-thumbnails');
+    const thumbnails = gallery
+        ? Array.from(gallery.querySelectorAll('.product-thumbnail'))
+        : [];
     const changeInterval = 5000;
     let activeIndex = 0;
     let carouselTimer;
 
-    if (!mainImage || thumbnails.length < 2) return;
+    if (!mainImage || thumbnails.length === 0) return;
 
-    function selectImage(index) {
-        activeIndex = (index + thumbnails.length) % thumbnails.length;
-        const thumbnail = thumbnails[activeIndex];
-
-        mainImage.classList.add('opacity-0');
-        window.setTimeout(() => {
-            mainImage.src = thumbnail.dataset.imageSrc;
-            mainImage.alt = thumbnail.dataset.imageAlt;
-            mainImage.classList.remove('opacity-0');
-        }, 150);
-
+    function setActiveThumbnail(index) {
         thumbnails.forEach((item, itemIndex) => {
-            const isSelected = itemIndex === activeIndex;
-            item.classList.toggle('border-2', isSelected);
-            item.classList.toggle('border-primary', isSelected);
-            item.classList.toggle('shadow-sm', isSelected);
-            item.classList.toggle('border', !isSelected);
-            item.classList.toggle('border-outline-variant', !isSelected);
+            const isSelected = itemIndex === index;
+            item.classList.toggle('is-active', isSelected);
             item.setAttribute('aria-current', String(isSelected));
         });
     }
 
-    function restartCarousel() {
+    function selectImage(index, { restartAuto = true } = {}) {
+        activeIndex = (index + thumbnails.length) % thumbnails.length;
+        const thumbnail = thumbnails[activeIndex];
+        const nextSrc = thumbnail.dataset.imageSrc;
+        const nextAlt = thumbnail.dataset.imageAlt;
+
+        setActiveThumbnail(activeIndex);
+
+        if (mainImage.src.endsWith(nextSrc) || mainImage.getAttribute('src') === nextSrc) {
+            mainImage.alt = nextAlt;
+            if (restartAuto && thumbnails.length > 1) restartCarousel();
+            return;
+        }
+
+        mainImage.classList.add('is-fading');
+        window.setTimeout(() => {
+            mainImage.src = nextSrc;
+            mainImage.alt = nextAlt;
+            mainImage.classList.remove('is-fading');
+        }, 150);
+
+        if (restartAuto && thumbnails.length > 1) restartCarousel();
+    }
+
+    function stopCarousel() {
         window.clearInterval(carouselTimer);
-        carouselTimer = window.setInterval(() => selectImage(activeIndex + 1), changeInterval);
+        carouselTimer = null;
+    }
+
+    function restartCarousel() {
+        stopCarousel();
+        carouselTimer = window.setInterval(() => selectImage(activeIndex + 1, { restartAuto: false }), changeInterval);
     }
 
     thumbnails.forEach((thumbnail, index) => {
-        thumbnail.addEventListener('click', () => {
-            selectImage(index);
-            restartCarousel();
-        });
+        thumbnail.addEventListener('click', () => selectImage(index));
     });
 
-    restartCarousel();
+    if (gallery && thumbnails.length > 1) {
+        gallery.addEventListener('mouseenter', stopCarousel);
+        gallery.addEventListener('mouseleave', restartCarousel);
+        gallery.addEventListener('focusin', stopCarousel);
+        gallery.addEventListener('focusout', (event) => {
+            if (!gallery.contains(event.relatedTarget)) restartCarousel();
+        });
+        restartCarousel();
+    } else {
+        setActiveThumbnail(0);
+    }
 });
 
 // Add a subtle scroll reveal effect
@@ -210,6 +257,4 @@ function goToCheckout(productId) {
     window.location.href = `/products/Checkout/${productId}/${qty}/`;
 }
 </script>
-
-</body></html>
 {% endblock %}
