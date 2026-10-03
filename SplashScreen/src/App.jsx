@@ -1,8 +1,9 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import logo from './assets/logo.png';
 
 const MAIN_APP_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const HEALTH_CHECK_URL = new URL('/healthz/', MAIN_APP_URL).toString();
 
 const LOADING_MESSAGES = [
   "Connecting to Lakshmi Broliers Hub...",
@@ -19,7 +20,6 @@ export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
   const [serverOnline, setServerOnline] = useState(false);
-  const attemptRef = useRef(0);
 
   // Cycle loading messages
   useEffect(() => {
@@ -46,52 +46,59 @@ export default function App() {
   // Health check polling against live backend server
   useEffect(() => {
     let cancelled = false;
+    let retryTimer;
+    let initialTimer;
+    let redirectTimer;
+    let fadeTimer;
+    let activeController;
 
     const checkServerHealth = async () => {
-      attemptRef.current += 1;
+      activeController = new AbortController();
+      const requestTimeout = setTimeout(() => activeController.abort(), 5000);
+
       try {
-        await fetch(MAIN_APP_URL, { method: 'HEAD', mode: 'no-cors' });
+        const response = await fetch(HEALTH_CHECK_URL, {
+          method: 'GET',
+          headers: { Accept: 'application/json' },
+          cache: 'no-store',
+          signal: activeController.signal,
+        });
+        if (!response.ok) throw new Error(`Health check returned ${response.status}.`);
+        const health = await response.json();
+        if (health.status !== 'ok') throw new Error('Main app is not healthy yet.');
+
         if (!cancelled) {
           setServerOnline(true);
           setIsReady(true);
           setProgress(100);
 
-          setTimeout(() => {
+          redirectTimer = setTimeout(() => {
             setFadingOut(true);
-            setTimeout(() => {
+            fadeTimer = setTimeout(() => {
               window.location.href = MAIN_APP_URL;
             }, 700);
           }, 900);
         }
-      } catch (err) {
+      } catch {
         if (!cancelled) {
-          setTimeout(checkServerHealth, 2000);
+          retryTimer = setTimeout(checkServerHealth, 2000);
         }
+      } finally {
+        clearTimeout(requestTimeout);
       }
     };
 
-    const initialTimer = setTimeout(checkServerHealth, 600);
-
-    const fallbackTimer = setTimeout(() => {
-      if (!cancelled && !isReady) {
-        setServerOnline(true);
-        setIsReady(true);
-        setProgress(100);
-        setTimeout(() => {
-          setFadingOut(true);
-          setTimeout(() => {
-            window.location.href = MAIN_APP_URL;
-          }, 700);
-        }, 600);
-      }
-    }, 25000);
+    initialTimer = setTimeout(checkServerHealth, 600);
 
     return () => {
       cancelled = true;
+      activeController?.abort();
       clearTimeout(initialTimer);
-      clearTimeout(fallbackTimer);
+      clearTimeout(retryTimer);
+      clearTimeout(redirectTimer);
+      clearTimeout(fadeTimer);
     };
-  }, [isReady]);
+  }, []);
 
   // Circular progress math (radius: 76px)
   const radius = 76;

@@ -7,6 +7,19 @@ from .models import CustomerAddress, CustomerProfile
 
 
 class CustomerAuthenticationTests(TestCase):
+    def test_health_check_reports_main_application_is_alive(self):
+        response = self.client.get(reverse('health_check'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'status': 'ok'})
+        self.assertEqual(response['Access-Control-Allow-Origin'], '*')
+        self.assertIn('no-store', response['Cache-Control'])
+
+    def test_health_check_only_accepts_get_requests(self):
+        response = self.client.post(reverse('health_check'))
+
+        self.assertEqual(response.status_code, 405)
+
     def test_customer_can_sign_up_and_is_logged_in(self):
         response = self.client.post(reverse('customer_signup'), {
             'username': 'customer', 'password1': 'A-strong-password123',

@@ -19,8 +19,10 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 from admin_dashboard import views
+from main.views import health_check
 
 urlpatterns = [
+    path('healthz/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
     path('admin_dashboard/', include('admin_dashboard.urls')),
     path('admin_login/', views.admin_login, name='admin_login'),
