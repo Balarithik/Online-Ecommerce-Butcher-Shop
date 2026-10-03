@@ -7,10 +7,10 @@ urlpatterns = [
     path('admin_orders/', views.admin_orders, name='admin_orders'),
     path('admin_customers/', views.admin_customers, name='admin_customers'),
     path('toggle_product_availability/<int:product_id>/', views.toggle_product_availability, name='toggle_product_availability'),
+    path('upload_product_image/', views.upload_product_image, name='upload_product_image'),
     path('add_product_modal/', views.add_product_modal, name='add_product_modal'),
     path('edit_product_modal/<int:product_id>/', views.edit_product_modal, name='edit_product_modal'),
     path('delete_product/<int:product_id>/', views.delete_product, name='delete_product'),
     path('update_order/<int:order_id>/', views.update_order, name='update_order')
 ]
  
-

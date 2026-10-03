@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from store.models import Products
 from orders.models import Order
 from orders.forms import OrderForm
+from home.models import CustomerAddress
 from decimal import Decimal
 
 class OrderTestCase(TestCase):
@@ -58,6 +59,53 @@ class OrderTestCase(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Lakshmi Broliers Order Center')
+
+    def test_checkout_uses_saved_account_address_without_manual_entry(self):
+        self.normal_user.first_name = 'Normal Customer'
+        self.normal_user.save()
+        address = CustomerAddress.objects.create(
+            user=self.normal_user,
+            label='Home',
+            recipient_name='Delivery Recipient',
+            mobile='9876543210',
+            address='12/4, Main Road, Uchipuli',
+            is_default=True,
+        )
+        self.client.force_login(self.normal_user)
+
+        response = self.client.get(reverse('Checkout_direct', args=[self.product.id, '1']))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Choose a saved delivery address')
+        self.assertContains(response, 'Delivery Recipient')
+        self.assertContains(response, address.formatted_address)
+        self.assertNotContains(response, 'id="addr_house"')
+
+    def test_order_uses_selected_saved_address_instead_of_forged_checkout_values(self):
+        address = CustomerAddress.objects.create(
+            user=self.normal_user,
+            label='Home',
+            recipient_name='Saved Recipient',
+            mobile='9876543210',
+            address='12/4, Saved Street, Uchipuli',
+            is_default=True,
+        )
+        self.client.force_login(self.normal_user)
+
+        response = self.client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+            'saved_address_id': address.pk,
+            'name': 'Forged Name',
+            'mobile': '1111111111',
+            'address': 'Forged Address',
+            'quantity': '1',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        order = Order.objects.get()
+        self.assertEqual(order.user, self.normal_user)
+        self.assertEqual(order.name, 'Saved Recipient')
+        self.assertEqual(order.mobile, '9876543210')
+        self.assertEqual(order.location, address.formatted_address)
 
     def test_order_price_tamper_prevention(self):
         # Test server-side price calculation and tamper prevention

@@ -1,4 +1,9 @@
 import re
+from io import BytesIO
+from unittest.mock import patch
+
+from PIL import Image
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from django.test import Client
 from django.test import TestCase
@@ -186,19 +191,19 @@ class AdminEndpointTests(TestCase):
         self.assertContains(response, 'max-h-[92vh]')
         self.assertContains(response, 'Main Image (Required)')
         self.assertContains(response, 'Image 2 (Optional)')
-        self.assertContains(response, 'CLOUDINARY_UPLOAD_PRESET')
+        self.assertContains(response, 'data-upload-url')
         self.assertContains(response, 'data-cloudinary-upload')
         self.assertNotContains(response, 'p-xl')
         self.assertNotContains(response, 'font-headline-lg')
 
     @override_settings(
         CLOUDINARY_UPLOAD_CONFIGURED=True,
+        CLOUDINARY_API_CONFIGURED=True,
         CLOUDINARY_CLOUD_NAME='test-cloud',
-        CLOUDINARY_UPLOAD_PRESET='test-unsigned-preset',
     )
-    def test_add_product_saves_unsigned_cloudinary_public_ids(self):
+    def test_add_product_saves_cloudinary_public_ids(self):
         response = self.client.post(reverse('add_product_modal'), {
-            'name': 'Unsigned Cloudinary Chicken',
+            'name': 'Cloudinary Chicken',
             'price': '275.00',
             'description': 'Freshly cut to order',
             'is_available': 'on',
@@ -207,14 +212,14 @@ class AdminEndpointTests(TestCase):
         })
 
         self.assertEqual(response.status_code, 302)
-        product = Products.objects.get(name='Unsigned Cloudinary Chicken')
+        product = Products.objects.get(name='Cloudinary Chicken')
         self.assertEqual(product.image1.name, 'products_images/main-image')
         self.assertEqual(product.image2.name, 'products_images/side-image')
 
     @override_settings(
         CLOUDINARY_UPLOAD_CONFIGURED=True,
+        CLOUDINARY_API_CONFIGURED=True,
         CLOUDINARY_CLOUD_NAME='test-cloud',
-        CLOUDINARY_UPLOAD_PRESET='test-unsigned-preset',
     )
     def test_add_product_rejects_public_ids_outside_product_folder(self):
         response = self.client.post(reverse('add_product_modal'), {
@@ -230,10 +235,10 @@ class AdminEndpointTests(TestCase):
 
     @override_settings(
         CLOUDINARY_UPLOAD_CONFIGURED=True,
+        CLOUDINARY_API_CONFIGURED=True,
         CLOUDINARY_CLOUD_NAME='test-cloud',
-        CLOUDINARY_UPLOAD_PRESET='test-unsigned-preset',
     )
-    def test_edit_product_replaces_unsigned_image_without_server_upload(self):
+    def test_edit_product_replaces_cloudinary_image(self):
         product = Products.objects.create(
             name='Existing Chicken',
             price='250.00',
@@ -255,11 +260,49 @@ class AdminEndpointTests(TestCase):
         self.assertEqual(product.image1.name, 'products_images/new-image')
 
     @override_settings(CLOUDINARY_UPLOAD_CONFIGURED=False)
-    def test_product_upload_is_blocked_until_unsigned_preset_is_configured(self):
+    def test_product_upload_is_blocked_until_cloudinary_api_is_configured(self):
         response = self.client.post(reverse('add_product_modal'), {})
 
         self.assertEqual(response.status_code, 503)
-        self.assertContains(response, 'CLOUDINARY_UPLOAD_PRESET', status_code=503)
+        self.assertContains(response, 'CLOUDINARY_API_SECRET', status_code=503)
+
+    @override_settings(
+        CLOUDINARY_UPLOAD_CONFIGURED=True,
+        CLOUDINARY_API_CONFIGURED=True,
+    )
+    @patch('admin_dashboard.views.cloudinary.uploader.upload')
+    def test_product_image_upload_uses_signed_cloudinary_api(self, cloudinary_upload):
+        cloudinary_upload.side_effect = lambda _file, **options: {
+            'public_id': options['public_id'],
+            'secure_url': f"https://res.cloudinary.com/test-cloud/image/upload/{options['public_id']}",
+        }
+        image_data = BytesIO()
+        Image.new('RGB', (2, 2), color='red').save(image_data, format='PNG')
+
+        response = self.client.post(reverse('upload_product_image'), {
+            'image': SimpleUploadedFile(
+                'product.png',
+                image_data.getvalue(),
+                content_type='image/png',
+            ),
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['public_id'].startswith('products_images/'))
+        cloudinary_upload.assert_called_once()
+
+    @override_settings(CLOUDINARY_UPLOAD_CONFIGURED=True)
+    def test_product_image_upload_rejects_invalid_file(self):
+        response = self.client.post(reverse('upload_product_image'), {
+            'image': SimpleUploadedFile(
+                'not-an-image.png',
+                b'not an image',
+                content_type='image/png',
+            ),
+        })
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['error'], 'The selected file is not a valid image.')
 
     def test_cloudinary_storage_uses_configured_cloud_or_local_fallback(self):
         if settings.CLOUDINARY_CLOUD_NAME:

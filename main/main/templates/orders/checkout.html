@@ -38,6 +38,9 @@
     <input type="hidden" name="product_id" value="{{ product.id }}">
     <input type="hidden" id="hidden_quantity" name="quantity" value="{{ qty }}">
     <input type="hidden" id="hidden_address" name="address" value="{{ form.address.value|default:'' }}">
+    {% if saved_addresses %}
+    <input type="hidden" name="saved_address_id" id="saved_address_id" value="{{ selected_address.pk|default:'' }}">
+    {% endif %}
     <input type="hidden" id="location_latitude" name="latitude" value="{{ form.latitude.value|default:'' }}">
     <input type="hidden" id="location_longitude" name="longitude" value="{{ form.longitude.value|default:'' }}">
     <input type="hidden" id="selected_slot_input" name="delivery_slot" value="Express Delivery (45-60 Mins)">
@@ -58,6 +61,21 @@
           </div>
         </div>
 
+        {% if saved_addresses %}
+        <input type="hidden" name="name" id="id_name" value="{{ selected_address.recipient_name|default:form.name.value }}">
+        <input type="hidden" name="mobile" id="id_mobile" value="{{ selected_address.mobile|default:form.mobile.value }}">
+        <div id="saved-contact-summary" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="rounded-xl bg-surface-container-low p-3">
+            <p class="text-[10px] font-bold uppercase tracking-wide text-on-surface-variant">Delivery recipient</p>
+            <p id="saved-recipient-name" class="mt-1 text-sm font-bold text-on-surface">{{ selected_address.recipient_name }}</p>
+          </div>
+          <div class="rounded-xl bg-surface-container-low p-3">
+            <p class="text-[10px] font-bold uppercase tracking-wide text-on-surface-variant">Contact mobile</p>
+            <p id="saved-recipient-mobile" class="mt-1 text-sm font-bold text-on-surface">+91 {{ selected_address.mobile }}</p>
+          </div>
+          <a href="{% url 'customer_account' %}" class="text-xs font-semibold text-primary hover:underline sm:col-span-2">Manage your personal details and saved addresses</a>
+        </div>
+        {% else %}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1.5">
@@ -102,6 +120,7 @@
             {% endif %}
           </div>
         </div>
+        {% endif %}
       </div>
 
       <!-- SECTION 2: Complete Delivery Address (Licious Style) -->
@@ -118,13 +137,40 @@
           </div>
 
           <!-- Address Type Selector -->
+          {% if not saved_addresses %}
           <div class="inline-flex rounded-xl bg-surface-container-low p-1 border border-outline-variant/50" id="addressTypePills">
             <button type="button" onclick="setAddressTag('Home', this)" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-white text-primary shadow-sm">🏠 Home</button>
             <button type="button" onclick="setAddressTag('Work', this)" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-on-surface-variant hover:text-on-surface">🏢 Work</button>
             <button type="button" onclick="setAddressTag('Other', this)" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-on-surface-variant hover:text-on-surface">📍 Other</button>
           </div>
+          {% endif %}
         </div>
 
+        {% if saved_addresses %}
+        <div class="space-y-3">
+          <label for="saved-address-select" class="block text-xs font-bold uppercase tracking-wide text-on-surface-variant">Choose a saved delivery address</label>
+          <select id="saved-address-select" class="w-full rounded-xl border border-outline-variant bg-white px-3 py-3 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20">
+            {% for address in saved_addresses %}
+            <option value="{{ address.pk }}" data-name="{{ address.recipient_name }}" data-mobile="{{ address.mobile }}" data-address="{{ address.formatted_address }}" {% if selected_address.pk == address.pk %}selected{% endif %}>
+              {{ address.label }}{% if address.is_default %} · Default{% endif %} — {{ address.formatted_address }}
+            </option>
+            {% endfor %}
+          </select>
+          <div class="rounded-xl border border-outline-variant/50 bg-surface-container-low p-3">
+            <p class="text-[10px] font-bold uppercase tracking-wide text-on-surface-variant">Delivering to</p>
+            <p id="saved-address-preview" class="mt-1 text-sm leading-relaxed text-on-surface">{{ selected_address.formatted_address }}</p>
+          </div>
+          <a href="{% url 'customer_account' %}" class="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline">
+            <span class="material-symbols-outlined text-sm">edit_location_alt</span> Add or manage addresses
+          </a>
+          <div class="rounded-xl border border-outline-variant/50 bg-white p-3">
+            <button type="button" id="shareLocationButton" onclick="shareCurrentLocation()" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-primary px-4 py-2 text-sm font-bold text-primary hover:bg-primary/5">
+              <span class="material-symbols-outlined text-[18px]">my_location</span> Share my current location
+            </button>
+            <p id="location_share_status" class="mt-2 text-xs text-on-surface-variant" role="status" aria-live="polite">Optional: share a one-time GPS pin to help the delivery rider find you.</p>
+          </div>
+        </div>
+        {% else %}
         <div class="space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
@@ -216,6 +262,7 @@
               </p>
             </div>
           </div>
+          {% endif %}
         </div>
       </div>
 
@@ -572,9 +619,30 @@
     btn.classList.remove('border-outline-variant', 'bg-surface-bright', 'text-on-surface-variant', 'border');
   }
 
-  // Preload initial address if available from previous order/session
+  function syncSavedAddress() {
+    const selector = document.getElementById('saved-address-select');
+    if (!selector) return;
+    const option = selector.selectedOptions[0];
+    if (!option) return;
+
+    document.getElementById('saved_address_id').value = option.value;
+    document.getElementById('id_name').value = option.dataset.name;
+    document.getElementById('id_mobile').value = option.dataset.mobile;
+    document.getElementById('hidden_address').value = option.dataset.address;
+    document.getElementById('saved-recipient-name').textContent = option.dataset.name;
+    document.getElementById('saved-recipient-mobile').textContent = `+91 ${option.dataset.mobile}`;
+    document.getElementById('saved-address-preview').textContent = option.dataset.address;
+  }
+
+  document.getElementById('saved-address-select')?.addEventListener('change', syncSavedAddress);
+
+  // Preload the selected saved address or a previous manually entered address.
   document.addEventListener('DOMContentLoaded', () => {
     updatePricing();
+    if (document.getElementById('saved-address-select')) {
+      syncSavedAddress();
+      return;
+    }
     const existing = document.getElementById('hidden_address').value;
     if (existing) {
       document.getElementById('addr_street').value = existing;
@@ -586,14 +654,19 @@
 
   // Validation on form submission
   document.getElementById('checkoutForm').addEventListener('submit', (e) => {
-    syncFullAddress();
+    const savedAddressSelect = document.getElementById('saved-address-select');
+    if (savedAddressSelect) {
+      syncSavedAddress();
+    } else {
+      syncFullAddress();
+    }
     const addr = document.getElementById('hidden_address').value;
     const latitude = document.getElementById('location_latitude').value;
     const longitude = document.getElementById('location_longitude').value;
     if (!addr || addr.length < 5) {
       e.preventDefault();
       alert("Please enter a valid delivery address.");
-      document.getElementById('addr_house').focus();
+      (savedAddressSelect || document.getElementById('addr_house')).focus();
       return;
     }
     if (Boolean(latitude) !== Boolean(longitude)) {

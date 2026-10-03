@@ -287,8 +287,7 @@
     function initializeCloudinaryProductUpload(form) {
       if (form.dataset.uploadInitialized === 'true') return;
       form.dataset.uploadInitialized = 'true';
-      const cloudName = form.dataset.cloudName;
-      const uploadPreset = form.dataset.uploadPreset;
+      const uploadUrl = form.dataset.uploadUrl;
       const submitButton = form.querySelector('button[type="submit"]');
       let pendingUploads = 0;
 
@@ -312,20 +311,19 @@
           submitButton.disabled = true;
           status.textContent = 'Uploading securely to Cloudinary...';
           const body = new FormData();
-          body.append('file', file);
-          body.append('upload_preset', uploadPreset);
-          const generatedId = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-          body.append('public_id', `products_images/${generatedId}`);
+          body.append('image', file);
+          const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
 
           try {
-            const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/image/upload`, {
+            const response = await fetch(uploadUrl, {
               method: 'POST',
               body,
+              headers: { 'X-CSRFToken': csrfToken },
             });
             const result = await response.json();
-            if (!response.ok) throw new Error(result.error?.message || 'Cloudinary rejected this image.');
-            if (!result.public_id?.startsWith('products_images/') || !result.secure_url?.startsWith(`https://res.cloudinary.com/${cloudName}/image/upload/`)) {
-              throw new Error('Cloudinary returned an unexpected image location. Check the preset folder.');
+            if (!response.ok) throw new Error(result.error || 'The image upload failed.');
+            if (!result.public_id?.startsWith('products_images/') || !result.secure_url?.startsWith('https://res.cloudinary.com/')) {
+              throw new Error('Cloudinary returned an unexpected image location.');
             }
 
             publicIdInput.value = result.public_id;
@@ -335,7 +333,7 @@
             status.textContent = 'Image uploaded.';
           } catch (error) {
             input.value = '';
-            status.textContent = error.message;
+            status.textContent = error instanceof Error ? error.message : 'The image upload failed.';
           } finally {
             pendingUploads -= 1;
             submitButton.disabled = pendingUploads > 0;

@@ -26,8 +26,7 @@
       class="min-h-0 flex-1 overflow-y-auto"
       method="POST"
       action="{% url 'edit_product_modal' product.id %}"
-      data-cloud-name="{{ cloudinary_cloud_name }}"
-      data-upload-preset="{{ cloudinary_upload_preset }}"
+      data-upload-url="{{ cloudinary_upload_url }}"
       data-cloudinary-upload
     >
       {% csrf_token %}
@@ -37,9 +36,9 @@
         {{ form.errors }}
       </div>
       {% endif %}
-      {% if not cloudinary_upload_preset or not cloudinary_cloud_name %}
+      {% if not cloudinary_upload_configured %}
       <div class="mx-4 mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs leading-relaxed text-amber-900 sm:mx-6" role="status">
-        Product image uploads need an unsigned Cloudinary upload preset. Set <code>CLOUDINARY_UPLOAD_PRESET</code> in <code>main/.env</code> after creating the preset in Cloudinary.
+        Product image uploads need the Cloudinary cloud name, API key, and API secret configured in <code>main/.env</code>.
       </div>
       {% endif %}
 
@@ -88,7 +87,7 @@
                 data-cloudinary-image
                 data-image-number="{{ upload.number }}"
                 accept="image/jpeg,image/png,image/webp"
-                {% if not cloudinary_upload_preset or not cloudinary_cloud_name %}disabled{% endif %}
+                {% if not cloudinary_upload_configured %}disabled{% endif %}
                 class="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                 aria-label="Replace product image {{ upload.number }}"
               />
@@ -109,7 +108,7 @@
         <button type="button" onclick="closeModal()" class="inline-flex min-h-10 items-center justify-center rounded-xl px-4 text-xs font-bold text-on-surface-variant transition hover:bg-surface-container-low hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
           Cancel
         </button>
-        <button type="submit" {% if not cloudinary_upload_preset or not cloudinary_cloud_name %}disabled{% endif %} class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-bold text-white shadow-sm transition hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+        <button type="submit" {% if not cloudinary_upload_configured %}disabled{% endif %} class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-bold text-white shadow-sm transition hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
           <span class="material-symbols-outlined text-[16px]">save</span>
           Save Changes
         </button>

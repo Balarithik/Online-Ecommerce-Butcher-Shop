@@ -1,7 +1,15 @@
 # Create your views here.
+import logging
+import uuid
+
+import cloudinary.uploader
+from cloudinary.exceptions import Error as CloudinaryError
+from django.core.files.uploadedfile import UploadedFile
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.db.models import Sum, Count, Q
@@ -9,9 +17,15 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
+from PIL import Image, UnidentifiedImageError
 from store.models import Products
 from orders.models import Order
 from .forms import CloudinaryProductForm
+
+
+logger = logging.getLogger(__name__)
+MAX_PRODUCT_IMAGE_SIZE = 5 * 1024 * 1024
+ALLOWED_PRODUCT_IMAGE_FORMATS = {"JPEG", "PNG", "WEBP"}
 
 
 def _product_form_context(form, product=None):
@@ -37,7 +51,8 @@ def _product_form_context(form, product=None):
         "form": form,
         "product": product,
         "cloudinary_cloud_name": settings.CLOUDINARY_CLOUD_NAME,
-        "cloudinary_upload_preset": settings.CLOUDINARY_UPLOAD_PRESET,
+        "cloudinary_upload_configured": settings.CLOUDINARY_UPLOAD_CONFIGURED,
+        "cloudinary_upload_url": reverse("upload_product_image"),
         "image_uploads": image_uploads,
     }
 
@@ -46,6 +61,65 @@ def _assign_cloudinary_images(form, product):
     for number in range(1, 5):
         public_id = form.cleaned_data[f"image{number}_public_id"]
         setattr(product, f"image{number}", public_id or None)
+
+
+def _validate_product_image(uploaded_file: UploadedFile):
+    if uploaded_file.size > MAX_PRODUCT_IMAGE_SIZE:
+        return "Choose an image up to 5 MB."
+
+    try:
+        with Image.open(uploaded_file) as image:
+            if image.format not in ALLOWED_PRODUCT_IMAGE_FORMATS:
+                return "Choose a JPG, PNG, or WebP image."
+            image.verify()
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError):
+        return "The selected file is not a valid image."
+    finally:
+        uploaded_file.seek(0)
+
+    return None
+
+
+@login_required(login_url="/admin_login/")
+@user_passes_test(lambda user: user.is_superuser, login_url="/admin_login/")
+@require_POST
+def upload_product_image(request):
+    if not settings.CLOUDINARY_UPLOAD_CONFIGURED:
+        return JsonResponse(
+            {"error": "Cloudinary uploads are not configured. Check the cloud name, API key, and API secret."},
+            status=503,
+        )
+
+    uploaded_file = request.FILES.get("image")
+    if not uploaded_file:
+        return JsonResponse({"error": "Choose an image to upload."}, status=400)
+
+    validation_error = _validate_product_image(uploaded_file)
+    if validation_error:
+        return JsonResponse({"error": validation_error}, status=400)
+
+    public_id = f"products_images/{uuid.uuid4().hex}"
+    try:
+        result = cloudinary.uploader.upload(
+            uploaded_file,
+            public_id=public_id,
+            overwrite=False,
+            resource_type="image",
+        )
+    except CloudinaryError:
+        logger.exception("Cloudinary failed to upload a product image.")
+        return JsonResponse(
+            {"error": "Cloudinary could not upload this image. Check the server Cloudinary configuration and try again."},
+            status=502,
+        )
+
+    returned_public_id = result.get("public_id")
+    secure_url = result.get("secure_url")
+    if returned_public_id != public_id or not secure_url:
+        logger.error("Cloudinary returned an unexpected product image response.")
+        return JsonResponse({"error": "Cloudinary returned an invalid image response."}, status=502)
+
+    return JsonResponse({"public_id": returned_public_id, "secure_url": secure_url})
 
 
 @never_cache
@@ -195,7 +269,7 @@ def add_product_modal(request):
     if request.method == "POST":
         if not settings.CLOUDINARY_UPLOAD_CONFIGURED:
             return HttpResponse(
-                "Configure CLOUDINARY_UPLOAD_PRESET in main/.env before uploading product images.",
+                "Configure CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in main/.env before uploading product images.",
                 status=503,
             )
 
@@ -231,7 +305,7 @@ def edit_product_modal(request, product_id):
     if request.method == "POST":
         if not settings.CLOUDINARY_UPLOAD_CONFIGURED:
             return HttpResponse(
-                "Configure CLOUDINARY_UPLOAD_PRESET in main/.env before uploading product images.",
+                "Configure CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in main/.env before uploading product images.",
                 status=503,
             )
 

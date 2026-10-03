@@ -4,6 +4,7 @@ from django.http import HttpResponseBadRequest
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from orders.forms import OrderForm
+from home.models import CustomerAddress, CustomerProfile
 from store.models import Products
 from .models import Order
 
@@ -17,16 +18,31 @@ def Checkout(request, product_id=None, qty='1'):
 
     product = get_object_or_404(Products, id=product_id, is_available=True)
     initial_data = {'quantity': qty}
+    saved_addresses = CustomerAddress.objects.none()
+    selected_address = None
     
-    # Auto-fill for logged-in user or previous session
     if request.user.is_authenticated:
         initial_data['name'] = request.user.get_full_name() or request.user.username
-        last_order = Order.objects.filter(user=request.user).order_by('-order_id').first()
-        if last_order:
-            initial_data['mobile'] = last_order.mobile
-            initial_data['address'] = last_order.location
-            initial_data['cut_preference'] = last_order.cut_preference
-            initial_data['delivery_slot'] = last_order.delivery_slot
+        profile = CustomerProfile.objects.filter(user=request.user).first()
+        if profile and profile.mobile:
+            initial_data['mobile'] = profile.mobile
+        saved_addresses = request.user.saved_addresses.all()
+        requested_address_id = request.GET.get('address_id')
+        if requested_address_id:
+            selected_address = saved_addresses.filter(pk=requested_address_id).first()
+        if selected_address is None:
+            selected_address = saved_addresses.filter(is_default=True).first() or saved_addresses.first()
+        if selected_address:
+            initial_data['name'] = selected_address.recipient_name
+            initial_data['mobile'] = selected_address.mobile
+            initial_data['address'] = selected_address.formatted_address
+        else:
+            last_order = Order.objects.filter(user=request.user).order_by('-order_id').first()
+            if last_order:
+                initial_data['mobile'] = initial_data.get('mobile') or last_order.mobile
+                initial_data['address'] = last_order.location
+                initial_data['cut_preference'] = last_order.cut_preference
+                initial_data['delivery_slot'] = last_order.delivery_slot
     elif 'customer_phone' in request.session:
         initial_data['name'] = request.session.get('customer_name', '')
         initial_data['mobile'] = request.session.get('customer_phone', '')
@@ -39,12 +55,28 @@ def Checkout(request, product_id=None, qty='1'):
         'product': product,
         'form': form,
         'qty': qty,
-        'available_products': available_products
+        'available_products': available_products,
+        'saved_addresses': saved_addresses,
+        'selected_address': selected_address,
     })
 
 @require_POST
 def Orders(request, product_id):
-    form = OrderForm(request.POST)
+    selected_address = None
+    order_data = request.POST.copy()
+    saved_address_id = order_data.get('saved_address_id')
+    if request.user.is_authenticated and saved_address_id:
+        selected_address = get_object_or_404(
+            request.user.saved_addresses,
+            pk=saved_address_id,
+        )
+        order_data['name'] = selected_address.recipient_name
+        order_data['mobile'] = selected_address.mobile
+        order_data['address'] = selected_address.formatted_address
+    elif request.user.is_authenticated and request.user.saved_addresses.exists():
+        return HttpResponseBadRequest("Choose one of your saved delivery addresses.")
+
+    form = OrderForm(order_data)
     if form.is_valid():
         name = form.cleaned_data.get('name', '').strip()
         mobile = form.cleaned_data.get('mobile', '').strip()
@@ -107,10 +139,15 @@ def Orders(request, product_id):
         })
 
     product = get_object_or_404(Products, id=product_id, is_available=True)
+    saved_addresses = request.user.saved_addresses.all() if request.user.is_authenticated else CustomerAddress.objects.none()
+    if request.user.is_authenticated and saved_address_id:
+        selected_address = saved_addresses.filter(pk=saved_address_id).first()
     return render(request, 'orders/checkout.html', {
         'product': product,
         'form': form,
         'qty': request.POST.get('quantity', '1'),
+        'saved_addresses': saved_addresses,
+        'selected_address': selected_address,
     }, status=400)
 
 
