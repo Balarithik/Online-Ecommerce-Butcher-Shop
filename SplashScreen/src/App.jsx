@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import './App.css';
 import logo from './assets/logo.png';
 
-const MAIN_APP_URL = 'http://127.0.0.1:8000/';
+const MAIN_APP_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 const LOADING_MESSAGES = [
   "Connecting to Lakshmi Broliers Hub...",
