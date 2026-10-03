@@ -1,5 +1,148 @@
 {% extends "base/base.html" %}
-{% block title %}Sign in{% endblock %}
+{% block title %}Sign In - Lakshmi Broliers{% endblock %}
+
 {% block content %}
-<main class="max-w-md mx-auto px-margin-mobile py-xl"><section class="bg-white rounded-2xl border border-outline-variant shadow-sm p-lg md:p-xl"><p class="text-primary font-label-md mb-xs">AramCuts account</p><h1 class="font-headline-lg mb-xs">Welcome back</h1><p class="text-on-surface-variant mb-lg">Sign in for a faster checkout experience.</p><form method="post" class="space-y-md">{% csrf_token %}{% if form.non_field_errors %}<p class="text-red-700">{{ form.non_field_errors.0 }}</p>{% endif %}<div><label for="id_username">Username</label><input id="id_username" name="username" required autofocus class="w-full mt-xs px-md py-3 rounded-lg border border-outline-variant" value="{{ form.username.value|default:'' }}"></div><div><label for="id_password">Password</label><input id="id_password" name="password" type="password" required class="w-full mt-xs px-md py-3 rounded-lg border border-outline-variant"></div><button class="w-full bg-primary text-white py-3 rounded-lg font-medium">Sign in</button></form><p class="mt-lg text-center text-on-surface-variant">New here? <a href="{% url 'customer_signup' %}" class="text-primary font-medium">Create an account</a></p></section></main>
+<main class="min-h-[75vh] flex items-center justify-center px-margin-mobile md:px-margin-desktop py-xl relative">
+  <!-- Soft Crimson Radial Background Glow -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+
+  <div class="max-w-md w-full">
+    <!-- Card Container -->
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] p-6 md:p-8 backdrop-blur-sm">
+      
+      <!-- Top Brand Accent -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">
+          <span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+          Fresh Cuts Daily
+        </div>
+        <span class="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Delivering Now (45m)
+        </span>
+      </div>
+
+      <!-- Heading -->
+      <div class="mb-6">
+        <h1 class="text-2xl md:text-3xl font-bold text-on-surface tracking-tight mb-1">Welcome back</h1>
+        <p class="text-sm text-on-surface-variant">Sign in to track your orders and enjoy fast 1-click checkout.</p>
+      </div>
+
+      <!-- Social / Guest highlight banner -->
+      <div class="mb-6 p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[22px]">rocket_launch</span>
+        </div>
+        <div class="text-xs">
+          <p class="font-semibold text-on-surface">Express Guest Ordering</p>
+          <p class="text-on-surface-variant">You can also order directly from checkout without an account.</p>
+        </div>
+      </div>
+
+      <!-- Form Errors -->
+      {% if form.non_field_errors %}
+      <div class="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-start gap-2.5">
+        <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
+        <span>{{ form.non_field_errors.0 }}</span>
+      </div>
+      {% endif %}
+
+      <!-- Sign In Form -->
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
+
+        <div>
+          <label for="id_username" class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1.5">
+            Username or Mobile Number
+          </label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 material-symbols-outlined text-[20px]">person</span>
+            <input 
+              id="id_username" 
+              name="username" 
+              type="text" 
+              required 
+              autofocus 
+              placeholder="Enter your registered username"
+              value="{{ form.username.value|default:'' }}"
+              class="w-full pl-11 pr-4 py-3 rounded-xl border border-outline-variant bg-surface-bright font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="id_password" class="block text-xs font-semibold text-on-surface uppercase tracking-wider">
+              Password
+            </label>
+            <a href="#" class="text-xs text-primary font-medium hover:underline">Forgot password?</a>
+          </div>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 material-symbols-outlined text-[20px]">lock</span>
+            <input 
+              id="id_password" 
+              name="password" 
+              type="password" 
+              required 
+              placeholder="Enter your password"
+              class="w-full pl-11 pr-11 py-3 rounded-xl border border-outline-variant bg-surface-bright font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+            />
+            <button 
+              type="button" 
+              onclick="togglePasswordVisibility('id_password', this)"
+              class="absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 hover:text-on-surface focus:outline-none"
+              aria-label="Toggle password visibility"
+            >
+              <span class="material-symbols-outlined text-[20px]">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full h-12 mt-2 bg-primary-container hover:bg-primary text-white font-semibold rounded-xl active:scale-[0.99] transition-all shadow-md shadow-primary/20 flex items-center justify-center gap-2"
+        >
+          <span>Sign In</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+      </form>
+
+      <!-- Trust Features -->
+      <div class="mt-6 pt-5 border-t border-outline-variant/50 grid grid-cols-2 gap-2 text-center text-xs text-on-surface-variant">
+        <div class="flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined text-emerald-600 text-[18px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+          <span>100% Safe & Secure</span>
+        </div>
+        <div class="flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined text-primary text-[18px]">speed</span>
+          <span>45-Min Fast Delivery</span>
+        </div>
+      </div>
+
+      <!-- Switch to Sign Up -->
+      <p class="mt-6 text-center text-sm text-on-surface-variant">
+        New to Lakshmi Broliers? 
+        <a href="{% url 'customer_signup' %}" class="text-primary font-semibold hover:underline">
+          Create an Account
+        </a>
+      </p>
+
+    </div>
+  </div>
+</main>
+
+<script>
+function togglePasswordVisibility(inputId, button) {
+  const input = document.getElementById(inputId);
+  const icon = button.querySelector('.material-symbols-outlined');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.textContent = 'visibility_off';
+  } else {
+    input.type = 'password';
+    icon.textContent = 'visibility';
+  }
+}
+</script>
 {% endblock %}

@@ -1,182 +1,143 @@
-<!-- Modal Component -->
-<div class="fixed inset-0 z-50 flex items-center justify-center p-margin-mobile md:p-margin-desktop modal-backdrop" style="background-color: rgba(18, 28, 42, 0.4); backdrop-filter: blur(8px);">
-<div class="bg-surface-container-lowest w-full max-w-4xl w-[90vw] h-[90vw] max-w-[600px] max-h-[600px] rounded-xl shadow-xl flex flex-col overflow-hidden border border-outline-variant">
-<!-- Modal Header -->
-<div class="px-xl py-lg border-b border-outline-variant flex justify-between items-center bg-white">
-<div>
-<h2 class="font-headline-lg text-headline-lg text-on-background">Add New Product</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">Fill in the clinical details for the new poultry inventory item.</p>
-</div>
-<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-95" onclick="closeModal()">
-<span class="material-symbols-outlined text-secondary">close</span>
-</button>
-</div>
-<!-- Modal Body -->
-<form class="flex-1 overflow-y-auto p-xl custom-scrollbar space-y-xl" method="POST" action="{% url 'add_product_modal' %}" enctype="multipart/form-data">
-  {% csrf_token %}
-<div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
-<!-- Left Column: Basic Info -->
-<div class="space-y-lg">
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="name">Product Name</label>
-<input name='name' required class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" id="name" placeholder="e.g., Organic Whole Chicken" type="text"/>
-</div>
-<div class="grid grid-cols-2 gap-md">
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="price">Price</label>
-<div class="relative">
-<span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">₹</span>
-<input name = "price" required class="w-full h-12 pl-xl pr-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md" min="0" step="1" id="price" placeholder="0.00" type="number"/>
-</div>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="category">Category</label>
-<select  class="w-full h-12 px-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md appearance-none" id="category">
-<option value="">Select Category</option>
-<option value="whole">Whole Poultry</option>
-<option value="cuts" selected>Fresh Cuts</option>
-<option value="marinated">Marinated Items</option>
-<option value="specialty">Specialty Meats</option>
-</select>
-</div>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="description">Description</label>
-<textarea name = "description" required class="w-full p-md bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none font-body-md text-body-md resize-none" id="description" placeholder="Describe the origin, weight, and storage instructions..." rows="4"></textarea>
-</div>
-<label class="flex items-center gap-2 font-label-md text-on-surface">
-  <input type="checkbox" name="is_available" checked> Available to order
-</label>
-</div>
-<!-- Right Column: Image Uploads -->
-<div class="space-y-lg">
-<label class="block font-label-md text-label-md text-on-surface-variant">Product Images (Clinical standard photography preferred)</label>
-<div class="grid grid-cols-2 gap-md h-full">
-<!-- Slot 1 (Main) -->
-<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
-    <!-- File input -->
-    <input type="file" name="image1" accept="image/*" required
-           class="absolute inset-0 opacity-0 cursor-pointer"
-           onchange="previewImage(event, 'preview1', 'placeholder1')" />
+<div class="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/50 p-3 backdrop-blur-sm sm:p-6">
+  <section
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="add-product-title"
+    class="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-outline-variant/70 bg-white shadow-2xl shadow-slate-950/20"
+  >
+    <header class="flex shrink-0 items-center justify-between gap-3 border-b border-outline-variant/60 bg-surface-container-low px-4 py-3 sm:px-6 sm:py-4">
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">Product Inventory</p>
+        <h2 id="add-product-title" class="mt-1 text-lg font-extrabold tracking-tight text-on-surface sm:text-xl">Add New Product</h2>
+        <p class="mt-0.5 text-xs leading-relaxed text-on-surface-variant sm:text-sm">Add a fresh product and its details to the Lakshmi Broliers store.</p>
+      </div>
+      <button
+        type="button"
+        aria-label="Close add product"
+        onclick="closeModal()"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-on-surface-variant transition hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </header>
 
-    <!-- Preview image -->
-    <img id="preview1" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+    <form
+      id="product-form"
+      class="min-h-0 flex-1 overflow-y-auto"
+      method="POST"
+      action="{% url 'add_product_modal' %}"
+      data-cloud-name="{{ cloudinary_cloud_name }}"
+      data-upload-preset="{{ cloudinary_upload_preset }}"
+      data-cloudinary-upload
+    >
+      {% csrf_token %}
+      {% if form.errors %}
+      <div class="mx-4 mt-4 rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-xs font-semibold text-red-800 sm:mx-6" role="alert">
+        Please correct the product details and confirm that the main image finished uploading.
+        {{ form.errors }}
+      </div>
+      {% endif %}
+      {% if not cloudinary_upload_preset or not cloudinary_cloud_name %}
+      <div class="mx-4 mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs leading-relaxed text-amber-900 sm:mx-6" role="status">
+        Product image uploads need an unsigned Cloudinary upload preset. Set <code>CLOUDINARY_UPLOAD_PRESET</code> in <code>main/.env</code> after creating the preset in Cloudinary.
+      </div>
+      {% endif %}
+      <div class="grid grid-cols-1 gap-5 p-4 sm:p-6 md:grid-cols-2">
+        <section class="space-y-4">
+          <div>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-primary">Product Information</h3>
+            <p class="mt-1 text-xs text-on-surface-variant">Enter the name, price, and product description.</p>
+          </div>
 
-    <!-- Placeholder icon + label -->
-    <div id="placeholder1" class="flex flex-col items-center justify-center">
-        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
-        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 1 (Main)</span>
-    </div>
-</div>
-<!-- Slot 2 -->
-<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
-    <!-- File input -->
-    <input type="file" name="image2" accept="image/*"
-           class="absolute inset-0 opacity-0 cursor-pointer"
-           onchange="previewImage(event, 'preview2', 'placeholder2')" />
+          <div>
+            <label class="mb-1.5 block text-xs font-bold text-on-surface-variant" for="name">Product Name</label>
+            <input name="name" value="{{ form.name.value|default:'' }}" required class="h-11 w-full rounded-xl border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/20" id="name" placeholder="e.g., Fresh Whole Chicken" type="text"/>
+          </div>
 
-    <!-- Preview image -->
-    <img id="preview2" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="mb-1.5 block text-xs font-bold text-on-surface-variant" for="price">Price</label>
+              <div class="relative">
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-on-surface-variant">₹</span>
+                <input name="price" value="{{ form.price.value|default:'' }}" required class="h-11 w-full rounded-xl border border-outline-variant bg-surface pl-8 pr-3 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/20" min="0" step="0.01" id="price" placeholder="0.00" type="number"/>
+              </div>
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-bold text-on-surface-variant" for="category">Category</label>
+              <select class="h-11 w-full rounded-xl border border-outline-variant bg-white px-3 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" id="category">
+                <option value="">Select Category</option>
+                <option value="whole">Whole Poultry</option>
+                <option value="cuts" selected>Fresh Cuts</option>
+                <option value="marinated">Marinated Items</option>
+                <option value="specialty">Specialty Meats</option>
+              </select>
+            </div>
+          </div>
 
-    <!-- Placeholder icon + label -->
-    <div id="placeholder2" class="flex flex-col items-center justify-center">
-        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
-        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 2</span>
-    </div>
-</div>
-<!-- Slot 3 -->
-<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
-    <!-- File input -->
-    <input type="file" name="image3" accept="image/*"
-           class="absolute inset-0 opacity-0 cursor-pointer"
-           onchange="previewImage(event, 'preview3', 'placeholder3')" />
+          <div>
+            <label class="mb-1.5 block text-xs font-bold text-on-surface-variant" for="description">Description</label>
+            <textarea name="description" required class="min-h-28 w-full resize-y rounded-xl border border-outline-variant bg-surface p-3 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/20" id="description" placeholder="Describe the product and how it is prepared..." rows="4">{{ form.description.value|default:'' }}</textarea>
+          </div>
 
-    <!-- Preview image -->
-    <img id="preview3" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+          <label class="flex min-h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-outline-variant/60 bg-surface px-3 text-sm font-semibold text-on-surface">
+            <input type="checkbox" name="is_available" {% if form.is_available.value %}checked{% endif %} class="rounded border-outline-variant text-primary focus:ring-primary/30"/>
+            Available to order
+          </label>
+        </section>
 
-    <!-- Placeholder icon + label -->
-    <div id="placeholder3" class="flex flex-col items-center justify-center">
-        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
-        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 3</span>
-    </div>
-</div>
-<!-- Slot 4 -->
-<div class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center cursor-pointer group relative overflow-hidden">
-    <!-- File input -->
-    <input type="file" name="image4" accept="image/*"
-           class="absolute inset-0 opacity-0 cursor-pointer"
-           onchange="previewImage(event, 'preview4', 'placeholder4')" />
+        <section class="space-y-4">
+          <div>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-primary">Product Images</h3>
+            <p class="mt-1 text-xs text-on-surface-variant">The main product image is required. Other images are optional.</p>
+          </div>
 
-    <!-- Preview image -->
-    <img id="preview4" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden" />
+          <div class="grid grid-cols-2 gap-3">
+            {% for upload in image_uploads %}
+            <label class="group relative flex aspect-square cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-outline-variant bg-surface transition hover:border-primary hover:bg-primary/5">
+              <input
+                type="file"
+                data-cloudinary-image
+                data-image-number="{{ upload.number }}"
+                accept="image/*"
+                {% if upload.number == 1 and not upload.public_id %}required{% endif %}
+                {% if not cloudinary_upload_preset or not cloudinary_cloud_name %}disabled{% endif %}
+                class="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+                aria-label="Upload product image {{ upload.number }}"
+              />
+              <input type="hidden" name="image{{ upload.number }}_public_id" id="image{{ upload.number }}-public-id" value="{{ upload.public_id|default:'' }}"/>
+              <img id="preview{{ upload.number }}" alt="" {% if upload.image_url %}src="{{ upload.image_url }}"{% endif %} class="absolute inset-0 h-full w-full object-cover {% if not upload.image_url %}hidden{% endif %}"/>
+              <span id="placeholder{{ upload.number }}" class="pointer-events-none flex flex-col items-center gap-2 px-2 text-center {% if upload.image_url %}hidden{% endif %}">
+                <span class="material-symbols-outlined text-2xl text-on-surface-variant transition group-hover:text-primary">add_a_photo</span>
+                <span class="text-[11px] font-bold text-on-surface-variant">{% if upload.number == 1 %}Main Image (Required){% else %}Image {{ upload.number }} (Optional){% endif %}</span>
+              </span>
+              <span id="upload-status-{{ upload.number }}" class="absolute bottom-1 left-1 right-1 z-20 rounded bg-white/90 px-1 text-center text-[9px] font-semibold text-primary" role="status">{% if upload.public_id %}Image uploaded{% endif %}</span>
+            </label>
+            {% endfor %}
+          </div>
 
-    <!-- Placeholder icon + label -->
-    <div id="placeholder4" class="flex flex-col items-center justify-center">
-        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-xs">add_a_photo</span>
-        <span class="font-label-sm text-label-sm text-on-surface-variant">Image 4</span>
-    </div>
-</div>
-</div>
-</div>
-</div>
-<!-- Hygiene Badge Preview -->
-<div class="bg-tertiary-container/5 border border-tertiary/20 p-md rounded-lg flex items-center gap-md">
-<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">verified</span>
-<div>
-<p class="font-label-md text-label-md text-tertiary font-bold">Standard Safety Protocol</p>
-<p class="font-label-sm text-label-sm text-on-tertiary-fixed-variant">Items added via this portal are automatically tagged with the 'Freshness Guaranteed' clinical badge.</p>
-</div>
-</div>
+          <div class="flex items-start gap-2.5 rounded-xl border border-primary/10 bg-primary/5 px-3.5 py-3">
+            <span class="material-symbols-outlined mt-0.5 text-[18px] text-primary">verified</span>
+            <p class="text-xs leading-relaxed text-on-surface-variant">Use clear product photos so customers can see what they are ordering.</p>
+          </div>
+        </section>
+      </div>
 
-<!-- Modal Footer -->
-<div class="px-xl py-lg border-t border-outline-variant flex justify-end items-center gap-md bg-surface-container-lowest">
-<button class="px-xl h-12 rounded-lg border border-secondary text-secondary font-label-md hover:bg-surface-container-high transition-all active:scale-95" onclick="closeModal()"  type="button">
+      <footer class="sticky bottom-0 flex flex-col-reverse gap-2 border-t border-outline-variant/60 bg-white/95 p-3 backdrop-blur sm:flex-row sm:justify-end sm:px-6">
+        <button type="button" onclick="closeModal()" class="inline-flex min-h-10 items-center justify-center rounded-xl px-4 text-xs font-bold text-on-surface-variant transition hover:bg-surface-container-low hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
           Cancel
         </button>
-<button class="px-xl h-12 rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary-container shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center gap-sm" type="submit">
-<span class="material-symbols-outlined text-body-md">save</span>
+        <button type="submit" {% if not cloudinary_upload_preset or not cloudinary_cloud_name %}disabled{% endif %} class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-bold text-white shadow-sm transition hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+          <span class="material-symbols-outlined text-[16px]">save</span>
           Save Product
         </button>
-</div>
-</form>
-</div>
+      </footer>
+    </form>
+  </section>
 </div>
 
 <script>
-    // Micro-interaction for input focus
-    (function() {
-      const inputs = document.querySelectorAll('input, select, textarea');
-      inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-          input.parentElement.classList.add('scale-[1.01]');
-        });
-        input.addEventListener('blur', () => {
-          input.parentElement.classList.remove('scale-[1.01]');
-        });
-      });
-    })();
-
-    function previewImage(event, previewId, placeholderId) {
-      const file = event.target.files[0];
-      const preview = document.getElementById(previewId);
-      const placeholder = document.getElementById(placeholderId);
-
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          preview.src = e.target.result;
-          preview.classList.remove("hidden");
-          placeholder.classList.add("hidden");
-        };
-        reader.readAsDataURL(file);
-      } else {
-        preview.src = "";
-        preview.classList.add("hidden");
-        placeholder.classList.remove("hidden");
-      }
-    }
-
-    function closeModal() {
-      document.getElementById("add_product_modal-container").innerHTML = "";
-    }
+  function closeModal() {
+    document.getElementById("global-modal-container").innerHTML = "";
+    document.getElementById("add_product_modal-container").innerHTML = "";
+  }
 </script>

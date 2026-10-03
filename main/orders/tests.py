@@ -51,6 +51,14 @@ class OrderTestCase(TestCase):
         form = OrderForm(data=data)
         self.assertFalse(form.is_valid())
 
+    def test_authenticated_customer_can_view_orders(self):
+        self.client.force_login(self.normal_user)
+
+        response = self.client.get(reverse('my_orders'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Lakshmi Broliers Order Center')
+
     def test_order_price_tamper_prevention(self):
         # Test server-side price calculation and tamper prevention
         client = Client()
@@ -70,6 +78,33 @@ class OrderTestCase(TestCase):
         order = Order.objects.latest('order_id')
         self.assertEqual(order.price, Decimal('500.00'))
         self.assertEqual(order.product_name, "Test Chicken")
+
+    def test_order_saves_customer_shared_gps_location(self):
+        response = Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+            'name': 'Bala Test',
+            'mobile': '7397511387',
+            'address': '9/427 Kamarajar Nagar, Uchipuli',
+            'quantity': '0.25',
+            'latitude': '9.310044',
+            'longitude': '78.994671',
+        })
+        self.assertEqual(response.status_code, 200)
+        order = Order.objects.latest('order_id')
+        self.assertEqual(order.latitude, Decimal('9.310044'))
+        self.assertEqual(order.longitude, Decimal('78.994671'))
+        self.assertContains(response, 'Open shared GPS pin in Maps')
+
+    def test_order_rejects_invalid_gps_coordinates(self):
+        response = Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+            'name': 'Bala Test',
+            'mobile': '7397511387',
+            'address': 'Test address',
+            'quantity': '1',
+            'latitude': '91',
+            'longitude': '78.994671',
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Order.objects.exists())
 
     def test_admin_permissions_superuser_only(self):
         # Test that administrative views are restricted to superusers only

@@ -1,119 +1,254 @@
 {% extends "base/base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Order Confirmed #{{ order_id }} - Lakshmi Broliers{% endblock %}
 
 {% block content %}
 <style>
-    .confetti {
-        position: fixed;
-        width: 8px;
-        height: 12px;
-        pointer-events: none;
-        z-index: 9999;
-        border-radius: 1px;
-    }
+  .confetti {
+    position: fixed;
+    width: 8px;
+    height: 12px;
+    pointer-events: none;
+    z-index: 9999;
+    border-radius: 2px;
+  }
 </style>
 
-<!-- Main Content -->
-<main class="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-xl relative overflow-hidden">
-<!-- Background Atmospheric Element -->
-<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -z-10"></div>
-<div class="max-w-xl w-full text-center space-y-lg bg-surface-container-lowest p-xl rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant">
-<!-- Success Illustration Area -->
-<div class="relative inline-block mb-md">
-<div class="w-24 h-24 bg-tertiary-container/10 rounded-full flex items-center justify-center mx-auto">
-<span class="material-symbols-outlined text-[48px] text-tertiary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-</div>
-<!-- Animated decorative circles -->
-<div class="absolute inset-0 animate-ping rounded-full border-2 border-tertiary/20 scale-125"></div>
-</div>
-<!-- Content -->
-<div class="space-y-sm">
-<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Order Placed Successfully!</h1>
-<p class="font-body-md text-body-md text-on-surface-variant max-w-md mx-auto">Your order has been received. We will contact you shortly to confirm.</p>
-</div>
-<!-- Order ID Card -->
-<div class="bg-surface-container-low border border-outline-variant rounded-lg p-md inline-flex flex-col items-center gap-xs">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Order ID </span>
-<span class="font-headline-md text-headline-md text-primary font-bold">{{ order_id }}</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Name</span>
-<span class="font-headline-md text-headline-md text-primary font-bold">{{ name }} </span>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Mobile</span>
-<span class="font-headline-md text-headline-md text-primary font-bold">{{ mobile }}</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Address</span>
-<span class="font-headline-md text-headline-md text-primary font-bold">{{ location }}</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Quantity</span>
-<span class="font-headline-md text-headline-md text-primary font-bold">{{ quantity }}</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Price</span>
-<span class="font-headline-md text-headline-md text-primary font-bold">{{ price }}</span>
-</div>
-<!-- Estimated Timeline -->
-<div class="flex flex-col gap-sm py-md">
-<div class="flex items-center gap-md text-left">
-<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-white text-[18px]">restaurant</span>
-</div>
-<div>
-<p class="font-label-md text-label-md text-on-surface">Preparation</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant">Selected butcher preparing your fresh cuts</p>
-</div>
-</div>
-<div class="w-0.5 h-6 bg-outline-variant ml-4"></div>
-<div class="flex items-center gap-md text-left">
-<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-on-surface-variant text-[18px]">delivery_dining</span>
-</div>
-<div>
-<p class="font-label-md text-label-md text-on-surface-variant opacity-60">Delivery</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant opacity-60">Hygienically packed and on its way</p>
-</div>
-</div>
-</div>
-<!-- Action Buttons -->
-<div class="flex flex-col gap-md pt-lg">
-<button class="bg-primary-container text-white h-[48px] rounded-lg font-label-md text-label-md hover:bg-primary transition-all active:scale-95 flex items-center justify-center gap-sm shadow-md" onclick="window.location.href='/'">
-<span class="material-symbols-outlined text-[20px]">shopping_basket</span>
-                    Continue Shopping
-                </button>
-<button class="bg-white border border-on-surface h-[48px] rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all active:scale-95 flex items-center justify-center gap-sm">
-<span class="material-symbols-outlined text-[20px] text-[#25D366]">chat</span>
-                    Chat on WhatsApp
-                </button>
-</div>
-</div>
+<main class="max-w-[900px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 relative overflow-hidden">
+  
+  <!-- Glowing Background Accent -->
+  <div class="absolute top-12 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+
+  <div class="space-y-8">
+    
+    <!-- Top Success Banner -->
+    <div class="bg-surface-container-lowest rounded-3xl border border-outline-variant/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] p-6 md:p-8 text-center relative overflow-hidden">
+      
+      <!-- Celebratory Icon -->
+      <div class="relative inline-block mb-4">
+        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+          <span class="material-symbols-outlined text-[44px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+        </div>
+        <div class="absolute inset-0 animate-ping rounded-full border-2 border-emerald-400 opacity-40"></div>
+      </div>
+
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-2">
+        <span class="material-symbols-outlined text-[15px]">electric_bolt</span>
+        Order Placed Successfully
+      </div>
+
+      <h1 class="text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight">Thank you, {{ name }}!</h1>
+      <p class="text-xs md:text-sm text-on-surface-variant max-w-md mx-auto mt-1">
+        We have received your order <strong>#{{ order_id }}</strong> and our master butcher is already preparing your fresh cut.
+      </p>
+
+      <!-- Estimated Arrival Banner (Licious style) -->
+      <div class="mt-6 max-w-md mx-auto p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center">
+            <span class="material-symbols-outlined text-[22px]">timer</span>
+          </div>
+          <div class="text-left">
+            <span class="text-[11px] font-bold text-on-surface-variant uppercase">Estimated Delivery Time</span>
+            <p class="text-sm font-extrabold text-primary" id="countdown_timer">Today in ~45 Minutes</p>
+          </div>
+        </div>
+        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase">On Schedule</span>
+      </div>
+
+    </div>
+
+    <!-- Live Butchery & Delivery Tracker Timeline -->
+    <div class="bg-surface-container-lowest rounded-3xl border border-outline-variant/60 shadow-sm p-6 md:p-8">
+      <div class="flex items-center justify-between pb-4 border-b border-outline-variant/40 mb-6">
+        <div>
+          <h2 class="font-bold text-base text-on-surface">Live Order Progress</h2>
+          <p class="text-xs text-on-surface-variant">Order updates from Lakshmi Broliers</p>
+        </div>
+        <span class="text-xs font-bold text-primary flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Live Tracking
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+        
+        <!-- Step 1: Confirmed -->
+        <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex md:flex-col items-center md:items-start gap-3">
+          <div class="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">done</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-emerald-900">Order Confirmed</h4>
+            <p class="text-[11px] text-emerald-700">Received & logged in system</p>
+          </div>
+        </div>
+
+        <!-- Step 2: Butchery -->
+        <div class="p-3.5 rounded-2xl bg-primary/10 border-2 border-primary flex md:flex-col items-center md:items-start gap-3">
+          <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shrink-0 animate-pulse">
+            <span class="material-symbols-outlined text-[20px]">restaurant</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-primary">Butcher Cutting</h4>
+            <p class="text-[11px] text-on-surface-variant">{{ cut_preference|default:'Curry Cut' }} in progress</p>
+          </div>
+        </div>
+
+        <!-- Step 3: Packing -->
+        <div class="p-3.5 rounded-2xl bg-surface-container-low border border-outline-variant/50 flex md:flex-col items-center md:items-start gap-3 opacity-75">
+          <div class="w-9 h-9 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-sm shrink-0">
+            <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-on-surface">Vacuum Packing</h4>
+            <p class="text-[11px] text-on-surface-variant">Dispatched promptly after cutting</p>
+          </div>
+        </div>
+
+        <!-- Step 4: Doorstep Drop -->
+        <div class="p-3.5 rounded-2xl bg-surface-container-low border border-outline-variant/50 flex md:flex-col items-center md:items-start gap-3 opacity-75">
+          <div class="w-9 h-9 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-sm shrink-0">
+            <span class="material-symbols-outlined text-[20px]">electric_moped</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-on-surface">Out for Delivery</h4>
+            <p class="text-[11px] text-on-surface-variant">Doorstep drop in 45-60 min</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Order Breakdown & Customer Details -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Box 1: Delivery Details -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-5 shadow-sm space-y-3">
+        <h3 class="font-bold text-sm text-on-surface flex items-center gap-2 pb-2 border-b border-outline-variant/40">
+          <span class="material-symbols-outlined text-primary text-[18px]">home_pin</span>
+          Delivery Address & Instructions
+        </h3>
+        
+        <div class="text-xs space-y-1.5 text-on-surface-variant">
+          <p class="font-bold text-on-surface">{{ name }} (📞 +91 {{ mobile }})</p>
+          <p class="leading-relaxed">{{ location }}</p>
+          {% if order.latitude is not None and order.longitude is not None %}
+          <a
+            href="https://www.google.com/maps?q={{ order.latitude }},{{ order.longitude }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1 font-bold text-primary hover:underline"
+          >
+            <span class="material-symbols-outlined text-[16px]">location_on</span>
+            Open shared GPS pin in Maps
+          </a>
+          {% endif %}
+          <div class="pt-2">
+            <span class="font-semibold text-on-surface">Selected Slot: </span>
+            <span class="text-primary font-bold">{{ delivery_slot|default:'Express Delivery (45-60 Mins)' }}</span>
+          </div>
+          {% if instructions %}
+          <div class="p-2 bg-surface-container-low rounded-lg border border-outline-variant/30 text-[11px]">
+            <span class="font-bold text-on-surface">Notes: </span>{{ instructions }}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Box 2: Product & Payment Breakdown -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-5 shadow-sm space-y-3">
+        <h3 class="font-bold text-sm text-on-surface flex items-center gap-2 pb-2 border-b border-outline-variant/40">
+          <span class="material-symbols-outlined text-primary text-[18px]">receipt</span>
+          Item Details & Payment
+        </h3>
+
+        <div class="text-xs space-y-2 text-on-surface-variant">
+          <div class="flex justify-between font-semibold text-on-surface">
+            <span>{{ product.name|default:'Fresh Chicken Cut' }} ({{ quantity }} kg)</span>
+            <span>₹{{ price }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Cut Style</span>
+            <span class="font-semibold text-primary">{{ cut_preference|default:'Curry Cut (Medium)' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Payment Mode</span>
+            <span class="font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">{{ payment_method|default:'Cash on Delivery' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Delivery Fee</span>
+            <span class="font-bold text-emerald-700">FREE</span>
+          </div>
+          <div class="flex justify-between font-extrabold text-sm text-on-surface pt-2 border-t border-outline-variant/40">
+            <span>Total Amount</span>
+            <span class="text-primary text-base">₹{{ price }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Action Navigation -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+      <a 
+        href="{% url 'my_orders' %}" 
+        class="w-full sm:w-auto px-6 py-3 rounded-xl bg-primary-container hover:bg-primary text-white font-bold text-xs md:text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-primary/20"
+      >
+        <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+        View in My Orders
+      </a>
+
+      <a 
+        href="https://wa.me/919876543210?text=Hi%20Lakshmi%20Broliers,%20I%20have%20placed%20Order%20%23{{ order_id }}%20for%20{{ name }}."
+        target="_blank"
+        class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs md:text-sm flex items-center justify-center gap-2 transition-all shadow-sm"
+      >
+        <span class="material-symbols-outlined text-[18px]">chat</span>
+        WhatsApp Order Updates
+      </a>
+
+      <a 
+        href="{% url 'products' %}" 
+        class="w-full sm:w-auto px-6 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant text-on-surface font-semibold text-xs md:text-sm flex items-center justify-center gap-2 transition-all"
+      >
+        <span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+        Continue Shopping
+      </a>
+    </div>
+
+  </div>
 </main>
 
 <script>
-        // Simple confetti effect for celebration
-        function createConfetti() {
-            const container = document.body;
-            const colors = ['#8f000d', '#b22222', '#10B981', '#FFD700'];
-            
-            for (let i = 0; i < 30; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = -10 + 'px';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-                
-                container.appendChild(confetti);
+  // Confetti effect
+  function launchConfetti() {
+    const colors = ['#8f000d', '#b22222', '#10B981', '#FFD700', '#3B82F6'];
+    for (let i = 0; i < 40; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.top = '-10px';
+      el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      el.style.transform = `rotate(${Math.random() * 360}deg)`;
+      document.body.appendChild(el);
 
-                const animation = confetti.animate([
-                    { transform: `translate3d(0, 0, 0) rotate(0deg)`, opacity: 1 },
-                    { transform: `translate3d(${(Math.random() - 0.5) * 200}px, 100vh, 0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
-                ], {
-                    duration: 2000 + Math.random() * 3000,
-                    easing: 'cubic-bezier(0, .9, .57, 1)'
-                });
+      el.animate([
+        { transform: 'translate3d(0, 0, 0) rotate(0deg)', opacity: 1 },
+        { transform: `translate3d(${(Math.random() - 0.5) * 300}px, 100vh, 0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+      ], {
+        duration: 2500 + Math.random() * 2000,
+        easing: 'cubic-bezier(0, .9, .57, 1)'
+      }).onfinish = () => el.remove();
+    }
+  }
 
-                animation.onfinish = () => confetti.remove();
-            }
-        }
-
-        // Trigger confetti on load
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(createConfetti, 300);
-        });
-    </script>
-</body></html>
+  // Clear client cart when order successfully placed
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.AramCart) {
+      localStorage.removeItem(AramCart.storageKey);
+      AramCart.render();
+    }
+    setTimeout(launchConfetti, 250);
+  });
+</script>
 {% endblock %}

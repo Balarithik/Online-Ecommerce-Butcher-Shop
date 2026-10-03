@@ -1,189 +1,605 @@
 {% extends "base/base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Checkout - Lakshmi Broliers{% endblock %}
 
 {% block content %}
+<main class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+  
+  <!-- Checkout Header & Step Progress -->
+  <div class="mb-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-outline-variant/60 pb-6">
+      <div>
+        <div class="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider mb-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          Express Butcher Checkout
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight">Delivery & Payment Details</h1>
+        <p class="text-xs md:text-sm text-on-surface-variant mt-1">Direct from our hygienic hub to your kitchen in 45-60 minutes.</p>
+      </div>
 
-<body class="bg-background text-on-surface min-h-screen">
+      <!-- Trust Badges -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+          <span class="material-symbols-outlined text-[16px]">verified</span>
+          100% Fresh & Halal
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
+          <span class="material-symbols-outlined text-[16px]">ac_unit</span>
+          Cut fresh to order
+        </div>
+      </div>
+    </div>
+  </div>
 
-<main class="px-margin-mobile py-lg checkout-container pb-xl">
-<!-- Header Section -->
-<section class="mb-xl">
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile mb-xs">Checkout</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">Complete your order as a guest. No account required.</p>
-</section>
-<form class="flex flex-col gap-xl" id="checkoutForm" method="POST" action="{% url 'Orders' product.id %}">
-{% csrf_token %}
-<!-- Delivery Details Section -->
-<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm">
-<div class="flex items-center gap-sm mb-md text-primary">
-<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
-<h3 class="font-headline-md text-headline-md">Delivery Details</h3>
-</div>
-<div class="space-y-md">
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant" for='{{ form.name.id_for_label }}'>Full Name</label>
-<input name="name" value="{{ form.name.value|default:'' }}" class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="e.g. John Doe" required="" type="text"/>
-{% if form.name.errors %}
-<p class="text-red-600 text-xs font-medium mt-1">{{ form.name.errors.0 }}</p>
-{% endif %}
-</div>
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant" for="{{ form.mobile.id_for_label }}">Mobile Number</label>
-<div class="relative">
-<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">+91</span>
-<input name="mobile" id="mobile" type="tel" placeholder="00000 00000" maxlength="10" required value="{{ form.mobile.value|default:'' }}" class="input-focus-effect w-full h-12 pl-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" />
-</div>
-{% if form.mobile.errors %}
-<p class="text-red-600 text-xs font-medium mt-1">{{ form.mobile.errors.0 }}</p>
-{% endif %}
-</div>
-<div class="flex flex-col gap-xs" name="address">
-<label class="font-label-md text-label-md text-on-surface-variant" for="{{ form.address.id_for_label }}">Delivery Address</label>
-<input name="address" value="{{ form.address.value|default:'' }}" class="input-focus-effect w-full p-md rounded-lg border border-outline-variant bg-surface-bright font-body-md resize-none" placeholder="Apartment, Street, Area, Landmark" required="" type="text"/>
-{% if form.address.errors %}
-<p class="text-red-600 text-xs font-medium mt-1">{{ form.address.errors.0 }}</p>
-{% endif %}
-</div>
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant" for="{{ form.instructions.id_for_label }}">Special Instructions (Optional)</label>
-<input class="input-focus-effect w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-bright font-body-md" placeholder="e.g. Ring the bell twice" name="instructions" value="{{ form.instructions.value|default:'' }}" type="text"/>
-{% if form.instructions.errors %}
-<p class="text-red-600 text-xs font-medium mt-1">{{ form.instructions.errors.0 }}</p>
-{% endif %}
-</div>
-</div>
-</div>
-<!-- Payment Options Section -->
-<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm">
-<div class="flex items-center gap-sm mb-md text-primary">
-<span class="material-symbols-outlined" data-icon="payments">payments</span>
-<h3 class="font-headline-md text-headline-md">Payment Method</h3>
-</div>
-<div class="flex flex-col gap-sm">
-<!-- COD (Default) -->
-<label class="relative flex items-center p-md border-2 border-primary-container bg-surface-container-low rounded-xl cursor-pointer transition-all duration-200">
-<input checked="" class="w-5 h-5 text-primary border-outline focus:ring-primary" name="payment" type="radio" value="cod"/>
-<div class="ml-md">
-<span class="block font-label-md text-label-md text-on-surface">Cash on Delivery</span>
-<span class="block font-label-sm text-label-sm text-on-surface-variant">Pay when you receive the order</span>
-</div>
-<span class="material-symbols-outlined ml-auto text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-</label>
-<!-- UPI
-<label class="relative flex items-center p-md border border-outline-variant hover:border-primary-container bg-surface-bright rounded-xl cursor-pointer transition-all duration-200">
-<input class="w-5 h-5 text-primary border-outline focus:ring-primary" name="payment" type="radio" value="upi"/>
-<div class="ml-md">
-<span class="block font-label-md text-label-md text-on-surface">UPI Payment</span>
-<span class="block font-label-sm text-label-sm text-on-surface-variant">Google Pay, PhonePe, Paytm</span>
-</div>
-<span class="material-symbols-outlined ml-auto text-on-surface-variant" data-icon="qr_code_2">qr_code_2</span>
-</label>
-</div>
-</div>-->
-<!-- Order Summary Section -->
-<div class="bg-surface-container-highest/30 p-lg rounded-xl border border-outline-variant">
-<div class="flex items-center justify-between mb-md">
-<h3 class="font-headline-md text-headline-md text-on-surface">Order Summary</h3>
-<span class="bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm px-sm py-1 rounded-full flex items-center gap-xs">
-<span class="material-symbols-outlined text-[16px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
-                        Freshness Guaranteed
-                    </span>
-</div>
-<div class="space-y-sm mb-lg">
-<!-- Product Item 1 -->
-<div class="flex items-center justify-between py-xs border-b border-outline-variant/30">
-<div class="flex items-center gap-sm">
-<div class="w-12 h-12 rounded-lg bg-surface-variant overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A macro photograph of premium raw chicken breasts placed on a clinical white butcher's table. The lighting is bright and airy, reflecting a professional food safety environment. The chicken looks exceptionally fresh with a natural pink hue, highlighting the high-quality corporate meat shop aesthetic." src="{{ product.image1.url }}"/>
-</div>
-<div>
-<p class="font-label-md text-label-md">{{ product.name }}</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant">{{ qty }} Kg × ₹{{ product.price|floatformat:2 }}</p>
-</div>
-</div>
-<p class="font-label-md text-label-md">₹{% widthratio qty 1 product.price %}  </p>
-</div>
+  <!-- Main Checkout Grid -->
+  <form id="checkoutForm" method="POST" action="{% url 'Orders' product.id %}" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    {% csrf_token %}
 
-</div>
-<!-- Totals -->
-<div class="space-y-xs">
-<div class="flex justify-between font-label-md text-label-md text-on-surface-variant">
-<span>Subtotal</span>
-<span>₹{% widthratio qty 1 product.price %}</span>
-</div>
-<div class="flex justify-between font-label-md text-label-md text-on-surface-variant">
-<span>Delivery Fee</span>
-<span class="text-tertiary">FREE</span>
-</div>
-<div class="flex justify-between font-headline-md text-headline-md text-on-surface pt-sm border-t border-outline-variant mt-sm">
-<span>Total Payable</span>
-<span class="text-primary">₹{% widthratio qty 1 product.price %}</span>
-<input type="hidden" name="product_id" value="{{ product.id }}">
-<input type="hidden" name="quantity" value="{{ qty }}">
-<input type="hidden" name="price" value="{% widthratio qty 1 product.price %}">
-</div>
-</div>
-</div>
-<!-- Place Order Button -->
-<button class="w-full h-[56px] bg-primary-container text-on-primary hover:bg-primary transition-all duration-200 active:scale-95 rounded-xl font-headline-md text-headline-md shadow-lg shadow-primary-container/20 flex items-center justify-center gap-md" type="submit">
-                Place Order
-                <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
-</button>
-<p class="text-center font-label-sm text-label-sm text-on-surface-variant px-md">
-                By placing this order, you agree to AramCuts's 
-                <a class="text-primary underline" href="#">Terms of Service</a> and 
-                <a class="text-primary underline" href="#">Privacy Policy</a>.
-            </p>
-</form>
+    <!-- Hidden standard fields -->
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    <input type="hidden" id="hidden_quantity" name="quantity" value="{{ qty }}">
+    <input type="hidden" id="hidden_address" name="address" value="{{ form.address.value|default:'' }}">
+    <input type="hidden" id="location_latitude" name="latitude" value="{{ form.latitude.value|default:'' }}">
+    <input type="hidden" id="location_longitude" name="longitude" value="{{ form.longitude.value|default:'' }}">
+    <input type="hidden" id="selected_slot_input" name="delivery_slot" value="Express Delivery (45-60 Mins)">
+    <input type="hidden" id="selected_cut_input" name="cut_preference" value="Curry Cut (Medium)">
+
+    <!-- Left Column: Form Details (7 cols) -->
+    <div class="lg:col-span-7 space-y-6">
+
+      <!-- SECTION 1: Customer Contact Details -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-5 md:p-6 shadow-sm">
+        <div class="flex items-center gap-2.5 text-primary mb-4 pb-3 border-b border-outline-variant/40">
+          <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">person_pin</span>
+          </div>
+          <div>
+            <h2 class="font-bold text-base text-on-surface">1. Contact Information</h2>
+            <p class="text-xs text-on-surface-variant">We will send live delivery SMS & WhatsApp updates</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1.5">
+              Full Name *
+            </label>
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 material-symbols-outlined text-[20px]">badge</span>
+              <input 
+                name="name" 
+                id="id_name"
+                value="{{ form.name.value|default:'' }}" 
+                class="w-full pl-11 pr-4 py-3 rounded-xl border border-outline-variant bg-surface-bright font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                placeholder="e.g. John Doe" 
+                required 
+                type="text"
+              />
+            </div>
+            {% if form.name.errors %}
+            <p class="text-red-600 text-xs font-medium mt-1">{{ form.name.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1.5">
+              Mobile Number (10 Digits) *
+            </label>
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-xs text-on-surface-variant">+91</span>
+              <input 
+                name="mobile" 
+                id="id_mobile" 
+                type="tel" 
+                placeholder="9876543210" 
+                maxlength="10" 
+                required 
+                value="{{ form.mobile.value|default:'' }}" 
+                class="w-full pl-12 pr-4 py-3 rounded-xl border border-outline-variant bg-surface-bright font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+              />
+            </div>
+            {% if form.mobile.errors %}
+            <p class="text-red-600 text-xs font-medium mt-1">{{ form.mobile.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Complete Delivery Address (Licious Style) -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-5 md:p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-outline-variant/40">
+          <div class="flex items-center gap-2.5 text-primary">
+            <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">location_on</span>
+            </div>
+            <div>
+              <h2 class="font-bold text-base text-on-surface">2. Delivery Address</h2>
+              <p class="text-xs text-on-surface-variant">Fast doorstep drop across Uchipuli & nearby areas</p>
+            </div>
+          </div>
+
+          <!-- Address Type Selector -->
+          <div class="inline-flex rounded-xl bg-surface-container-low p-1 border border-outline-variant/50" id="addressTypePills">
+            <button type="button" onclick="setAddressTag('Home', this)" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-white text-primary shadow-sm">🏠 Home</button>
+            <button type="button" onclick="setAddressTag('Work', this)" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-on-surface-variant hover:text-on-surface">🏢 Work</button>
+            <button type="button" onclick="setAddressTag('Other', this)" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-on-surface-variant hover:text-on-surface">📍 Other</button>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1">
+                House / Flat / Door No. *
+              </label>
+              <input 
+                type="text" 
+                id="addr_house" 
+                placeholder="e.g. Flat 3B, Door 12/4" 
+                class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                oninput="syncFullAddress()"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1">
+                Apartment / Building / Street *
+              </label>
+              <input 
+                type="text" 
+                id="addr_street" 
+                placeholder="e.g. Green Valley Street, Main Rd" 
+                class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                oninput="syncFullAddress()"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1">
+                Area / Locality *
+              </label>
+              <input 
+                type="text" 
+                id="addr_area" 
+                value="Uchipuli" 
+                placeholder="e.g. Uchipuli / Vedalai" 
+                class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                oninput="syncFullAddress()"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1">
+                Landmark
+              </label>
+              <input 
+                type="text" 
+                id="addr_landmark" 
+                placeholder="e.g. Near Bus Stand / Temple" 
+                class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                oninput="syncFullAddress()"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1">
+                Pincode
+              </label>
+              <input 
+                type="text" 
+                id="addr_pincode" 
+                value="623534" 
+                placeholder="e.g. 623534" 
+                class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                oninput="syncFullAddress()"
+              />
+            </div>
+          </div>
+
+          <!-- Quick Preview of formatted address -->
+          <div class="mt-2 p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/40 flex items-start gap-2">
+            <span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">pin_drop</span>
+            <div class="text-[11px] leading-relaxed text-on-surface-variant">
+              <span class="font-bold text-on-surface">Delivering to: </span>
+              <span id="address_preview_text">Enter your door and street details above.</span>
+            </div>
+            <div class="rounded-xl border border-outline-variant/50 bg-white p-3">
+              <button
+                type="button"
+                id="shareLocationButton"
+                onclick="shareCurrentLocation()"
+                class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-primary px-4 py-2 text-sm font-bold text-primary transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                <span class="material-symbols-outlined text-[18px]">my_location</span>
+                Share my current location
+              </button>
+              <p id="location_share_status" class="mt-2 text-xs text-on-surface-variant" role="status" aria-live="polite">
+                Optional: share a one-time GPS pin to help the delivery rider find you.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: Delivery Slot & Butcher Cut Preference (Licious Feature) -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-5 md:p-6 shadow-sm">
+        <div class="flex items-center gap-2.5 text-primary mb-4 pb-3 border-b border-outline-variant/40">
+          <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">electric_moped</span>
+          </div>
+          <div>
+            <h2 class="font-bold text-base text-on-surface">3. Delivery Slot & Butcher Customization</h2>
+            <p class="text-xs text-on-surface-variant">Your order is cut fresh and dispatched as soon as preparation is complete.</p>
+          </div>
+        </div>
+
+        <!-- Slot Options -->
+        <div class="mb-5">
+          <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-2.5">
+            Delivery
+          </label>
+          <div class="grid grid-cols-1 gap-3" id="slotSelector">
+            
+            <!-- Express Slot (Selected by default) -->
+            <div 
+              onclick="selectSlot('Express Delivery (45-60 Mins)', this)"
+              class="slot-card active p-3 rounded-xl border-2 border-primary bg-primary/5 cursor-pointer transition-all flex items-start justify-between"
+            >
+              <div class="flex items-start gap-2.5">
+                <span class="material-symbols-outlined text-primary text-[22px] mt-0.5" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-bold text-xs text-on-surface">Express Delivery</span>
+                    <span class="bg-emerald-100 text-emerald-800 text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase">Fastest</span>
+                  </div>
+                  <p class="text-[11px] text-primary font-semibold mt-0.5">Cut fresh and dispatched immediately · arrives in 45-60 minutes</p>
+                </div>
+              </div>
+              <span class="material-symbols-outlined text-primary text-[18px] slot-radio" style="font-variation-settings: 'FILL' 1;">radio_button_checked</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Butchery Cut Preference -->
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-2">
+            Butchery & Cut Style
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="cutSelector">
+            <button 
+              type="button" 
+              onclick="selectCut('Curry Cut (Medium)', this)" 
+              class="cut-btn active p-2 rounded-xl border-2 border-primary bg-primary/5 text-center text-xs font-semibold text-primary transition-all"
+            >
+              🥘 Curry Cut
+            </button>
+            <button 
+              type="button" 
+              onclick="selectCut('Biryani Cut (Large)', this)" 
+              class="cut-btn p-2 rounded-xl border border-outline-variant bg-surface-bright text-center text-xs font-semibold text-on-surface-variant hover:border-primary transition-all"
+            >
+              🍗 Biryani Cut
+            </button>
+            <button 
+              type="button" 
+              onclick="selectCut('Small Fry Cut', this)" 
+              class="cut-btn p-2 rounded-xl border border-outline-variant bg-surface-bright text-center text-xs font-semibold text-on-surface-variant hover:border-primary transition-all"
+            >
+              🔪 Small Pieces
+            </button>
+          </div>
+        </div>
+
+        <!-- Special Instructions -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface uppercase tracking-wider mb-1">
+            Special Instructions for Butcher / Delivery Rider (Optional)
+          </label>
+          <input 
+            type="text" 
+            name="instructions" 
+            id="id_instructions" 
+            value="{{ form.instructions.value|default:'' }}"
+            placeholder="e.g. Ring the bell, Extra washed, Leave with security" 
+            class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+          />
+        </div>
+
+      </div>
+
+      <!-- SECTION 4: Payment Options -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-5 md:p-6 shadow-sm">
+        <div class="flex items-center gap-2.5 text-primary mb-4 pb-3 border-b border-outline-variant/40">
+          <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+          </div>
+          <div>
+            <h2 class="font-bold text-base text-on-surface">4. Payment Method</h2>
+            <p class="text-xs text-on-surface-variant">Safe & secure payments upon delivery or via UPI</p>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <!-- COD -->
+          <label class="relative flex items-center p-3.5 border-2 border-primary bg-primary/5 rounded-xl cursor-pointer transition-all">
+            <input type="radio" name="payment" value="Cash on Delivery" checked class="w-4 h-4 text-primary focus:ring-primary">
+            <div class="ml-3 flex-grow">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-xs md:text-sm text-on-surface">Cash on Delivery (COD)</span>
+                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Recommended</span>
+              </div>
+              <p class="text-[11px] text-on-surface-variant">Pay with cash or UPI QR directly to the delivery partner.</p>
+            </div>
+            <span class="material-symbols-outlined text-primary text-[22px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+          </label>
+
+          <!-- UPI / Online -->
+          <label class="relative flex items-center p-3.5 border border-outline-variant bg-surface-bright hover:border-primary/50 rounded-xl cursor-pointer transition-all">
+            <input type="radio" name="payment" value="UPI / QR Code" class="w-4 h-4 text-primary focus:ring-primary">
+            <div class="ml-3 flex-grow">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-xs md:text-sm text-on-surface">UPI / QR Code on Delivery</span>
+                <span class="text-[10px] text-on-surface-variant font-medium">GPay • PhonePe • Paytm</span>
+              </div>
+              <p class="text-[11px] text-on-surface-variant">Driver will present dynamic QR code at your door.</p>
+            </div>
+            <span class="material-symbols-outlined text-on-surface-variant text-[22px]">qr_code_scanner</span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Order Summary & Action (5 cols) -->
+    <div class="lg:col-span-5 space-y-6">
+
+      <!-- Order Summary Card -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-5 md:p-6 shadow-md sticky top-28">
+        
+        <div class="flex items-center justify-between pb-4 border-b border-outline-variant/40 mb-4">
+          <h3 class="font-bold text-base text-on-surface">Order Summary</h3>
+          <span class="text-xs bg-emerald-50 text-emerald-800 font-bold px-2.5 py-1 rounded-full border border-emerald-200">
+            1 Item in Basket
+          </span>
+        </div>
+
+        <!-- Product Preview Card -->
+        <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 flex items-center gap-3 mb-5">
+          <div class="w-16 h-16 rounded-lg bg-surface-variant overflow-hidden shrink-0 border border-outline-variant/30">
+            <img src="{{ product.image1.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+          </div>
+          <div class="flex-grow min-w-0">
+            <h4 class="font-bold text-sm text-on-surface truncate">{{ product.name }}</h4>
+            <p class="text-xs text-on-surface-variant font-medium">₹{{ product.price|floatformat:2 }} / kg</p>
+            
+            <!-- Quantity Stepper -->
+            <div class="flex items-center gap-2 mt-1.5">
+              <div class="inline-flex items-center border border-outline-variant rounded-lg bg-white px-1">
+                <button type="button" onclick="adjustCheckoutQty(-0.250)" class="w-6 h-6 flex items-center justify-center font-bold text-on-surface hover:text-primary">−</button>
+                <span id="qty_display" class="text-xs font-bold px-2">{{ qty }} kg</span>
+                <button type="button" onclick="adjustCheckoutQty(0.250)" class="w-6 h-6 flex items-center justify-center font-bold text-on-surface hover:text-primary">+</button>
+              </div>
+              <span class="text-[11px] text-emerald-700 font-semibold">Fresh Cut</span>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="font-extrabold text-sm text-primary" id="item_total_display">₹0.00</span>
+          </div>
+        </div>
+
+        <!-- Expected Delivery Time Notice (Licious feature) -->
+        <div class="mb-5 p-3.5 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-xl border border-primary/20 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[22px]">timer</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-on-surface">Estimated Arrival Time</p>
+            <p class="text-xs font-extrabold text-primary" id="estimated_time_text">Today in 45-60 Mins</p>
+          </div>
+        </div>
+
+        <!-- Bill Details -->
+        <div class="space-y-2.5 text-xs pb-4 border-b border-outline-variant/40">
+          <div class="flex justify-between text-on-surface-variant">
+            <span>Item Total (<span id="summary_qty_label">{{ qty }}</span> kg)</span>
+            <span class="font-semibold text-on-surface" id="summary_subtotal">₹0.00</span>
+          </div>
+          <div class="flex justify-between text-on-surface-variant">
+            <span>Delivery Charge</span>
+            <span class="font-bold text-emerald-700">FREE</span>
+          </div>
+          <div class="flex justify-between text-on-surface-variant">
+            <span>Food-Safe Packaging</span>
+            <span class="font-bold text-emerald-700">FREE</span>
+          </div>
+        </div>
+
+        <!-- Total Payable -->
+        <div class="flex items-center justify-between py-4">
+          <div>
+            <span class="text-xs font-semibold text-on-surface-variant">Total Payable</span>
+            <p class="text-xs text-emerald-700 font-bold">Inclusive of all taxes</p>
+          </div>
+          <span class="text-2xl font-black text-primary" id="summary_total">₹0.00</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          id="placeOrderBtn"
+          class="w-full h-14 bg-primary-container hover:bg-primary text-white font-bold text-base rounded-xl active:scale-[0.98] transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2"
+        >
+          <span>Confirm & Place Order</span>
+          <span class="material-symbols-outlined text-[20px]">check_circle</span>
+        </button>
+
+        <!-- Terms notice -->
+        <p class="text-center text-[11px] text-on-surface-variant/80 mt-3">
+          By clicking Place Order, you confirm delivery to the address specified above.
+        </p>
+
+      </div>
+
+    </div>
+
+  </form>
+
 </main>
 
 <script>
-        // Simple micro-interaction for payment selection
-        const paymentLabels = document.querySelectorAll('input[name="payment"]');
-        paymentLabels.forEach(input => {
-            input.addEventListener('change', (e) => {
-                // Reset all
-                paymentLabels.forEach(p => {
-                    const label = p.closest('label');
-                    label.classList.remove('border-primary-container', 'bg-surface-container-low', 'border-2');
-                    label.classList.add('border-outline-variant', 'bg-surface-bright', 'border');
-                    const icon = label.querySelector('.material-symbols-outlined');
-                    if (icon.getAttribute('data-icon') === 'check_circle') {
-                        icon.style.fontVariationSettings = "'FILL' 0";
-                        icon.classList.remove('text-primary');
-                        icon.classList.add('text-on-surface-variant');
-                    }
-                });
+  const unitPrice = parseFloat("{{ product.price }}") || 0;
+  let currentQty = parseFloat("{{ qty }}") || 1.0;
+  let addressTag = "Home";
 
-                // Set active
-                const activeLabel = e.target.closest('label');
-                activeLabel.classList.add('border-primary-container', 'bg-surface-container-low', 'border-2');
-                activeLabel.classList.remove('border-outline-variant', 'bg-surface-bright', 'border');
-                const activeIcon = activeLabel.querySelector('.material-symbols-outlined');
-                if (activeIcon.getAttribute('data-icon') === 'check_circle' || activeIcon.getAttribute('data-icon') === 'qr_code_2') {
-                    // For demo, we switch icons or just highlight
-                    if (activeIcon.getAttribute('data-icon') === 'check_circle') {
-                        activeIcon.style.fontVariationSettings = "'FILL' 1";
-                        activeIcon.classList.add('text-primary');
-                    }
-                }
-            });
-        });
+  function updatePricing() {
+    const total = (unitPrice * currentQty).toFixed(2);
+    document.getElementById('hidden_quantity').value = currentQty.toFixed(3);
+    document.getElementById('qty_display').textContent = `${currentQty.toFixed(2)} kg`;
+    document.getElementById('summary_qty_label').textContent = currentQty.toFixed(2);
+    document.getElementById('item_total_display').textContent = `₹${total}`;
+    document.getElementById('summary_subtotal').textContent = `₹${total}`;
+    document.getElementById('summary_total').textContent = `₹${total}`;
+  }
 
-        // Form Submission Logic
-        /*document.getElementById('checkoutForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalContent = btn.innerHTML;
-            
-            btn.disabled = true;
-            btn.innerHTML = `<span class="material-symbols-outlined animate-spin" data-icon="progress_activity">progress_activity</span> Processing...`;
-            
-            setTimeout(() => {
-                alert('Order Placed Successfully! Thank you for shopping with PrimePoultry.');
-                btn.disabled = false;
-                btn.innerHTML = originalContent;
-            }, 2000);       });*/
-    </script>
-</body></html>
+  function adjustCheckoutQty(delta) {
+    let next = currentQty + delta;
+    if (next < 0.25) next = 0.25;
+    if (next > 50.0) next = 50.0;
+    currentQty = parseFloat(next.toFixed(3));
+    updatePricing();
+  }
+
+  function setAddressTag(tag, btn) {
+    addressTag = tag;
+    const container = document.getElementById('addressTypePills');
+    container.querySelectorAll('button').forEach(b => {
+      b.classList.remove('bg-white', 'text-primary', 'shadow-sm');
+      b.classList.add('text-on-surface-variant');
+    });
+    btn.classList.add('bg-white', 'text-primary', 'shadow-sm');
+    btn.classList.remove('text-on-surface-variant');
+    syncFullAddress();
+  }
+
+  function syncFullAddress() {
+    const house = document.getElementById('addr_house').value.trim();
+    const street = document.getElementById('addr_street').value.trim();
+    const area = document.getElementById('addr_area').value.trim();
+    const landmark = document.getElementById('addr_landmark').value.trim();
+    const pincode = document.getElementById('addr_pincode').value.trim();
+
+    const parts = [];
+    if (house) parts.push(house);
+    if (street) parts.push(street);
+    if (landmark) parts.push(`Near ${landmark}`);
+    if (area) parts.push(area);
+    if (pincode) parts.push(`PIN: ${pincode}`);
+    if (addressTag) parts.push(`(${addressTag})`);
+
+    const fullStr = parts.join(', ');
+    document.getElementById('hidden_address').value = fullStr;
+    document.getElementById('address_preview_text').textContent = fullStr || "Enter your door and street details above.";
+  }
+
+  function shareCurrentLocation() {
+    const status = document.getElementById('location_share_status');
+    const button = document.getElementById('shareLocationButton');
+    if (!navigator.geolocation) {
+      status.textContent = "This browser does not support location sharing. Please enter your address manually.";
+      return;
+    }
+
+    button.disabled = true;
+    button.classList.add('opacity-60', 'cursor-wait');
+    status.textContent = "Waiting for your location permission…";
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        document.getElementById('location_latitude').value = latitude.toFixed(6);
+        document.getElementById('location_longitude').value = longitude.toFixed(6);
+        status.textContent = `Location shared for this order (${latitude.toFixed(5)}, ${longitude.toFixed(5)}).`;
+        button.disabled = false;
+        button.classList.remove('opacity-60', 'cursor-wait');
+      },
+      (error) => {
+        const messages = {
+          1: "Location permission was denied. You can allow it in your browser or enter your address manually.",
+          2: "Your location could not be determined. Please try again or enter your address manually.",
+          3: "Location request timed out. Please try again or enter your address manually."
+        };
+        status.textContent = messages[error.code] || "Location could not be shared. Please enter your address manually.";
+        button.disabled = false;
+        button.classList.remove('opacity-60', 'cursor-wait');
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  }
+
+  function selectSlot(slotText, card) {
+    document.getElementById('selected_slot_input').value = slotText;
+    document.getElementById('estimated_time_text').textContent = slotText.includes('Express') ? 'Today in 45-60 Mins' : slotText;
+
+    document.querySelectorAll('.slot-card').forEach(c => {
+      c.classList.remove('border-primary', 'bg-primary/5', 'active');
+      c.classList.add('border-outline-variant', 'bg-surface-bright');
+      const radio = c.querySelector('.slot-radio');
+      if (radio) {
+        radio.textContent = 'radio_button_unchecked';
+        radio.classList.remove('text-primary');
+        radio.classList.add('text-on-surface-variant');
+        radio.style.fontVariationSettings = "'FILL' 0";
+      }
+    });
+
+    card.classList.add('border-primary', 'bg-primary/5', 'active');
+    card.classList.remove('border-outline-variant', 'bg-surface-bright');
+    const activeRadio = card.querySelector('.slot-radio');
+    if (activeRadio) {
+      activeRadio.textContent = 'radio_button_checked';
+      activeRadio.classList.add('text-primary');
+      activeRadio.classList.remove('text-on-surface-variant');
+      activeRadio.style.fontVariationSettings = "'FILL' 1";
+    }
+  }
+
+  function selectCut(cutName, btn) {
+    document.getElementById('selected_cut_input').value = cutName;
+    document.querySelectorAll('.cut-btn').forEach(b => {
+      b.classList.remove('border-primary', 'bg-primary/5', 'text-primary', 'border-2');
+      b.classList.add('border-outline-variant', 'bg-surface-bright', 'text-on-surface-variant', 'border');
+    });
+    btn.classList.add('border-primary', 'bg-primary/5', 'text-primary', 'border-2');
+    btn.classList.remove('border-outline-variant', 'bg-surface-bright', 'text-on-surface-variant', 'border');
+  }
+
+  // Preload initial address if available from previous order/session
+  document.addEventListener('DOMContentLoaded', () => {
+    updatePricing();
+    const existing = document.getElementById('hidden_address').value;
+    if (existing) {
+      document.getElementById('addr_street').value = existing;
+      document.getElementById('address_preview_text').textContent = existing;
+    } else {
+      syncFullAddress();
+    }
+  });
+
+  // Validation on form submission
+  document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+    syncFullAddress();
+    const addr = document.getElementById('hidden_address').value;
+    const latitude = document.getElementById('location_latitude').value;
+    const longitude = document.getElementById('location_longitude').value;
+    if (!addr || addr.length < 5) {
+      e.preventDefault();
+      alert("Please enter a valid delivery address.");
+      document.getElementById('addr_house').focus();
+      return;
+    }
+    if (Boolean(latitude) !== Boolean(longitude)) {
+      e.preventDefault();
+      alert("Please share your location again, or clear the location pin and continue with your address.");
+    }
+  });
+</script>
 {% endblock %}

@@ -16,23 +16,26 @@ from pathlib import Path
 import dj_database_url
 from django.urls import reverse_lazy
 import cloudinary
+from dotenv import load_dotenv
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-local-development-only-change-me")
-
-# SECURITY WARNING: don't run with debug turned on in production!
-
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
-if not DEBUG and "SECRET_KEY" not in os.environ:
-    raise RuntimeError("SECRET_KEY must be set when DEBUG=False.")
+
+# Keep a development-only fallback for local .env files with an empty key.
+# Production must always supply its own secret key.
+SECRET_KEY = os.environ.get("SECRET_KEY", "").strip()
+if not SECRET_KEY:
+    if not DEBUG:
+        raise RuntimeError("SECRET_KEY must be set when DEBUG=False.")
+    SECRET_KEY = "django-insecure-local-development-only-change-me"
 
 ALLOWED_HOSTS = [
     ".onrender.com",
@@ -168,14 +171,29 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Cloudinary is optional. Placeholder credentials must never be used in production.
-if all(os.environ.get(key) for key in ("CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET")):
-    cloudinary.config(
-        cloud_name=os.environ["CLOUDINARY_CLOUD_NAME"],
-        api_key=os.environ["CLOUDINARY_API_KEY"],
-        api_secret=os.environ["CLOUDINARY_API_SECRET"],
-    )
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", "").strip()
+CLOUDINARY_UPLOAD_PRESET = os.environ.get("CLOUDINARY_UPLOAD_PRESET", "").strip()
+CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", "").strip()
+CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "").strip()
+CLOUDINARY_UPLOAD_CONFIGURED = bool(CLOUDINARY_CLOUD_NAME and CLOUDINARY_UPLOAD_PRESET)
+CLOUDINARY_API_CONFIGURED = bool(CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET)
+
+CLOUDINARY_CONFIG = {"secure": True}
+CLOUDINARY_STORAGE = {"SECURE": True}
+if CLOUDINARY_CLOUD_NAME:
+    CLOUDINARY_CONFIG["cloud_name"] = CLOUDINARY_CLOUD_NAME
+    CLOUDINARY_STORAGE["CLOUD_NAME"] = CLOUDINARY_CLOUD_NAME
+if CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
+    CLOUDINARY_CONFIG.update({
+        "api_key": CLOUDINARY_API_KEY,
+        "api_secret": CLOUDINARY_API_SECRET,
+    })
+    CLOUDINARY_STORAGE.update({
+        "API_KEY": CLOUDINARY_API_KEY,
+        "API_SECRET": CLOUDINARY_API_SECRET,
+    })
+if CLOUDINARY_CLOUD_NAME:
+    cloudinary.config(**CLOUDINARY_CONFIG)
 
 STORAGES = {
     "default": {
@@ -185,7 +203,7 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-if all(os.environ.get(key) for key in ("CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET")):
+if CLOUDINARY_CLOUD_NAME:
     STORAGES["default"] = {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"}
 if 'test' in sys.argv:
     # Tests render templates before collectstatic; production still uses hashed assets.
@@ -214,4 +232,3 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "True").lower() == "true"
     SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "31536000"))
-

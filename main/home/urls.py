@@ -1,5 +1,5 @@
 from . import views
-from django.urls import path ,include 
+from django.urls import path
 
 
 urlpatterns = [
@@ -7,6 +7,4 @@ urlpatterns = [
     path('login/', views.customer_login, name='customer_login'),
     path('signup/', views.customer_signup, name='customer_signup'),
     path('logout/', views.customer_logout, name='customer_logout'),
-    path('selected_product/<int:product_id>/', include('store.urls'), name='selected_product'),
 ]
-

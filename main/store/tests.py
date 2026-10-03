@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.core.files.storage import default_storage
 
 from store.models import Products
 
@@ -24,4 +25,7 @@ class AvailabilityTests(TestCase):
         self.assertContains(response, 'id="product-main-image"')
         self.assertContains(response, 'class="product-thumbnail')
         self.assertContains(response, 'restartCarousel()')
-        self.assertContains(response, 'data-image-src="/media/products_images/two.png"')
+        self.assertContains(
+            response,
+            f'data-image-src="{default_storage.url("products_images/two.png")}"',
+        )

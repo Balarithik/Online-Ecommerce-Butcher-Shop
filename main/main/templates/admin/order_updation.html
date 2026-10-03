@@ -1,148 +1,148 @@
-<!-- Modal Overlay -->
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-lg modal-overlay" style="background-color: rgba(18, 28, 42, 0.4); backdrop-filter: blur(4px);">
-<!-- Desktop Modal Container -->
-<div class="bg-surface-container-lowest w-full max-w-4xl max-h-[90vh] flex flex-col rounded-xl shadow-xl overflow-hidden border border-outline-variant animate-in fade-in zoom-in duration-300">
-<!-- Modal Header (Sticky) -->
-<header class="flex-shrink-0 flex items-center justify-between px-lg py-md bg-surface border-b border-outline-variant">
-<div class="flex items-center gap-sm">
-<h2 class="font-headline-md text-headline-md text-on-surface">Order Details</h2>
-<span class="px-sm py-xs bg-surface-container-high rounded-full font-label-sm text-on-surface-variant">Order #{{ order.order_id }}</span>
-</div>
-<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant group" onclick="closeModal()"  type="button">
-<span class="material-symbols-outlined group-hover:scale-110 transition-transform" data-icon="close">close</span>
-</button>
-</header>
-<!-- Modal Content (Scrollable) -->
-<div class="flex-grow overflow-y-auto px-lg py-lg space-y-xl">
-<!-- Section 1: Customer & Product Two-Column Layout -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
-<!-- Customer Information -->
-<div class="space-y-md">
-<div class="flex items-center gap-xs text-primary">
-<span class="material-symbols-outlined" data-icon="person">person</span>
-<h3 class="font-label-md text-label-md uppercase tracking-wider">Customer Information</h3>
-</div>
-<div class="p-lg border border-outline-variant rounded-xl bg-surface-bright clinical-shadow">
-<div class="space-y-sm">
-<div>
-<p class="text-xs font-label-sm text-on-surface-variant uppercase">Full Name</p>
-<p class="font-headline-md text-on-surface">{{ order.name }}</p>
-</div>
-<div>
-<p class="text-xs font-label-sm text-on-surface-variant uppercase">Mobile Number</p>
-<p class="text-on-surface font-body-md">{{ order.mobile }}</p>
-</div>
-<div>
-<p class="text-xs font-label-sm text-on-surface-variant uppercase">Delivery Address</p>
-<div class="mt-xs flex items-start gap-xs text-on-surface">
-<span class="material-symbols-outlined text-primary-container mt-1" data-icon="location_on">location_on</span>
-<p class="text-body-md">{{ order.location }}</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Product Details -->
-<div class="space-y-md">
-<div class="flex items-center gap-xs text-primary">
-<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
-<h3 class="font-label-md text-label-md uppercase tracking-wider">Product Details</h3>
-</div>
-<div class="p-lg border border-outline-variant rounded-xl bg-surface-bright clinical-shadow">
-<div class="flex justify-between items-start mb-md">
-<div>
-<p class="text-xs font-label-sm text-on-surface-variant uppercase">Item</p>
-<p class="font-headline-md text-on-surface">{% if product %}{{ product.name }}{% else %}{{ order.product_name }}{% endif %}</p>
-</div>
-</div>
-<div class="grid grid-cols-2 gap-md border-t border-outline-variant pt-md">
-<div>
-<p class="text-xs font-label-sm text-on-surface-variant uppercase">Quantity</p>
-<p class="font-headline-md text-on-surface">{{ order.quantity }} kg</p>
-</div>
-<div class="text-right">
-<p class="text-xs font-label-sm text-on-surface-variant uppercase">Total Price</p>
-<p class="font-headline-md text-primary">₹{{ order.price }}</p>
-</div>
-</div>
-<div class="mt-md pt-md border-t border-outline-variant flex items-center gap-md">
-{% if product and product.image1 %}
-<div class="w-16 h-16 rounded-lg bg-surface-container-high flex-shrink-0 overflow-hidden border border-outline-variant">
-<img alt="Premium organic chicken display" class="w-full h-full object-cover" src="{{ product.image1.url }}"/>
-</div>
-{% endif %}
-<p class="text-sm text-on-surface-variant italic leading-relaxed">Verified quality poultry batch. Cleaned and processed daily under strict temperature standards.</p>
-</div>
-</div>
-</div>
-</div>
-<!-- Section 2: Delivery Instructions -->
-{% if order.instructions %}
-<div class="space-y-md">
-<div class="flex items-center gap-xs text-primary">
-<span class="material-symbols-outlined" data-icon="notes">notes</span>
-<h3 class="font-label-md text-label-md uppercase tracking-wider">Special Delivery Instructions</h3>
-</div>
-<div class="p-lg border border-outline-variant rounded-xl bg-surface-container-low/40 relative">
-<span class="material-symbols-outlined absolute top-4 left-4 text-outline-variant/30 text-4xl" data-icon="format_quote">format_quote</span>
-<p class="relative z-10 italic text-on-surface-variant text-body-md pl-6">
-                        {{ order.instructions }}
-                    </p>
-</div>
-</div>
-{% endif %}
-<!-- Section 3: Order Status Update -->
-<form method="POST" action="{% url 'update_order' order.order_id %}">
-    {% csrf_token %}
-    <div class="space-y-md">
-        <div class="flex items-center gap-xs text-primary">
-            <span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
-            <h3 class="font-label-md text-label-md uppercase tracking-wider">Order Management</h3>
+<div class="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/50 p-3 backdrop-blur-sm sm:p-6" role="presentation">
+  <section
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="order-details-title"
+    class="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-outline-variant/70 bg-white shadow-2xl shadow-slate-950/20"
+  >
+    <header class="flex shrink-0 items-center justify-between gap-3 border-b border-outline-variant/60 bg-surface-container-low px-4 py-3 sm:px-6 sm:py-4">
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">Fulfillment & Dispatch</p>
+        <div class="mt-1 flex flex-wrap items-center gap-2">
+          <h2 id="order-details-title" class="text-lg font-extrabold tracking-tight text-on-surface sm:text-xl">Order Details</h2>
+          <span class="rounded-full border border-primary/15 bg-white px-2.5 py-1 text-[11px] font-bold text-primary">Order #{{ order.order_id }}</span>
         </div>
-        <div class="bg-surface-container-low/30 border border-outline-variant rounded-xl p-lg">
-            <div class="max-w-md">
-                <label class="block font-label-md text-on-surface-variant mb-2" for="status-dropdown">Update Order Status</label>
-                <div class="relative">
-                    <select name="status" class="w-full h-12 pl-md pr-12 bg-white border border-outline rounded-lg text-on-surface font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer hover:border-primary/50" id="status-dropdown">
-                        {% for value,label in status_choices %}     
-                        <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+      </div>
+      <button
+        type="button"
+        aria-label="Close order details"
+        onclick="closeModal()"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-on-surface-variant transition hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </header>
+
+    <div class="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <section class="overflow-hidden rounded-2xl border border-outline-variant/60 bg-white shadow-sm">
+          <div class="flex items-center gap-2 border-b border-outline-variant/50 bg-surface-container-low/70 px-4 py-3">
+            <span class="material-symbols-outlined text-[18px] text-primary">person</span>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-primary">Customer Information</h3>
+          </div>
+          <dl class="space-y-3 p-4">
+            <div>
+              <dt class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Full Name</dt>
+              <dd class="mt-0.5 break-words text-sm font-bold text-on-surface">{{ order.name }}</dd>
             </div>
+            <div>
+              <dt class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Mobile Number</dt>
+              <dd class="mt-0.5 text-sm font-semibold text-on-surface">
+                <a href="tel:{{ order.mobile }}" class="hover:text-primary hover:underline">{{ order.mobile }}</a>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Delivery Address</dt>
+              <dd class="mt-1 flex items-start gap-2 text-sm leading-relaxed text-on-surface">
+                <span class="material-symbols-outlined mt-0.5 shrink-0 text-[17px] text-primary">location_on</span>
+                <span class="break-words">{{ order.location|default:"Address not provided" }}</span>
+              </dd>
+              {% if order.latitude is not None and order.longitude is not None %}
+              <a href="https://www.google.com/maps?q={{ order.latitude }},{{ order.longitude }}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+                <span class="material-symbols-outlined text-[16px]">my_location</span>
+                Open shared GPS pin in Maps
+              </a>
+              {% endif %}
+            </div>
+          </dl>
+        </section>
+
+        <section class="overflow-hidden rounded-2xl border border-outline-variant/60 bg-white shadow-sm">
+          <div class="flex items-center gap-2 border-b border-outline-variant/50 bg-surface-container-low/70 px-4 py-3">
+            <span class="material-symbols-outlined text-[18px] text-primary">shopping_basket</span>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-primary">Product Details</h3>
+          </div>
+          <div class="p-4">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Item</p>
+            <p class="mt-0.5 break-words text-sm font-bold text-on-surface">{% if product %}{{ product.name }}{% else %}{{ order.product_name|default:"Fresh Chicken" }}{% endif %}</p>
+            <dl class="mt-4 grid grid-cols-2 gap-3 border-t border-outline-variant/50 pt-3">
+              <div>
+                <dt class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Quantity</dt>
+                <dd class="mt-0.5 text-sm font-bold text-on-surface">{{ order.quantity }} kg</dd>
+              </div>
+              <div class="text-right">
+                <dt class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total Price</dt>
+                <dd class="mt-0.5 text-sm font-extrabold text-primary">₹{{ order.price|floatformat:2 }}</dd>
+              </div>
+            </dl>
+            {% if order.cut_preference %}
+            <div class="mt-3 rounded-xl bg-primary/5 px-3 py-2 text-xs text-on-surface-variant">
+              <span class="font-bold text-primary">Cut preference:</span> {{ order.cut_preference }}
+            </div>
+            {% endif %}
+            {% if product and product.image1 %}
+            <div class="mt-4 flex items-center gap-3 border-t border-outline-variant/50 pt-3">
+              <img alt="{{ product.name }}" class="h-14 w-14 shrink-0 rounded-xl border border-outline-variant/50 object-cover" src="{{ product.image1.url }}"/>
+              <p class="text-xs leading-relaxed text-on-surface-variant">Freshly prepared to order by Lakshmi Broliers.</p>
+            </div>
+            {% endif %}
+          </div>
+        </section>
+      </div>
+
+      {% if order.instructions %}
+      <section class="mt-4 overflow-hidden rounded-2xl border border-amber-200 bg-amber-50">
+        <div class="flex items-center gap-2 border-b border-amber-200 px-4 py-3">
+          <span class="material-symbols-outlined text-[18px] text-amber-800">notes</span>
+          <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-900">Special Delivery Instructions</h3>
         </div>
+        <p class="break-words px-4 py-3 text-sm leading-relaxed text-amber-950">{{ order.instructions }}</p>
+      </section>
+      {% endif %}
+
+      <form method="POST" action="{% url 'update_order' order.order_id %}" class="mt-4 overflow-hidden rounded-2xl border border-outline-variant/60 bg-white shadow-sm">
+        {% csrf_token %}
+        <div class="flex items-center gap-2 border-b border-outline-variant/50 bg-surface-container-low/70 px-4 py-3">
+          <span class="material-symbols-outlined text-[18px] text-primary">settings_suggest</span>
+          <h3 class="text-xs font-extrabold uppercase tracking-wider text-primary">Order Management</h3>
+        </div>
+        <div class="p-4">
+          <label class="mb-1.5 block text-xs font-bold text-on-surface-variant" for="status-dropdown">Update Order Status</label>
+          <select name="status" id="status-dropdown" class="h-11 w-full rounded-xl border border-outline-variant bg-white px-3 text-sm font-semibold text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
+            {% for value,label in status_choices %}
+            <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <footer class="flex flex-col-reverse gap-2 border-t border-outline-variant/60 bg-surface-container-low/70 p-3 sm:flex-row sm:justify-end sm:px-4">
+          <button type="button" onclick="closeModal()" class="inline-flex min-h-10 items-center justify-center rounded-xl px-4 text-xs font-bold text-on-surface-variant transition hover:bg-white hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            Cancel
+          </button>
+          <button type="submit" id="update-btn" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-bold text-white shadow-sm transition hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+            <span class="material-symbols-outlined text-[16px]">check_circle</span>
+            Update Order
+          </button>
+        </footer>
+      </form>
     </div>
-    <!-- Modal Footer (Sticky Actions) -->
-    <footer class="flex-shrink-0 flex items-center justify-end gap-md px-lg py-md bg-surface-container-low border-t border-outline-variant mt-lg">
-        <button class="px-lg h-12 font-label-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150" onclick="closeModal()"  type="button">
-                        Cancel
-                    </button>
-        <button class="px-xl h-12 bg-primary text-on-primary font-label-md rounded-lg shadow-md hover:brightness-110 hover:shadow-lg transition-all active:scale-95 duration-150 flex items-center gap-xs"  type="submit" id="update-btn">
-        <span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
-                        Update Order
-                    </button>
-    </footer>
-</form>
-</div>
-</div>
+  </section>
 </div>
 
 <script>
-    (function() {
-        const form = document.querySelector('#update_order_modal-container form');
-        const updateBtn = document.getElementById('update-btn');
+  (function() {
+    const form = document.querySelector('#update_order_modal-container form');
+    const updateBtn = document.getElementById('update-btn');
 
-        if (form && updateBtn) {
-            form.addEventListener('submit', function () {
-                const originalContent = updateBtn.innerHTML;
-                updateBtn.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Processing...';
-                updateBtn.disabled = true;
-                updateBtn.classList.add('opacity-90', 'cursor-not-allowed');
-            });
-        }
-    })();
-
-    function closeModal() {
-        document.getElementById("update_order_modal-container").innerHTML = "";
+    if (form && updateBtn) {
+      form.addEventListener('submit', function () {
+        updateBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Processing...';
+        updateBtn.disabled = true;
+        updateBtn.classList.add('opacity-90', 'cursor-not-allowed');
+      });
     }
+  })();
+
+  function closeModal() {
+    document.getElementById("update_order_modal-container").innerHTML = "";
+  }
 </script>

@@ -1,60 +1,143 @@
 from decimal import Decimal, ROUND_HALF_UP
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseBadRequest
 from django.views.decorators.http import require_POST
+from django.contrib import messages
 from orders.forms import OrderForm
 from store.models import Products
 from .models import Order
 
-# Create your views here.
-# views.py
+def Checkout(request, product_id=None, qty='1'):
+    if product_id is None:
+        first_product = Products.objects.filter(is_available=True).first()
+        if not first_product:
+            messages.info(request, "No products are currently available.")
+            return redirect('products')
+        return redirect('Checkout', product_id=first_product.id, qty='1')
 
-
-def Checkout(request, product_id, qty):
     product = get_object_or_404(Products, id=product_id, is_available=True)
-    form = OrderForm(initial={'quantity': qty})
-    return render(request, 'orders/checkout.html', {'product': product, 'form': form, 'qty': qty})
+    initial_data = {'quantity': qty}
+    
+    # Auto-fill for logged-in user or previous session
+    if request.user.is_authenticated:
+        initial_data['name'] = request.user.get_full_name() or request.user.username
+        last_order = Order.objects.filter(user=request.user).order_by('-order_id').first()
+        if last_order:
+            initial_data['mobile'] = last_order.mobile
+            initial_data['address'] = last_order.location
+            initial_data['cut_preference'] = last_order.cut_preference
+            initial_data['delivery_slot'] = last_order.delivery_slot
+    elif 'customer_phone' in request.session:
+        initial_data['name'] = request.session.get('customer_name', '')
+        initial_data['mobile'] = request.session.get('customer_phone', '')
+        initial_data['address'] = request.session.get('customer_address', '')
+
+    form = OrderForm(initial=initial_data)
+    available_products = Products.objects.filter(is_available=True).exclude(id=product.id)[:4]
+
+    return render(request, 'orders/checkout.html', {
+        'product': product,
+        'form': form,
+        'qty': qty,
+        'available_products': available_products
+    })
 
 @require_POST
 def Orders(request, product_id):
     form = OrderForm(request.POST)
     if form.is_valid():
-            name = form.cleaned_data.get('name', '').strip()
-            mobile = form.cleaned_data.get('mobile', '').strip()
-            location = form.cleaned_data.get('address', '').strip()
-            instructions = form.cleaned_data.get('instructions', '').strip()
-            quantity = form.cleaned_data.get('quantity', 1.0)
-            
-            product = Products.objects.filter(id=product_id, is_available=True).first()
-            if product is None:
-                return HttpResponseBadRequest("This product is no longer available.")
-            product_name = product.name
-            # Price and total deliberately come only from the database/form validation.
-            price = (product.price * quantity).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-            
-            orders = Order(
-                product_name=product_name,
-                name=name,
-                mobile=mobile,
-                location=location,
-                instructions=instructions,
-                product_id=product_id,
-                quantity=quantity,
-                price=price
-            )
-            orders.save()
-            return render(request, 'orders/order_confirmation.html', {
-                'order_id': orders.order_id,
-                'name': name,
-                'mobile': mobile,
-                'location': location,
-                'instructions': instructions,
-                'quantity': quantity,
-                'price': price
-            })
+        name = form.cleaned_data.get('name', '').strip()
+        mobile = form.cleaned_data.get('mobile', '').strip()
+        location = form.cleaned_data.get('address', '').strip()
+        latitude = form.cleaned_data.get('latitude')
+        longitude = form.cleaned_data.get('longitude')
+        instructions = form.cleaned_data.get('instructions', '').strip()
+        quantity = form.cleaned_data.get('quantity', Decimal('1.000'))
+        delivery_slot = request.POST.get('delivery_slot', 'Express Delivery (45-60 Mins)').strip()
+        cut_preference = request.POST.get('cut_preference', 'Curry Cut (Medium)').strip()
+        payment_method = request.POST.get('payment', 'Cash on Delivery').strip()
+        
+        product = Products.objects.filter(id=product_id, is_available=True).first()
+        if product is None:
+            return HttpResponseBadRequest("This product is no longer available.")
+        
+        product_name = product.name
+        price = (product.price * quantity).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        
+        user = request.user if request.user.is_authenticated else None
+
+        order = Order(
+            user=user,
+            product_name=product_name,
+            name=name,
+            mobile=mobile,
+            location=location,
+            latitude=latitude,
+            longitude=longitude,
+            instructions=instructions,
+            delivery_slot=delivery_slot,
+            cut_preference=cut_preference,
+            payment_method=payment_method,
+            product_id=product_id,
+            quantity=quantity,
+            price=price,
+            status='pending'
+        )
+        order.save()
+
+        # Save session for convenience
+        request.session['customer_name'] = name
+        request.session['customer_phone'] = mobile
+        request.session['customer_address'] = location
+        request.session['last_order_id'] = order.order_id
+
+        return render(request, 'orders/order_confirmation.html', {
+            'order': order,
+            'order_id': order.order_id,
+            'name': name,
+            'mobile': mobile,
+            'location': location,
+            'instructions': instructions,
+            'delivery_slot': delivery_slot,
+            'cut_preference': cut_preference,
+            'payment_method': payment_method,
+            'quantity': quantity,
+            'price': price,
+            'product': product,
+        })
+
     product = get_object_or_404(Products, id=product_id, is_available=True)
     return render(request, 'orders/checkout.html', {
         'product': product,
         'form': form,
         'qty': request.POST.get('quantity', '1'),
     }, status=400)
+
+
+def my_orders(request):
+    mobile_query = request.GET.get('mobile', '').strip()
+    orders = []
+    
+    if request.user.is_authenticated:
+        orders = Order.objects.filter(user=request.user).order_by('-order_id')
+    elif mobile_query:
+        cleaned_mobile = ''.join(filter(str.isdigit, mobile_query))
+        if len(cleaned_mobile) == 12 and cleaned_mobile.startswith('91'):
+            cleaned_mobile = cleaned_mobile[2:]
+        orders = Order.objects.filter(mobile__icontains=cleaned_mobile).order_by('-order_id')
+    elif 'customer_phone' in request.session:
+        orders = Order.objects.filter(mobile=request.session['customer_phone']).order_by('-order_id')
+    elif 'last_order_id' in request.session:
+        orders = Order.objects.filter(order_id=request.session['last_order_id'])
+
+    return render(request, 'orders/my_orders.html', {
+        'orders': orders,
+        'mobile_query': mobile_query
+    })
+
+
+def cart_view(request):
+    products = Products.objects.filter(is_available=True)
+    return render(request, 'orders/cart.html', {
+        'products': products
+    })

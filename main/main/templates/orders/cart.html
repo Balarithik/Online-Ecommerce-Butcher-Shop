@@ -1,0 +1,131 @@
+{% extends "base/base.html" %}
+{% block title %}Shopping Cart - Lakshmi Broliers{% endblock %}
+
+{% block content %}
+<main class="max-w-[1100px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+  
+  <div class="mb-8 pb-6 border-b border-outline-variant/60">
+    <div class="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider mb-1">
+      <span class="material-symbols-outlined text-[16px]">shopping_cart</span>
+      Your Fresh Basket
+    </div>
+    <h1 class="text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight">Shopping Cart & Delivery Estimate</h1>
+    <p class="text-xs md:text-sm text-on-surface-variant mt-1">Review your tender cuts before swift 45-minute dispatch.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Cart Items List (7 cols) -->
+    <div class="lg:col-span-7 space-y-4">
+      <div id="full-page-cart-items" class="space-y-4">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div id="full-page-empty" class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-12 text-center hidden">
+        <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mx-auto mb-4 text-primary/40">
+          <span class="material-symbols-outlined text-[36px]">shopping_cart</span>
+        </div>
+        <h3 class="text-lg font-bold text-on-surface mb-1">Your cart is currently empty</h3>
+        <p class="text-xs text-on-surface-variant mb-6">Add our fresh, tender chicken cuts to get started.</p>
+        <a href="{% url 'products' %}" class="px-6 py-2.5 bg-primary-container text-white font-bold text-xs rounded-xl hover:bg-primary transition-all">
+          Explore Products
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Sidebar Bill & Checkout (5 cols) -->
+    <div class="lg:col-span-5 space-y-6">
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-6 shadow-sm sticky top-28">
+        <h3 class="font-bold text-base text-on-surface pb-3 border-b border-outline-variant/40 mb-4">Bill Details</h3>
+        
+        <div class="space-y-2.5 text-xs text-on-surface-variant pb-4 border-b border-outline-variant/40">
+          <div class="flex justify-between">
+            <span>Item Subtotal</span>
+            <span class="font-semibold text-on-surface" id="full-page-subtotal">₹0.00</span>
+          </div>
+          <div class="flex justify-between text-emerald-700 font-medium">
+            <span>Delivery Fee (Within 10km)</span>
+            <span class="font-bold">FREE</span>
+          </div>
+          <div class="flex justify-between text-emerald-700 font-medium">
+            <span>Food-Safe Packaging</span>
+            <span class="font-bold">FREE</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between py-4">
+          <span class="text-sm font-bold text-on-surface">Total Payable</span>
+          <span class="text-2xl font-black text-primary" id="full-page-total">₹0.00</span>
+        </div>
+
+        <button 
+          onclick="AramCart.proceedToCheckout()"
+          class="w-full h-14 bg-primary-container hover:bg-primary text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-all shadow-md shadow-primary/25 flex items-center justify-center gap-2"
+        >
+          <span>Proceed to Checkout</span>
+          <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+        </button>
+
+        <!-- Delivery Guarantee -->
+        <div class="mt-4 p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center gap-2.5 text-emerald-800 text-xs">
+          <span class="material-symbols-outlined text-[20px]">electric_bolt</span>
+          <span>Guaranteed fresh delivery in 45-60 mins to your doorstep.</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+  function renderFullPageCart() {
+    const items = AramCart.getItems();
+    const container = document.getElementById('full-page-cart-items');
+    const emptyState = document.getElementById('full-page-empty');
+    const subtotalEl = document.getElementById('full-page-subtotal');
+    const totalEl = document.getElementById('full-page-total');
+    const total = AramCart.getTotal();
+
+    if (subtotalEl) subtotalEl.textContent = `₹${total.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `₹${total.toFixed(2)}`;
+
+    if (items.length === 0) {
+      if (container) container.classList.add('hidden');
+      if (emptyState) emptyState.classList.remove('hidden');
+    } else {
+      if (emptyState) emptyState.classList.add('hidden');
+      if (container) {
+        container.classList.remove('hidden');
+        container.innerHTML = items.map(item => `
+          <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-4 shadow-sm flex items-center justify-between gap-4">
+            <div class="w-16 h-16 rounded-xl bg-surface-variant overflow-hidden shrink-0 border border-outline-variant/30">
+              <img src="${item.image || 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=200'}" alt="${item.name}" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-grow min-w-0">
+              <h4 class="font-bold text-sm text-on-surface truncate">${item.name}</h4>
+              <p class="text-xs text-on-surface-variant">₹${item.price.toFixed(2)} / kg</p>
+              <div class="inline-flex items-center border border-outline-variant rounded-lg bg-surface-container-low px-1 mt-2">
+                <button onclick="AramCart.updateQty(${item.id}, -0.250); renderFullPageCart();" class="w-6 h-6 flex items-center justify-center font-bold text-on-surface hover:text-primary">−</button>
+                <span class="text-xs font-semibold px-2">${item.qty} kg</span>
+                <button onclick="AramCart.updateQty(${item.id}, 0.250); renderFullPageCart();" class="w-6 h-6 flex items-center justify-center font-bold text-on-surface hover:text-primary">+</button>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="font-extrabold text-base text-primary">₹${(item.price * item.qty).toFixed(2)}</p>
+              <button onclick="AramCart.removeItem(${item.id}); renderFullPageCart();" class="text-xs text-red-600 hover:underline mt-2 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+                Remove
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFullPageCart();
+  });
+</script>
+{% endblock %}

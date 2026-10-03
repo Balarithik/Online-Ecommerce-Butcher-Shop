@@ -1,197 +1,674 @@
 <!DOCTYPE html>
 {% load static %}
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Lakshmi Broliers - {% block title %}Fresh Farm Poultry & Meat Delivery{% endblock %}</title>
+  <link rel="icon" href="{% static 'icons/logo.png' %}" type="image/png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>AramCuts - {% block title %}{% endblock %}</title>
-<link rel="icon" href="{% static 'icons/logo.png' %}" type="image/png" />
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9ff;
-        }
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 24px;
-        }
-    </style>
-<script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "inverse-primary": "#ffb4ac",
-                      "inverse-surface": "#27313f",
-                      "on-tertiary-container": "#60eeb1",
-                      "surface-container-low": "#eff4ff",
-                      "on-primary-container": "#ffc8c2",
-                      "background": "#f8f9ff",
-                      "surface-container-high": "#dee9fc",
-                      "error-container": "#ffdad6",
-                      "tertiary-fixed": "#6ffbbe",
-                      "error": "#ba1a1a",
-                      "surface-container-lowest": "#ffffff",
-                      "on-secondary": "#ffffff",
-                      "on-background": "#121c2a",
-                      "on-error-container": "#93000a",
-                      "tertiary-container": "#006a48",
-                      "primary-fixed": "#ffdad6",
-                      "surface": "#f8f9ff",
-                      "tertiary-fixed-dim": "#4edea3",
-                      "surface-variant": "#d9e3f6",
-                      "on-surface": "#121c2a",
-                      "outline": "#8e706d",
-                      "on-secondary-fixed-variant": "#454747",
-                      "primary-container": "#b22222",
-                      "on-secondary-container": "#616363",
-                      "secondary": "#5d5f5f",
-                      "secondary-fixed": "#e2e2e2",
-                      "on-primary-fixed-variant": "#92030f",
-                      "on-tertiary-fixed": "#002113",
-                      "on-tertiary": "#ffffff",
-                      "on-error": "#ffffff",
-                      "tertiary": "#004f35",
-                      "surface-container": "#e6eeff",
-                      "surface-tint": "#b52424",
-                      "surface-dim": "#d0dbed",
-                      "surface-bright": "#f8f9ff",
-                      "secondary-fixed-dim": "#c6c6c7",
-                      "secondary-container": "#dfe0e0",
-                      "on-surface-variant": "#5a403e",
-                      "surface-container-highest": "#d9e3f6",
-                      "primary": "#8f000d",
-                      "primary-fixed-dim": "#ffb4ac",
-                      "inverse-on-surface": "#eaf1ff",
-                      "on-tertiary-fixed-variant": "#005236",
-                      "on-primary": "#ffffff",
-                      "outline-variant": "#e2beba",
-                      "on-secondary-fixed": "#1a1c1c",
-                      "on-primary-fixed": "#410003"
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "xl": "32px",
-                      "md": "16px",
-                      "gutter": "16px",
-                      "margin-desktop": "48px",
-                      "xs": "4px",
-                      "margin-mobile": "16px",
-                      "lg": "24px",
-                      "base": "8px",
-                      "sm": "12px"
-              },
-              "fontFamily": {
-                      "headline-lg": ["Inter"],
-                      "body-lg": ["Inter"],
-                      "headline-md": ["Inter"],
-                      "label-md": ["Inter"],
-                      "label-sm": ["Inter"],
-                      "headline-lg-mobile": ["Inter"],
-                      "body-md": ["Inter"],
-                      "headline-xl": ["Inter"]
-              },
-              "fontSize": {
-                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
-                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
-                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                      "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
-              }
-            },
-          },
-        }
-    </script>
-<style>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
     body {
-      min-height: max(884px, 100dvh);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f8f9ff;
+    }
+    .clean-shadow {
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    }
+    .premium-glow {
+      box-shadow: 0 0 30px rgba(143, 0, 13, 0.12);
+    }
+    /* Cart drawer transitions */
+    #cart-drawer {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #cart-backdrop {
+      transition: opacity 0.3s ease;
     }
   </style>
-  </head>
-<body class="bg-background text-on-surface">
-<!-- TopAppBar -->
-<header class="sticky top-0 z-50 flex items-center justify-between px-margin-mobile md:px-margin-desktop w-full bg-surface/95 backdrop-blur-sm border-b border-outline-variant shadow-sm h-16">
-<div class="flex items-center gap-md">
-<h1 class="font-headline-md text-headline-md font-bold text-primary">AramCuts</h1>
-</div>
-<div class="flex items-center gap-md">
-<nav class="hidden md:flex gap-lg">
-<a class="{% if request.path == '/' %}text-primary font-label-md font-bold underline decoration-2 underline-offset-4{% else %}text-on-surface-variant font-label-md hover:text-primary transition-colors{% endif %}" href="{% url 'home' %}">Home</a>
-<a class="{% if request.path == '/products/' %}text-primary font-label-md font-bold underline decoration-2 underline-offset-4{% else %}text-on-surface-variant font-label-md hover:text-primary transition-colors{% endif %}" href="{% url 'products' %}">Products</a>
-<a class="{% if request.path == '/aboutus/' %}text-primary font-label-md font-bold underline decoration-2 underline-offset-4{% else %}text-on-surface-variant font-label-md hover:text-primary transition-colors{% endif %}" href="{% url 'aboutus' %}">About Us/Contact</a>
-</nav>
-{% if request.user.is_authenticated %}
-<div class="hidden md:flex items-center gap-sm"><span class="text-label-md text-on-surface-variant">Hi, {{ request.user.username }}</span><form method="post" action="{% url 'customer_logout' %}">{% csrf_token %}<button class="text-primary font-label-md">Logout</button></form></div>
-{% else %}
-<a href="{% url 'customer_login' %}" class="hidden md:inline-flex px-4 py-2 rounded-lg border border-primary text-primary font-label-md hover:bg-primary hover:text-white transition-colors">Sign in</a>
-{% endif %}
-</div>
-</header>
-<main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-xl"></main>
-        {% block content %}
-        <!-- Child templates will insert content here -->
-        {% endblock %}
-</main>
-<!-- Footer -->
-<footer class="w-full py-xl px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-lg bg-surface-container-highest border-t border-outline-variant">
-<div class="flex flex-col gap-md">
-<h2 class="font-headline-md text-headline-md text-primary font-bold">AramCuts</h2>
-<p class="font-label-md text-on-surface-variant">Serving our local community with fresh, clean, and ethically sourced poultry.</p>
-<p class="font-label-sm text-on-surface-variant">© 2026 AramCuts. All rights reserved.</p>
-</div>
-<div class="flex flex-col gap-sm">
-<h3 class="font-label-md font-bold text-on-surface">Quick Links</h3>
-<a class="text-label-md text-on-surface-variant hover:text-primary transition-colors underline" href="https://www.google.com/maps/place/Lakshmi+Broliers/@9.3100439,78.9946711,15z/data=!4m9!1m2!2m1!1sLakshmi+Broilers,+Uchipuli!3m5!1s0x3b019566e14fcbef:0x8fb60e2aa9b7144e!8m2!3d9.3100712!4d79.0137268!16s%2Fg%2F11z931kdg8?hl=en-US&entry=ttu&g_ep=EgoyMDI2MDcwOC4wIKXMDSoASAFQAw%3D%3D">Shop Address</a>
-<a class="text-label-md text-on-surface-variant hover:text-primary transition-colors underline" href="#">WhatsApp Support</a>
-<a class="text-label-md text-on-surface-variant hover:text-primary transition-colors underline" href="#">Privacy Policy</a>
-<a class="text-label-md text-on-surface-variant hover:text-primary transition-colors underline" href="#">Terms of Service</a>
-</div>
-<div class="flex flex-col gap-sm">
-<h3 class="font-label-md font-bold text-on-surface">Connect</h3>
-<div class="flex gap-md mt-xs">
-<a class="text-primary hover:opacity-80 transition-opacity" href="#">
-<span class="material-symbols-outlined" data-icon="facebook">face_nod</span>
-</a>
-<a class="text-primary hover:opacity-80 transition-opacity" href="#">
-<span class="material-symbols-outlined" data-icon="camera_alt">camera_alt</span>
-</a>
-<a class="text-primary hover:opacity-80 transition-opacity" href="#">
-<span class="material-symbols-outlined" data-icon="alternate_email">alternate_email</span>
-</a>
-</div>
-</div>
-</footer>
-<!-- BottomNavBar (Mobile Only) -->
-<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface border-t border-outline-variant md:hidden rounded-t-xl shadow-lg">
-<button class="{% if request.path == '/' %}flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1{% else %}flex flex-col items-center justify-center text-secondary{% endif %}" onclick="window.location.href='{% url 'home' %}'">
-<span class="material-symbols-outlined" data-icon="home" style="{% if request.path == '/' %}font-variation-settings: 'FILL' 1;{% endif %}">home</span>
-<span class="font-label-sm text-label-sm">Home</span>
-</button>
-<button class="{% if request.path == '/products/' %}flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1{% else %}flex flex-col items-center justify-center text-secondary{% endif %}" onclick="window.location.href='{% url 'products' %}'">
-<span class="material-symbols-outlined" data-icon="rebase_edit" style="{% if request.path == '/products/' %}font-variation-settings: 'FILL' 1;{% endif %}">rebase_edit</span>
-<span class="font-label-sm text-label-sm">Products</span>
-</button>
-<button class="{% if request.path == '/aboutus/' %}flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1{% else %}flex flex-col items-center justify-center text-secondary{% endif %}" onclick="window.location.href='{% url 'aboutus' %}'">
-<span class="material-symbols-outlined" data-icon="info" style="{% if request.path == '/aboutus/' %}font-variation-settings: 'FILL' 1;{% endif %}">info</span>
-<span class="font-label-sm text-label-sm">About</span>
-</button>
-</nav>
-<div class="h-20 md:hidden"></div> <!-- Spacer for mobile nav -->
-</body></html>
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "inverse-primary": "#ffb4ac",
+            "inverse-surface": "#27313f",
+            "on-tertiary-container": "#60eeb1",
+            "surface-container-low": "#eff4ff",
+            "on-primary-container": "#ffc8c2",
+            "background": "#f8f9ff",
+            "surface-container-high": "#dee9fc",
+            "error-container": "#ffdad6",
+            "tertiary-fixed": "#6ffbbe",
+            "error": "#ba1a1a",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary": "#ffffff",
+            "on-background": "#121c2a",
+            "on-error-container": "#93000a",
+            "tertiary-container": "#006a48",
+            "primary-fixed": "#ffdad6",
+            "surface": "#f8f9ff",
+            "tertiary-fixed-dim": "#4edea3",
+            "surface-variant": "#d9e3f6",
+            "on-surface": "#121c2a",
+            "outline": "#8e706d",
+            "on-secondary-fixed-variant": "#454747",
+            "primary-container": "#b22222",
+            "on-secondary-container": "#616363",
+            "secondary": "#5d5f5f",
+            "secondary-fixed": "#e2e2e2",
+            "on-primary-fixed-variant": "#92030f",
+            "on-tertiary-fixed": "#002113",
+            "on-tertiary": "#ffffff",
+            "on-error": "#ffffff",
+            "tertiary": "#004f35",
+            "surface-container": "#e6eeff",
+            "surface-tint": "#b52424",
+            "surface-dim": "#d0dbed",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed-dim": "#c6c6c7",
+            "secondary-container": "#dfe0e0",
+            "on-surface-variant": "#5a403e",
+            "surface-container-highest": "#d9e3f6",
+            "primary": "#8f000d",
+            "primary-fixed-dim": "#ffb4ac",
+            "inverse-on-surface": "#eaf1ff",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#ffffff",
+            "outline-variant": "#e2beba",
+            "on-secondary-fixed": "#1a1c1c",
+            "on-primary-fixed": "#410003"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "3xl": "1.5rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "xl": "32px",
+            "md": "16px",
+            "gutter": "16px",
+            "margin-desktop": "48px",
+            "xs": "4px",
+            "margin-mobile": "16px",
+            "lg": "24px",
+            "base": "8px",
+            "sm": "12px"
+          },
+          fontFamily: {
+            "headline-lg": ["Inter", "sans-serif"],
+            "body-lg": ["Inter", "sans-serif"],
+            "headline-md": ["Inter", "sans-serif"],
+            "label-md": ["Inter", "sans-serif"],
+            "label-sm": ["Inter", "sans-serif"],
+            "headline-lg-mobile": ["Inter", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "headline-xl": ["Inter", "sans-serif"]
+          },
+          fontSize: {
+            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+            "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+            "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+            "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface flex flex-col min-h-screen selection:bg-primary-container selection:text-white">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-primary text-white text-xs py-1.5 px-4 text-center font-medium flex items-center justify-center gap-2">
+    <span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+    <span>⚡ <strong>Express Delivery:</strong> Fresh farm cuts at your doorstep in 45-60 minutes across Uchipuli & Ramanathapuram</span>
+    <span class="hidden md:inline text-white/70">| 100% Halal Certified</span>
+  </div>
+
+  <!-- Main Header / Navigation -->
+  <header class="sticky top-0 z-40 w-full bg-surface-container-lowest/95 backdrop-blur-md border-b border-outline-variant/60 shadow-sm">
+    <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop h-16 md:h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo & Delivery Pin -->
+      <div class="flex items-center gap-6">
+        <a href="{% url 'home' %}" class="flex items-center gap-2.5 group">
+          <img src="{% static 'icons/logo.png' %}" alt="Lakshmi Broliers" class="w-11 h-11 rounded-xl object-contain shadow-sm group-hover:scale-105 transition-transform" />
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-xl md:text-2xl text-primary tracking-tight">Lakshmi Broliers</span>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">Fresh</span>
+            </div>
+            <p class="text-[10px] text-on-surface-variant/80 hidden sm:block">Farm-Fresh Poultry & Meat</p>
+          </div>
+        </a>
+
+        <!-- Location Badge (Licious style) -->
+        <div class="hidden lg:flex items-center gap-2 pl-4 border-l border-outline-variant/50 text-xs">
+          <span class="material-symbols-outlined text-primary text-[18px]">location_on</span>
+          <div>
+            <span class="font-semibold text-on-surface flex items-center gap-1">
+              Uchipuli Delivery Hub
+              <span class="material-symbols-outlined text-[14px]">expand_more</span>
+            </span>
+            <span class="text-on-surface-variant text-[11px]">Serving 10km radius • Open 7 AM - 9 PM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="{% url 'home' %}" class="text-sm font-semibold transition-colors {% if request.path == '/' %}text-primary border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary{% endif %}">
+          Home
+        </a>
+        <a href="{% url 'products' %}" class="text-sm font-semibold transition-colors {% if '/products/' in request.path %}text-primary border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary{% endif %}">
+          All Products
+        </a>
+        <a href="{% url 'my_orders' %}" class="text-sm font-semibold transition-colors flex items-center gap-1 {% if '/orders/' in request.path and not 'checkout' in request.path %}text-primary border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary{% endif %}">
+          <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+          My Orders
+        </a>
+        <a href="{% url 'aboutus' %}" class="text-sm font-semibold transition-colors {% if '/aboutus/' in request.path %}text-primary border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary{% endif %}">
+          About & Contact
+        </a>
+      </nav>
+
+      <!-- Right Action Bar (Cart & Account) -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Cart Button -->
+        <button 
+          id="cart-trigger-btn"
+          onclick="AramCart.openDrawer()"
+          class="relative flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/60 text-on-surface font-semibold text-xs md:text-sm active:scale-95 transition-all"
+          aria-label="View shopping cart"
+        >
+          <div class="relative">
+            <span class="material-symbols-outlined text-primary text-[22px]">shopping_cart</span>
+            <span id="cart-badge-count" class="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">0</span>
+          </div>
+          <span class="hidden sm:inline font-bold" id="cart-nav-total">₹0</span>
+        </button>
+
+        <!-- User Authentication Section -->
+        {% if request.user.is_authenticated %}
+        <div class="relative group">
+          <button class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 transition-colors">
+            <div class="w-8 h-8 rounded-lg bg-primary-container text-white flex items-center justify-center font-bold text-xs">
+              {{ request.user.username|first|upper }}
+            </div>
+            <span class="text-xs font-semibold text-on-surface max-w-[100px] truncate hidden md:inline">
+              {{ request.user.first_name|default:request.user.username }}
+            </span>
+            <span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span>
+          </button>
+          
+          <!-- Dropdown -->
+          <div class="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-outline-variant/60 py-2 hidden group-hover:block hover:block z-50 animate-fadeIn">
+            <div class="px-4 py-2 border-b border-outline-variant/40">
+              <p class="text-xs text-on-surface-variant">Signed in as</p>
+              <p class="text-xs font-bold text-on-surface truncate">{{ request.user.username }}</p>
+            </div>
+            <a href="{% url 'my_orders' %}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium text-on-surface hover:bg-surface-container-low transition-colors">
+              <span class="material-symbols-outlined text-[18px] text-primary">receipt_long</span>
+              My Orders & Tracking
+            </a>
+            <form method="post" action="{% url 'customer_logout' %}" class="w-full">
+              {% csrf_token %}
+              <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors text-left">
+                <span class="material-symbols-outlined text-[18px]">logout</span>
+                Sign Out
+              </button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <a 
+          href="{% url 'customer_login' %}" 
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-container text-white text-xs md:text-sm font-semibold hover:bg-primary active:scale-95 transition-all shadow-sm"
+        >
+          <span class="material-symbols-outlined text-[18px]">person</span>
+          <span>Sign In</span>
+        </a>
+        {% endif %}
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Flash Messages Alert -->
+  {% if messages %}
+  <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop mt-4 w-full">
+    {% for message in messages %}
+    <div class="p-3.5 rounded-xl text-sm flex items-center justify-between gap-3 shadow-sm {% if message.tags == 'error' %}bg-red-50 border border-red-200 text-red-700{% else %}bg-emerald-50 border border-emerald-200 text-emerald-800{% endif %}">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-[20px]">{% if message.tags == 'error' %}error{% else %}check_circle{% endif %}</span>
+        <span>{{ message }}</span>
+      </div>
+      <button onclick="this.parentElement.remove()" class="text-xs font-bold opacity-70 hover:opacity-100">✕</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Page Main Content Slot -->
+  <div class="flex-grow">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <!-- SLIDE-OVER CART DRAWER -->
+  <div id="cart-drawer-container" class="fixed inset-0 z-50 pointer-events-none">
+    <!-- Backdrop -->
+    <div 
+      id="cart-backdrop" 
+      onclick="AramCart.closeDrawer()" 
+      class="fixed inset-0 bg-black/40 backdrop-blur-xs opacity-0 pointer-events-none transition-opacity duration-300"
+    ></div>
+
+    <!-- Drawer Panel -->
+    <div 
+      id="cart-drawer" 
+      class="fixed top-0 right-0 h-full w-full max-w-md bg-surface-container-lowest shadow-2xl flex flex-col pointer-events-auto transform translate-x-full transition-transform duration-300 ease-out z-50 border-l border-outline-variant/60"
+    >
+      <!-- Drawer Header -->
+      <div class="p-4 md:p-5 border-b border-outline-variant/60 flex items-center justify-between bg-surface-container-low">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-on-surface">Your Lakshmi Broliers Basket</h3>
+            <p class="text-xs text-on-surface-variant" id="cart-drawer-item-count">0 items</p>
+          </div>
+        </div>
+        <button 
+          onclick="AramCart.closeDrawer()" 
+          class="w-8 h-8 rounded-full bg-white hover:bg-surface-container flex items-center justify-center text-on-surface transition-colors border border-outline-variant/40"
+          aria-label="Close cart"
+        >
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- Free Delivery Progress Bar (Licious feature) -->
+      <div class="px-5 py-3 bg-primary/5 border-b border-outline-variant/40">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <span class="font-semibold text-primary flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">electric_bolt</span>
+            Express Delivery 45-60 mins
+          </span>
+          <span class="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]">FREE DELIVERY</span>
+        </div>
+        <div class="w-full h-1.5 bg-outline-variant/40 rounded-full overflow-hidden">
+          <div class="h-full bg-emerald-500 rounded-full w-full"></div>
+        </div>
+      </div>
+
+      <!-- Drawer Items Container -->
+      <div id="cart-items-list" class="flex-grow overflow-y-auto p-5 space-y-4">
+        <!-- Rendered dynamically by JS -->
+      </div>
+
+      <!-- Empty State View -->
+      <div id="cart-empty-state" class="flex-grow flex flex-col items-center justify-center p-8 text-center hidden">
+        <div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center mb-4 text-primary/40">
+          <span class="material-symbols-outlined text-[42px]">shopping_cart</span>
+        </div>
+        <h4 class="font-bold text-lg text-on-surface mb-1">Your cart is empty</h4>
+        <p class="text-xs text-on-surface-variant max-w-xs mb-6">Explore our tender, chemical-free farm poultry and add your favorite cuts.</p>
+        <a 
+          href="{% url 'products' %}" 
+          onclick="AramCart.closeDrawer()" 
+          class="px-6 py-2.5 bg-primary-container text-white text-xs font-bold rounded-xl hover:bg-primary transition-all shadow-sm"
+        >
+          Browse Fresh Cuts
+        </a>
+      </div>
+
+      <!-- Drawer Footer / Checkout Summary -->
+      <div id="cart-footer" class="p-5 border-t border-outline-variant/60 bg-surface-container-low space-y-3">
+        <div class="space-y-1.5 text-xs text-on-surface-variant">
+          <div class="flex justify-between">
+            <span>Item Subtotal</span>
+            <span class="font-semibold text-on-surface" id="cart-drawer-subtotal">₹0.00</span>
+          </div>
+          <div class="flex justify-between text-emerald-700">
+            <span>Delivery Fee</span>
+            <span class="font-bold">FREE</span>
+          </div>
+          <div class="flex justify-between font-bold text-base text-on-surface pt-2 border-t border-outline-variant/40">
+            <span>Total Payable</span>
+            <span class="text-primary font-extrabold text-lg" id="cart-drawer-total">₹0.00</span>
+          </div>
+        </div>
+
+        <button 
+          id="cart-checkout-btn"
+          onclick="AramCart.proceedToCheckout()" 
+          class="w-full h-12 bg-primary-container hover:bg-primary text-white font-bold rounded-xl active:scale-[0.98] transition-all shadow-md shadow-primary/20 flex items-center justify-between px-5 text-sm"
+        >
+          <span class="flex items-center gap-2">
+            <span>Proceed to Checkout</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </span>
+          <span class="font-extrabold" id="cart-btn-price">₹0.00</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed bottom-20 md:bottom-8 right-4 md:right-8 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Premium Footer -->
+  <footer class="w-full mt-auto bg-surface-container-highest border-t border-outline-variant/70 text-on-surface py-12 px-margin-mobile md:px-margin-desktop">
+    <div class="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      
+      <!-- Col 1: Brand Info -->
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <img src="{% static 'icons/logo.png' %}" alt="Lakshmi Broliers" class="w-10 h-10 rounded-lg object-contain" />
+          <span class="font-bold text-xl text-primary">Lakshmi Broliers</span>
+        </div>
+        <p class="text-xs text-on-surface-variant leading-relaxed">
+          Pioneering ultra-hygienic, fresh butchery. Daily sourced chemical-free poultry delivered in vacuum packaging within 45 minutes.
+        </p>
+        <div class="inline-flex items-center gap-1 text-xs text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md font-semibold">
+          <span class="material-symbols-outlined text-[16px]">verified</span>
+          100% Halal & Lab Tested
+        </div>
+      </div>
+
+      <!-- Col 2: Quick Links -->
+      <div class="space-y-2.5">
+        <h4 class="font-bold text-sm text-on-surface uppercase tracking-wider">Quick Navigation</h4>
+        <ul class="space-y-2 text-xs text-on-surface-variant">
+          <li><a href="{% url 'home' %}" class="hover:text-primary transition-colors">Home Store</a></li>
+          <li><a href="{% url 'products' %}" class="hover:text-primary transition-colors">Browse Products</a></li>
+          <li><a href="{% url 'my_orders' %}" class="hover:text-primary transition-colors">Track My Orders</a></li>
+          <li><a href="{% url 'aboutus' %}" class="hover:text-primary transition-colors">About Us & Quality Standards</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Delivery Hub -->
+      <div class="space-y-2.5">
+        <h4 class="font-bold text-sm text-on-surface uppercase tracking-wider">Hub Location</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">
+          Lakshmi Broliers<br>
+          NH49 Main Road, Uchipuli,<br>
+          Ramanathapuram, Tamil Nadu 623534
+        </p>
+        <a 
+          href="https://www.google.com/maps/place/Lakshmi+Broliers/@9.3100439,78.9946711,15z" 
+          target="_blank" 
+          class="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+        >
+          <span class="material-symbols-outlined text-[16px]">map</span>
+          View on Google Maps
+        </a>
+      </div>
+
+      <!-- Col 4: Help & WhatsApp -->
+      <div class="space-y-2.5">
+        <h4 class="font-bold text-sm text-on-surface uppercase tracking-wider">Customer Care</h4>
+        <p class="text-xs text-on-surface-variant">Instant WhatsApp assistance for custom cuts and bulk orders:</p>
+        <a 
+          href="https://wa.me/919876543210?text=Hi%20Lakshmi%20Broliers,%20I%20would%20like%20to%20place%20an%20order" 
+          target="_blank"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+        >
+          <span class="material-symbols-outlined text-[18px]">chat</span>
+          WhatsApp Order Desk
+        </a>
+        <p class="text-[11px] text-on-surface-variant/70 pt-2">© 2026 Lakshmi Broliers. All rights reserved.</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Bottom Mobile Navigation Bar -->
+  <nav class="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-2 py-2 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/60 md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+    <a href="{% url 'home' %}" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all {% if request.path == '/' %}text-primary bg-primary/10 font-bold{% else %}text-on-surface-variant{% endif %}">
+      <span class="material-symbols-outlined text-[22px]" style="{% if request.path == '/' %}font-variation-settings: 'FILL' 1;{% endif %}">home</span>
+      <span class="text-[10px] mt-0.5">Home</span>
+    </a>
+    <a href="{% url 'products' %}" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all {% if '/products/' in request.path %}text-primary bg-primary/10 font-bold{% else %}text-on-surface-variant{% endif %}">
+      <span class="material-symbols-outlined text-[22px]" style="{% if '/products/' in request.path %}font-variation-settings: 'FILL' 1;{% endif %}">storefront</span>
+      <span class="text-[10px] mt-0.5">Products</span>
+    </a>
+    <button onclick="AramCart.openDrawer()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-on-surface-variant relative">
+      <div class="relative">
+        <span class="material-symbols-outlined text-[22px] text-primary">shopping_cart</span>
+        <span id="mobile-cart-badge" class="absolute -top-1.5 -right-2 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+      </div>
+      <span class="text-[10px] mt-0.5 font-semibold text-primary">Cart</span>
+    </button>
+    <a href="{% url 'my_orders' %}" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all {% if '/orders/' in request.path and not 'checkout' in request.path %}text-primary bg-primary/10 font-bold{% else %}text-on-surface-variant{% endif %}">
+      <span class="material-symbols-outlined text-[22px]" style="{% if '/orders/' in request.path %}font-variation-settings: 'FILL' 1;{% endif %}">receipt_long</span>
+      <span class="text-[10px] mt-0.5">Orders</span>
+    </a>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'my_orders' %}" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-on-surface-variant">
+      <span class="material-symbols-outlined text-[22px]">account_circle</span>
+      <span class="text-[10px] mt-0.5">Account</span>
+    </a>
+    {% else %}
+    <a href="{% url 'customer_login' %}" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-on-surface-variant">
+      <span class="material-symbols-outlined text-[22px]">login</span>
+      <span class="text-[10px] mt-0.5">Sign In</span>
+    </a>
+    {% endif %}
+  </nav>
+  <div class="h-16 md:hidden"></div>
+
+  <!-- GLOBAL ARAMCART JAVASCRIPT ENGINE -->
+  <script>
+    const AramCart = {
+      storageKey: 'aramcuts_cart_v1',
+
+      getItems() {
+        try {
+          return JSON.parse(localStorage.getItem(this.storageKey)) || [];
+        } catch (e) {
+          return [];
+        }
+      },
+
+      saveItems(items) {
+        localStorage.setItem(this.storageKey, JSON.stringify(items));
+        this.render();
+      },
+
+      addItem(product) {
+        let items = this.getItems();
+        const existingIndex = items.findIndex(item => item.id === product.id);
+        
+        if (existingIndex > -1) {
+          items[existingIndex].qty = parseFloat((items[existingIndex].qty + (product.qty || 1)).toFixed(3));
+        } else {
+          items.push({
+            id: product.id,
+            name: product.name,
+            price: parseFloat(product.price),
+            image: product.image || '',
+            qty: parseFloat(product.qty || 1),
+            unit: product.unit || 'Kg'
+          });
+        }
+        this.saveItems(items);
+        this.showToast(`Added "${product.name}" to cart!`);
+        this.openDrawer();
+      },
+
+      updateQty(productId, delta) {
+        let items = this.getItems();
+        const item = items.find(i => i.id === productId);
+        if (!item) return;
+
+        item.qty = parseFloat((item.qty + delta).toFixed(3));
+        if (item.qty < 0.25) {
+          this.removeItem(productId);
+          return;
+        }
+        this.saveItems(items);
+      },
+
+      removeItem(productId) {
+        let items = this.getItems();
+        items = items.filter(i => i.id !== productId);
+        this.saveItems(items);
+        this.showToast('Item removed from cart');
+      },
+
+      getTotal() {
+        const items = this.getItems();
+        return items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      },
+
+      getItemCount() {
+        const items = this.getItems();
+        return items.reduce((count, item) => count + (item.qty >= 1 ? Math.floor(item.qty) : 1), 0);
+      },
+
+      openDrawer() {
+        const drawer = document.getElementById('cart-drawer');
+        const backdrop = document.getElementById('cart-backdrop');
+        const container = document.getElementById('cart-drawer-container');
+        if (drawer && backdrop) {
+          container.classList.remove('pointer-events-none');
+          backdrop.classList.remove('opacity-0', 'pointer-events-none');
+          backdrop.classList.add('opacity-100', 'pointer-events-auto');
+          drawer.classList.remove('translate-x-full');
+          drawer.classList.add('translate-x-0');
+        }
+        this.render();
+      },
+
+      closeDrawer() {
+        const drawer = document.getElementById('cart-drawer');
+        const backdrop = document.getElementById('cart-backdrop');
+        const container = document.getElementById('cart-drawer-container');
+        if (drawer && backdrop) {
+          backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+          backdrop.classList.add('opacity-0', 'pointer-events-none');
+          drawer.classList.remove('translate-x-0');
+          drawer.classList.add('translate-x-full');
+          setTimeout(() => container.classList.add('pointer-events-none'), 300);
+        }
+      },
+
+      proceedToCheckout() {
+        const items = this.getItems();
+        if (items.length === 0) {
+          alert("Your cart is empty. Please select an item to checkout.");
+          return;
+        }
+        // Direct to checkout for first item or general checkout
+        const primary = items[0];
+        window.location.href = `/products/Checkout/${primary.id}/${primary.qty}/`;
+      },
+
+      showToast(msg) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = "bg-on-surface text-white text-xs px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 animate-bounce pointer-events-auto border border-white/10";
+        toast.innerHTML = `<span class="material-symbols-outlined text-emerald-400 text-[18px]">check_circle</span><span>${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+      },
+
+      render() {
+        const items = this.getItems();
+        const total = this.getTotal();
+        const count = items.length;
+
+        // Update nav badges
+        const countBadge = document.getElementById('cart-badge-count');
+        const mobileBadge = document.getElementById('mobile-cart-badge');
+        const navTotal = document.getElementById('cart-nav-total');
+        if (countBadge) countBadge.textContent = count;
+        if (mobileBadge) mobileBadge.textContent = count;
+        if (navTotal) navTotal.textContent = `₹${total.toFixed(2)}`;
+
+        // Update Drawer elements
+        const itemsContainer = document.getElementById('cart-items-list');
+        const emptyState = document.getElementById('cart-empty-state');
+        const footer = document.getElementById('cart-footer');
+        const itemCountLabel = document.getElementById('cart-drawer-item-count');
+        const subtotalLabel = document.getElementById('cart-drawer-subtotal');
+        const totalLabel = document.getElementById('cart-drawer-total');
+        const btnPrice = document.getElementById('cart-btn-price');
+
+        if (itemCountLabel) itemCountLabel.textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
+        if (subtotalLabel) subtotalLabel.textContent = `₹${total.toFixed(2)}`;
+        if (totalLabel) totalLabel.textContent = `₹${total.toFixed(2)}`;
+        if (btnPrice) btnPrice.textContent = `₹${total.toFixed(2)}`;
+
+        if (items.length === 0) {
+          if (itemsContainer) itemsContainer.classList.add('hidden');
+          if (emptyState) emptyState.classList.remove('hidden');
+          if (footer) footer.classList.add('hidden');
+        } else {
+          if (emptyState) emptyState.classList.add('hidden');
+          if (footer) footer.classList.remove('hidden');
+          if (itemsContainer) {
+            itemsContainer.classList.remove('hidden');
+            itemsContainer.innerHTML = items.map(item => `
+              <div class="flex items-center justify-between gap-3 p-3 bg-white rounded-xl border border-outline-variant/50 shadow-sm">
+                <div class="w-14 h-14 rounded-lg bg-surface-variant overflow-hidden shrink-0">
+                  <img src="${item.image || 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=200'}" alt="${item.name}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-grow min-w-0">
+                  <h4 class="font-bold text-xs text-on-surface truncate">${item.name}</h4>
+                  <p class="text-[11px] text-on-surface-variant font-medium">₹${item.price.toFixed(2)} / kg</p>
+                  <div class="flex items-center gap-2 mt-1.5">
+                    <div class="inline-flex items-center border border-outline-variant rounded-lg bg-surface-container-low px-1">
+                      <button onclick="AramCart.updateQty(${item.id}, -0.250)" class="w-6 h-6 flex items-center justify-center text-on-surface font-bold hover:text-primary">−</button>
+                      <span class="text-xs font-semibold px-2">${item.qty} kg</span>
+                      <button onclick="AramCart.updateQty(${item.id}, 0.250)" class="w-6 h-6 flex items-center justify-center text-on-surface font-bold hover:text-primary">+</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="font-bold text-sm text-primary">₹${(item.price * item.qty).toFixed(2)}</p>
+                  <button onclick="AramCart.removeItem(${item.id})" class="text-xs text-on-surface-variant hover:text-red-600 mt-2 p-1" title="Remove">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+      }
+    };
+
+    // Auto initialize cart on DOM load
+    document.addEventListener('DOMContentLoaded', () => {
+      AramCart.render();
+    });
+  </script>
+</body>
+</html>
