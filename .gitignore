@@ -1,8 +1,13 @@
 .env
 .audit-venv/
+.venv/
 main/db.sqlite3
 __pycache__/
 *.pyc
 main/main/development_settings.py
 main/development_manage.py
 main/main/media/
+main/staticfiles/
+data.json
+main/data.json
+

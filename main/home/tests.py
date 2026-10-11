@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from orders.models import Order
 from store.models import Products
 from .models import CustomerAddress, CustomerProfile
 
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class CustomerAuthenticationTests(TestCase):
     def test_health_check_reports_main_application_is_alive(self):
         response = self.client.get(reverse('health_check'))
@@ -36,6 +37,15 @@ class CustomerAuthenticationTests(TestCase):
         })
         self.assertRedirects(response, reverse('home'))
 
+    @override_settings(WHATSAPP_NUMBER='919876543210')
+    def test_whatsapp_link_uses_the_environment_backed_setting(self):
+        response = self.client.get(reverse('home'))
+
+        self.assertContains(
+            response,
+            'https://wa.me/919876543210?text=Hi%20Lakshmi%20Broliers,%20I%20would%20like%20to%20place%20an%20order',
+        )
+
     def test_account_dashboard_requires_login(self):
         response = self.client.get(reverse('customer_account'))
 
@@ -43,6 +53,16 @@ class CustomerAuthenticationTests(TestCase):
             response,
             f"{reverse('customer_login')}?next={reverse('customer_account')}",
         )
+
+    def test_account_dashboard_uses_themed_confirmation_modal(self):
+        user = User.objects.create_user('customer', password='A-strong-password123')
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('customer_account'))
+
+        self.assertContains(response, 'id="confirmation-modal"')
+        self.assertContains(response, 'Delete your account?')
+        self.assertNotContains(response, 'return confirm(')
 
     def test_customer_can_update_profile_and_manage_saved_addresses(self):
         user = User.objects.create_user('customer', password='A-strong-password123')

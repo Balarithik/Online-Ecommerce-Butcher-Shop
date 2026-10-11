@@ -50,6 +50,7 @@
       <!-- Form -->
       <form method="post" class="space-y-4">
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
 
         {% if form.non_field_errors %}
         <div class="p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-start gap-2.5">
@@ -146,7 +147,7 @@
       <!-- Switch to Sign In -->
       <p class="mt-6 text-center text-sm text-on-surface-variant">
         Already have an account? 
-        <a href="{% url 'customer_login' %}" class="text-primary font-semibold hover:underline">
+        <a href="{% url 'customer_login' %}{% if next %}?next={{ next }}{% endif %}" class="text-primary font-semibold hover:underline">
           Sign In
         </a>
       </p>

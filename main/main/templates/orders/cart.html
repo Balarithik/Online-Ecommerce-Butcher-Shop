@@ -80,12 +80,12 @@
 
 <script>
   function renderFullPageCart() {
-    const items = AramCart.getItems();
+    const items = AramCart.items || [];
     const container = document.getElementById('full-page-cart-items');
     const emptyState = document.getElementById('full-page-empty');
     const subtotalEl = document.getElementById('full-page-subtotal');
     const totalEl = document.getElementById('full-page-total');
-    const total = AramCart.getTotal();
+    const total = AramCart.total || 0;
 
     if (subtotalEl) subtotalEl.textContent = `₹${total.toFixed(2)}`;
     if (totalEl) totalEl.textContent = `₹${total.toFixed(2)}`;
@@ -97,35 +97,38 @@
       if (emptyState) emptyState.classList.add('hidden');
       if (container) {
         container.classList.remove('hidden');
-        container.innerHTML = items.map(item => `
+        container.innerHTML = items.map(item => {
+          const safeName = item.name.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+          return `
           <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/60 p-4 shadow-sm flex items-center justify-between gap-4">
             <div class="w-16 h-16 rounded-xl bg-surface-variant overflow-hidden shrink-0 border border-outline-variant/30">
-              <img src="${item.image || 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=200'}" alt="${item.name}" class="w-full h-full object-cover">
+              <img src="${item.image || 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=200'}" alt="${safeName}" class="w-full h-full object-cover">
             </div>
             <div class="flex-grow min-w-0">
-              <h4 class="font-bold text-sm text-on-surface truncate">${item.name}</h4>
+              <h4 class="font-bold text-sm text-on-surface truncate">${safeName}</h4>
               <p class="text-xs text-on-surface-variant">₹${item.price.toFixed(2)} / kg</p>
               <div class="inline-flex items-center border border-outline-variant rounded-lg bg-surface-container-low px-1 mt-2">
-                <button onclick="AramCart.updateQty(${item.id}, -0.250); renderFullPageCart();" class="w-6 h-6 flex items-center justify-center font-bold text-on-surface hover:text-primary">−</button>
+                <button onclick="AramCart.updateQty(${item.id}, -0.250).then(renderFullPageCart);" class="w-6 h-6 flex items-center justify-center font-bold text-on-surface hover:text-primary">−</button>
                 <span class="text-xs font-semibold px-2">${item.qty} kg</span>
-                <button onclick="AramCart.updateQty(${item.id}, 0.250); renderFullPageCart();" class="w-6 h-6 flex items-center justify-center font-bold text-on-surface hover:text-primary">+</button>
+                <button onclick="AramCart.updateQty(${item.id}, 0.250).then(renderFullPageCart);" class="w-6 h-6 flex items-center justify-center font-bold text-on-surface hover:text-primary">+</button>
               </div>
             </div>
             <div class="text-right shrink-0">
               <p class="font-extrabold text-base text-primary">₹${(item.price * item.qty).toFixed(2)}</p>
-              <button onclick="AramCart.removeItem(${item.id}); renderFullPageCart();" class="text-xs text-red-600 hover:underline mt-2 flex items-center gap-1">
+              <button onclick="AramCart.removeItem(${item.id}).then(renderFullPageCart);" class="text-xs text-red-600 hover:underline mt-2 flex items-center gap-1">
                 <span class="material-symbols-outlined text-[16px]">delete</span>
                 Remove
               </button>
             </div>
           </div>
-        `).join('');
+        `;
+      }).join('');
       }
     }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    renderFullPageCart();
+    AramCart.sync().then(renderFullPageCart);
   });
 </script>
 {% endblock %}

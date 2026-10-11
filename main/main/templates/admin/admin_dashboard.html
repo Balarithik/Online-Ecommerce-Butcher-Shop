@@ -37,17 +37,17 @@
   <!-- KPI Metric Bento Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
     
-    <!-- 1. Total Revenue -->
+    <!-- 1. Revenue -->
     <div class="bg-white rounded-2xl p-5 border  border-primary/10 shadow-xs flex flex-col justify-between">
       <div class="flex items-center justify-between  text-primary mb-2">
-        <span class="text-xs font-bold uppercase tracking-wider">Total Revenue</span>
+        <span class="text-xs font-bold uppercase tracking-wider">Delivered Revenue</span>
         <div class="w-8 h-8 rounded-xl bg-primary/5 text-primary flex items-center justify-center">
           <span class="material-symbols-outlined text-[20px]">currency_rupee</span>
         </div>
       </div>
       <div>
-        <p class="text-2xl font-black text-on-surface">₹{{ total_revenue|floatformat:2 }}</p>
-        <p class="text-[11px] text-primary font-semibold mt-1">Excludes cancelled orders</p>
+        <p class="text-2xl font-black text-on-surface">₹{{ delivered_revenue|floatformat:2 }}</p>
+        <p class="text-[11px] text-on-surface-variant font-semibold mt-1">Order value (all active): ₹{{ total_order_value|floatformat:2 }}</p>
       </div>
     </div>
 

@@ -11,10 +11,13 @@ from django.test import override_settings
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from cloudinary.exceptions import Error as CloudinaryError
+from main.settings import _cloudinary_credentials
 from store.models import Products
 from orders.models import Order
 
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class AdminEndpointTests(TestCase):
     def setUp(self):
         self.admin = get_user_model().objects.create_superuser(
@@ -26,6 +29,23 @@ class AdminEndpointTests(TestCase):
 
     def test_delete_endpoint_rejects_get(self):
         self.assertEqual(self.client.get(reverse('delete_product', args=[999])).status_code, 405)
+
+    def test_cloudinary_credentials_support_standard_cloudinary_url(self):
+        credentials = _cloudinary_credentials({
+            'CLOUDINARY_URL': 'cloudinary://key-value:credential-value@cloud-name',
+        })
+
+        self.assertEqual(credentials, ('cloud-name', 'key-value', 'credential-value'))
+
+    def test_individual_cloudinary_values_override_cloudinary_url(self):
+        credentials = _cloudinary_credentials({
+            'CLOUDINARY_URL': 'cloudinary://url-key:url-value@url-cloud',
+            'CLOUDINARY_CLOUD_NAME': 'explicit-cloud',
+            'CLOUDINARY_API_KEY': 'explicit-key',
+            'CLOUDINARY_API_SECRET': 'explicit-secret',
+        })
+
+        self.assertEqual(credentials, ('explicit-cloud', 'explicit-key', 'explicit-secret'))
 
     def test_dashboard_and_inventory_render_responsive_navigation_and_cards(self):
         Products.objects.create(
@@ -303,6 +323,29 @@ class AdminEndpointTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()['error'], 'The selected file is not a valid image.')
+
+    @override_settings(
+        CLOUDINARY_UPLOAD_CONFIGURED=True,
+        CLOUDINARY_API_CONFIGURED=True,
+        CLOUDINARY_API_KEY='test-api-key',
+        CLOUDINARY_API_SECRET='test-api-secret',
+    )
+    @patch('admin_dashboard.views.cloudinary.uploader.upload')
+    def test_cloudinary_upload_error_is_actionable_without_leaking_credentials(self, cloudinary_upload):
+        cloudinary_upload.side_effect = CloudinaryError(
+            'Invalid Signature for API key test-api-key and secret test-api-secret.'
+        )
+        image_data = BytesIO()
+        Image.new('RGB', (2, 2), color='red').save(image_data, format='PNG')
+
+        response = self.client.post(reverse('upload_product_image'), {
+            'image': SimpleUploadedFile('product.png', image_data.getvalue(), content_type='image/png'),
+        })
+
+        self.assertEqual(response.status_code, 502)
+        self.assertContains(response, 'Invalid Signature', status_code=502)
+        self.assertNotContains(response, 'test-api-key', status_code=502)
+        self.assertNotContains(response, 'test-api-secret', status_code=502)
 
     def test_cloudinary_storage_uses_configured_cloud_or_local_fallback(self):
         if settings.CLOUDINARY_CLOUD_NAME:

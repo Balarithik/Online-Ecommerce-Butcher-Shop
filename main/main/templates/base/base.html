@@ -439,7 +439,7 @@
         <h4 class="font-bold text-sm text-on-surface uppercase tracking-wider">Customer Care</h4>
         <p class="text-xs text-on-surface-variant">Instant WhatsApp assistance for custom cuts and bulk orders:</p>
         <a 
-          href="https://wa.me/919876543210?text=Hi%20Lakshmi%20Broliers,%20I%20would%20like%20to%20place%20an%20order" 
+          href="https://wa.me/{{ settings.WHATSAPP_NUMBER }}?text=Hi%20Lakshmi%20Broliers,%20I%20would%20like%20to%20place%20an%20order"
           target="_blank"
           class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
         >
@@ -490,70 +490,113 @@
   <!-- GLOBAL ARAMCART JAVASCRIPT ENGINE -->
   <script>
     const AramCart = {
-      storageKey: 'aramcuts_cart_v1',
+      isAuth: {% if request.user.is_authenticated %}true{% else %}false{% endif %},
+      items: [],
+      total: 0,
+      count: 0,
 
-      getItems() {
+      getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      },
+
+      async sync() {
         try {
-          return JSON.parse(localStorage.getItem(this.storageKey)) || [];
+          const res = await fetch("{% url 'cart_data_api' %}");
+          if (res.ok) {
+            const data = await res.json();
+            this.items = data.items || [];
+            this.total = data.total || 0;
+            this.count = data.count || 0;
+            this.render();
+          }
         } catch (e) {
-          return [];
+          console.error("Cart sync error:", e);
         }
       },
 
-      saveItems(items) {
-        localStorage.setItem(this.storageKey, JSON.stringify(items));
-        this.render();
-      },
-
-      addItem(product) {
-        let items = this.getItems();
-        const existingIndex = items.findIndex(item => item.id === product.id);
-        
-        if (existingIndex > -1) {
-          items[existingIndex].qty = parseFloat((items[existingIndex].qty + (product.qty || 1)).toFixed(3));
-        } else {
-          items.push({
-            id: product.id,
-            name: product.name,
-            price: parseFloat(product.price),
-            image: product.image || '',
-            qty: parseFloat(product.qty || 1),
-            unit: product.unit || 'Kg'
+      async addItem(product) {
+        try {
+          const res = await fetch("{% url 'cart_add_api' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': this.getCookie('csrftoken') || '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+              product_id: product.id,
+              qty: product.qty || 1,
+              cut_preference: product.cut_preference || 'Curry Cut (Medium)',
+              delivery_slot: product.delivery_slot || 'Express Delivery (45-60 Mins)'
+            })
           });
+          if (res.ok) {
+            const data = await res.json();
+            this.items = data.items;
+            this.total = data.total;
+            this.count = data.count;
+            this.render();
+            this.showToast(`Added "${product.name}" to cart!`);
+            this.openDrawer();
+          }
+        } catch (e) {
+          console.error("Error adding to cart:", e);
         }
-        this.saveItems(items);
-        this.showToast(`Added "${product.name}" to cart!`);
-        this.openDrawer();
       },
 
-      updateQty(productId, delta) {
-        let items = this.getItems();
-        const item = items.find(i => i.id === productId);
-        if (!item) return;
-
-        item.qty = parseFloat((item.qty + delta).toFixed(3));
-        if (item.qty < 0.25) {
-          this.removeItem(productId);
-          return;
+      async updateQty(productId, delta) {
+        try {
+          const res = await fetch("{% url 'cart_update_api' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': this.getCookie('csrftoken') || '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ product_id: productId, delta: delta })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            this.items = data.items;
+            this.total = data.total;
+            this.count = data.count;
+            this.render();
+          }
+        } catch (e) {
+          console.error("Error updating cart:", e);
         }
-        this.saveItems(items);
       },
 
-      removeItem(productId) {
-        let items = this.getItems();
-        items = items.filter(i => i.id !== productId);
-        this.saveItems(items);
-        this.showToast('Item removed from cart');
-      },
-
-      getTotal() {
-        const items = this.getItems();
-        return items.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      },
-
-      getItemCount() {
-        const items = this.getItems();
-        return items.reduce((count, item) => count + (item.qty >= 1 ? Math.floor(item.qty) : 1), 0);
+      async removeItem(productId) {
+        try {
+          const res = await fetch("{% url 'cart_remove_api' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': this.getCookie('csrftoken') || '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ product_id: productId })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            this.items = data.items;
+            this.total = data.total;
+            this.count = data.count;
+            this.render();
+            this.showToast('Item removed from cart');
+          }
+        } catch (e) {
+          console.error("Error removing item:", e);
+        }
       },
 
       openDrawer() {
@@ -584,13 +627,16 @@
       },
 
       proceedToCheckout() {
-        const items = this.getItems();
-        if (items.length === 0) {
+        if (!this.isAuth) {
+          window.location.href = "{% url 'customer_login' %}?next=" + encodeURIComponent("{% url 'cart' %}");
+          return;
+        }
+
+        if (this.items.length === 0) {
           alert("Your cart is empty. Please select an item to checkout.");
           return;
         }
-        // Direct to checkout for first item or general checkout
-        const primary = items[0];
+        const primary = this.items[0];
         window.location.href = `/products/Checkout/${primary.id}/${primary.qty}/`;
       },
 
@@ -598,15 +644,83 @@
         const container = document.getElementById('toast-container');
         if (!container) return;
         const toast = document.createElement('div');
-        toast.className = "bg-on-surface text-white text-xs px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 animate-bounce pointer-events-auto border border-white/10";
-        toast.innerHTML = `<span class="material-symbols-outlined text-emerald-400 text-[18px]">check_circle</span><span>${msg}</span>`;
+        toast.className = "bg-on-surface text-white text-xs px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 animate-bounce pointer-events-auto border border-white/10 z-[9999]";
+        const icon = document.createElement('span');
+        icon.className = "material-symbols-outlined text-emerald-400 text-[18px]";
+        icon.textContent = "check_circle";
+        const text = document.createElement('span');
+        text.textContent = msg;
+        toast.appendChild(icon);
+        toast.appendChild(text);
         container.appendChild(toast);
         setTimeout(() => toast.remove(), 2500);
       },
 
+      _el(tag, cls, text) {
+        const el = document.createElement(tag);
+        if (cls) el.className = cls;
+        if (text !== undefined) el.textContent = text;
+        return el;
+      },
+
+      _buildCartRow(item) {
+        const safeId = parseInt(item.id, 10);
+        if (isNaN(safeId)) return null;
+        const safePrice = parseFloat(item.price) || 0;
+        const safeQty = parseFloat(item.qty) || 0;
+        const safeName = String(item.name || '').slice(0, 200);
+        const safeImage = /^https?:\/\//.test(item.image) ? item.image : 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=200';
+
+        const row = this._el('div', 'flex items-center justify-between gap-3 p-3 bg-white rounded-xl border border-outline-variant/50 shadow-sm');
+
+        // Image
+        const imgWrap = this._el('div', 'w-14 h-14 rounded-lg bg-surface-variant overflow-hidden shrink-0');
+        const img = document.createElement('img');
+        img.className = 'w-full h-full object-cover';
+        img.src = safeImage;
+        img.alt = safeName;
+        imgWrap.appendChild(img);
+        row.appendChild(imgWrap);
+
+        // Info
+        const info = this._el('div', 'flex-grow min-w-0');
+        info.appendChild(this._el('h4', 'font-bold text-xs text-on-surface truncate', safeName));
+        info.appendChild(this._el('p', 'text-[11px] text-on-surface-variant font-medium', `₹${safePrice.toFixed(2)} / kg`));
+
+        const qtyRow = this._el('div', 'flex items-center gap-2 mt-1.5');
+        const qtyControls = this._el('div', 'inline-flex items-center border border-outline-variant rounded-lg bg-surface-container-low px-1');
+
+        const btnMinus = this._el('button', 'w-6 h-6 flex items-center justify-center text-on-surface font-bold hover:text-primary', '−');
+        btnMinus.addEventListener('click', () => AramCart.updateQty(safeId, -0.250));
+        qtyControls.appendChild(btnMinus);
+
+        qtyControls.appendChild(this._el('span', 'text-xs font-semibold px-2', `${safeQty} kg`));
+
+        const btnPlus = this._el('button', 'w-6 h-6 flex items-center justify-center text-on-surface font-bold hover:text-primary', '+');
+        btnPlus.addEventListener('click', () => AramCart.updateQty(safeId, 0.250));
+        qtyControls.appendChild(btnPlus);
+
+        qtyRow.appendChild(qtyControls);
+        info.appendChild(qtyRow);
+        row.appendChild(info);
+
+        // Price + Remove
+        const priceCol = this._el('div', 'text-right shrink-0');
+        priceCol.appendChild(this._el('p', 'font-bold text-sm text-primary', `₹${(safePrice * safeQty).toFixed(2)}`));
+        const btnRemove = this._el('button', 'text-xs text-on-surface-variant hover:text-red-600 mt-2 p-1');
+        btnRemove.title = 'Remove';
+        btnRemove.addEventListener('click', () => AramCart.removeItem(safeId));
+        const delIcon = this._el('span', 'material-symbols-outlined text-[18px]', 'delete');
+        btnRemove.appendChild(delIcon);
+        priceCol.appendChild(btnRemove);
+        row.appendChild(priceCol);
+
+        return row;
+      },
+
       render() {
-        const items = this.getItems();
-        const total = this.getTotal();
+        const items = this.items || [];
+        const total = this.total || 0;
         const count = items.length;
 
         // Update nav badges
@@ -640,30 +754,13 @@
           if (footer) footer.classList.remove('hidden');
           if (itemsContainer) {
             itemsContainer.classList.remove('hidden');
-            itemsContainer.innerHTML = items.map(item => `
-              <div class="flex items-center justify-between gap-3 p-3 bg-white rounded-xl border border-outline-variant/50 shadow-sm">
-                <div class="w-14 h-14 rounded-lg bg-surface-variant overflow-hidden shrink-0">
-                  <img src="${item.image || 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=200'}" alt="${item.name}" class="w-full h-full object-cover">
-                </div>
-                <div class="flex-grow min-w-0">
-                  <h4 class="font-bold text-xs text-on-surface truncate">${item.name}</h4>
-                  <p class="text-[11px] text-on-surface-variant font-medium">₹${item.price.toFixed(2)} / kg</p>
-                  <div class="flex items-center gap-2 mt-1.5">
-                    <div class="inline-flex items-center border border-outline-variant rounded-lg bg-surface-container-low px-1">
-                      <button onclick="AramCart.updateQty(${item.id}, -0.250)" class="w-6 h-6 flex items-center justify-center text-on-surface font-bold hover:text-primary">−</button>
-                      <span class="text-xs font-semibold px-2">${item.qty} kg</span>
-                      <button onclick="AramCart.updateQty(${item.id}, 0.250)" class="w-6 h-6 flex items-center justify-center text-on-surface font-bold hover:text-primary">+</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="text-right shrink-0">
-                  <p class="font-bold text-sm text-primary">₹${(item.price * item.qty).toFixed(2)}</p>
-                  <button onclick="AramCart.removeItem(${item.id})" class="text-xs text-on-surface-variant hover:text-red-600 mt-2 p-1" title="Remove">
-                    <span class="material-symbols-outlined text-[18px]">delete</span>
-                  </button>
-                </div>
-              </div>
-            `).join('');
+            itemsContainer.textContent = '';
+            items.forEach(item => {
+              const row = this._buildCartRow(item);
+              if (row) itemsContainer.appendChild(row);
+            });
+          }
+        }
           }
         }
       }
@@ -671,7 +768,7 @@
 
     // Auto initialize cart on DOM load
     document.addEventListener('DOMContentLoaded', () => {
-      AramCart.render();
+      AramCart.sync();
     });
   </script>
 </body>

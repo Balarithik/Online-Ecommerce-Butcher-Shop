@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import logo from './assets/logo.png';
 
-const MAIN_APP_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+if (!VITE_API_BASE_URL) throw new Error('VITE_API_BASE_URL is not set. Configure it in your production environment.');
+const MAIN_APP_URL = VITE_API_BASE_URL;
 const HEALTH_CHECK_URL = new URL('/healthz/', MAIN_APP_URL).toString();
 
 const LOADING_MESSAGES = [
@@ -46,13 +48,19 @@ export default function App() {
   // Health check polling against live backend server
   useEffect(() => {
     let cancelled = false;
-    let retryTimer;
+    let retryCount = 0;
+    const MAX_RETRIES = 10;
     let initialTimer;
     let redirectTimer;
     let fadeTimer;
     let activeController;
 
     const checkServerHealth = async () => {
+      if (retryCount >= MAX_RETRIES) {
+        setServerOnline(false);
+        setIsReady(false);
+        return;
+      }
       activeController = new AbortController();
       const requestTimeout = setTimeout(() => activeController.abort(), 5000);
 
@@ -80,7 +88,9 @@ export default function App() {
           }, 900);
         }
       } catch {
+        retryCount++;
         if (!cancelled) {
+          setProgress(Math.max(0, 94 - retryCount * 5));
           retryTimer = setTimeout(checkServerHealth, 2000);
         }
       } finally {

@@ -89,16 +89,16 @@ wheels = [
 
 [[package]]
 name = "django"
-version = "6.0.6"
+version = "6.0.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "sqlparse" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/78/29/ac41e16097af67066d97a7d5775c5d8e7efc5d0284f6b0a159e07b9adb92/django-6.0.6.tar.gz", hash = "sha256:ad03916ba59523d781ae5c3f631960c23d69a9d9c43cecda52fc23b47e953713", size = 10905525, upload-time = "2026-06-03T13:02:46.503Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/13/1f/e4c69ec67bedee10428875a44b8b4554d0448a264b50298bfa63d2162708/django-6.0.9.tar.gz", hash = "sha256:8ce037c971f421cfb47d38c097ca233a8f6dd42d9e9501a37e02dd7d08c5cb3f", size = 10955325, upload-time = "2026-10-06T12:57:57.479Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/eb/50/23f9dc45483419a3cc2085b498b25adfbf10642b2941c73e6d2dfaffc9ab/django-6.0.6-py3-none-any.whl", hash = "sha256:25148b1194c47c2e685e5f5e9c5d59c78b075dfd282cb9618861ba6c1708f4d2", size = 8373354, upload-time = "2026-06-03T13:02:41.72Z" },
+    { url = "https://files.pythonhosted.org/packages/01/3f/f0378bc671b528caf61b143ba91c1057204a7e863d9a309d62a64203f9c4/django-6.0.9-py3-none-any.whl", hash = "sha256:5c6473d05bbea9c43359cc36701b5deec3c925f5311963786e1346544c1a68c0", size = 8377504, upload-time = "2026-10-06T12:57:52.649Z" },
 ]
 
 [[package]]
@@ -113,6 +113,15 @@ sdist = { url = "https://files.pythonhosted.org/packages/72/da/6072905410b869566
 wheels = [
     { url = "https://files.pythonhosted.org/packages/fe/e2/e52f63ddafa0985e2af70197c4d3e18963d0ea854083fc23705b88014891/django_cloudinary_storage-0.3.0-py3-none-any.whl", hash = "sha256:95c855c7334141b2a485ea7eb5716de87bb6ce0d848e205debb3a3ab7bbbd49a", size = 18866, upload-time = "2020-08-23T22:19:55.767Z" },
 ]
+
+[[package]]
+name = "django-settings-export"
+version = "1.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d6/72/9848a2d631dad70d7ea582540f0619e1a7ecf31b3a117de9d9f2b6b28029/django-settings-export-1.2.1.tar.gz", hash = "sha256:fceeae49fc597f654c1217415d8e049fc81c930b7154f5d8f28c432db738ff79", size = 4951, upload-time = "2016-11-06T11:18:58Z" }
 
 [[package]]
 name = "gunicorn"
@@ -147,6 +156,7 @@ dependencies = [
     { name = "dj-database-url" },
     { name = "django" },
     { name = "django-cloudinary-storage" },
+    { name = "django-settings-export" },
     { name = "gunicorn" },
     { name = "idna" },
     { name = "packaging" },
@@ -169,8 +179,9 @@ requires-dist = [
     { name = "charset-normalizer", specifier = "==3.4.7" },
     { name = "cloudinary", specifier = "==1.45.0" },
     { name = "dj-database-url", specifier = "==3.1.2" },
-    { name = "django", specifier = "==6.0.6" },
+    { name = "django", specifier = "==6.0.9" },
     { name = "django-cloudinary-storage", specifier = "==0.3.0" },
+    { name = "django-settings-export", specifier = ">=1.2.1" },
     { name = "gunicorn", specifier = "==26.0.0" },
     { name = "idna", specifier = "==3.18" },
     { name = "packaging", specifier = "==26.2" },

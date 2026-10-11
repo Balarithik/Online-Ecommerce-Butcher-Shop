@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import sys
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 import dj_database_url
 from django.urls import reverse_lazy
 import cloudinary
@@ -90,6 +91,24 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'main.urls'
 
+WHATSAPP_NUMBER = ''.join(
+    character for character in os.environ.get("WHATSAPP_NUMBER", "")
+    if character.isdigit()
+)
+
+# Optional Twilio delivery confirmations.  Leave these empty to keep order
+# placement active without attempting external notifications.
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "").strip()
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
+TWILIO_SMS_FROM = os.environ.get("TWILIO_SMS_FROM", "").strip()
+TWILIO_WHATSAPP_FROM = os.environ.get("TWILIO_WHATSAPP_FROM", "").strip()
+TWILIO_WHATSAPP_CONTENT_SID = os.environ.get("TWILIO_WHATSAPP_CONTENT_SID", "").strip()
+ORDER_NOTIFICATION_COUNTRY_CODE = ''.join(
+    character for character in os.environ.get("ORDER_NOTIFICATION_COUNTRY_CODE", "91")
+    if character.isdigit()
+)
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -100,6 +119,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'main.context_processors.site_settings',
             ],
         },
     },
@@ -155,7 +175,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -171,14 +191,41 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", "").strip()
-CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", "").strip()
-CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "").strip()
+def _cloudinary_credentials(environment=os.environ):
+    cloud_name = environment.get("CLOUDINARY_CLOUD_NAME", "").strip()
+    api_key = environment.get("CLOUDINARY_API_KEY", "").strip()
+    api_secret = environment.get("CLOUDINARY_API_SECRET", "").strip()
+    cloudinary_url = environment.get("CLOUDINARY_URL", "").strip()
+
+    if cloudinary_url:
+        parsed_url = urlsplit(cloudinary_url)
+        if (
+            parsed_url.scheme != "cloudinary"
+            or not parsed_url.hostname
+            or not parsed_url.username
+            or not parsed_url.password
+        ):
+            raise ValueError(
+                "CLOUDINARY_URL must use the format "
+                "cloudinary://API_KEY:API_SECRET@CLOUD_NAME."
+            )
+        cloud_name = cloud_name or parsed_url.hostname
+        api_key = api_key or unquote(parsed_url.username)
+        api_secret = api_secret or unquote(parsed_url.password)
+
+    return cloud_name, api_key, api_secret
+
+
+CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET = _cloudinary_credentials()
+CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL", "").strip()
 CLOUDINARY_API_CONFIGURED = bool(CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET)
 CLOUDINARY_UPLOAD_CONFIGURED = CLOUDINARY_API_CONFIGURED
 
 CLOUDINARY_CONFIG = {"secure": True}
-CLOUDINARY_STORAGE = {"SECURE": True}
+CLOUDINARY_STORAGE = {
+    "SECURE": True,
+    "PREFIX": "",
+}
 if CLOUDINARY_CLOUD_NAME:
     CLOUDINARY_CONFIG["cloud_name"] = CLOUDINARY_CLOUD_NAME
     CLOUDINARY_STORAGE["CLOUD_NAME"] = CLOUDINARY_CLOUD_NAME

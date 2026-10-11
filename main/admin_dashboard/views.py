@@ -105,11 +105,20 @@ def upload_product_image(request):
             public_id=public_id,
             overwrite=False,
             resource_type="image",
+            timeout=30,
         )
-    except CloudinaryError:
-        logger.exception("Cloudinary failed to upload a product image.")
+    except CloudinaryError as error:
+        error_message = str(error)
+        for sensitive_value in (
+            settings.CLOUDINARY_API_KEY,
+            settings.CLOUDINARY_API_SECRET,
+            settings.CLOUDINARY_URL,
+        ):
+            if sensitive_value:
+                error_message = error_message.replace(sensitive_value, "[redacted]")
+        logger.error("Cloudinary failed to upload product image %s: %s", public_id, error_message)
         return JsonResponse(
-            {"error": "Cloudinary could not upload this image. Check the server Cloudinary configuration and try again."},
+            {"error": f"Cloudinary rejected the upload: {error_message}"},
             status=502,
         )
 
@@ -152,7 +161,8 @@ def admin_dashboard(request):
     orders_delivered = orders.filter(status='delivered').count()
     orders_pending = orders.filter(status__in=['pending', 'preparing', 'out_for_delivery']).count()
     orders_cancelled = orders.filter(status='cancelled').count()
-    total_revenue = orders.exclude(status='cancelled').aggregate(total=Sum('price'))['total'] or 0
+    delivered_revenue = orders.filter(status='delivered').aggregate(total=Sum('price'))['total'] or 0
+    total_order_value = orders.exclude(status='cancelled').aggregate(total=Sum('price'))['total'] or 0
     total_customers = User.objects.filter(is_superuser=False).count()
 
     # Express vs Regular count
@@ -166,7 +176,8 @@ def admin_dashboard(request):
         'orders_delivered': orders_delivered,
         'orders_pending': orders_pending,
         'orders_cancelled': orders_cancelled,
-        'total_revenue': total_revenue,
+        'delivered_revenue': delivered_revenue,
+        'total_order_value': total_order_value,
         'total_customers': total_customers,
         'express_orders': express_orders,
         'recent_orders': orders[:10],
@@ -269,7 +280,7 @@ def add_product_modal(request):
     if request.method == "POST":
         if not settings.CLOUDINARY_UPLOAD_CONFIGURED:
             return HttpResponse(
-                "Configure CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in main/.env before uploading product images.",
+                "Configure CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET before uploading product images.",
                 status=503,
             )
 
@@ -305,7 +316,7 @@ def edit_product_modal(request, product_id):
     if request.method == "POST":
         if not settings.CLOUDINARY_UPLOAD_CONFIGURED:
             return HttpResponse(
-                "Configure CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in main/.env before uploading product images.",
+                "Configure CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET before uploading product images.",
                 status=503,
             )
 
@@ -362,9 +373,16 @@ def update_order(request, order_id):
         valid_choices = [choice[0] for choice in Order.status_choices]
         if new_status in valid_choices:
             order.status = new_status
-            order.save()
+            order.save(update_fields=['status'])
             messages.success(request, f"Order #{order_id} status updated to {new_status}.")
-            return redirect('admin_orders')
+
+            redirect_url = request.META.get('HTTP_REFERER') or reverse('admin_orders')
+            if request.headers.get('HX-Request'):
+                response = HttpResponse(status=204)
+                response['HX-Redirect'] = redirect_url
+                return response
+
+            return redirect(redirect_url)
 
     return render(
         request,

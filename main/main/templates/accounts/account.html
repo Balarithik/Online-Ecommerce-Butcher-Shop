@@ -64,7 +64,7 @@
               <button class="rounded-lg border border-outline-variant px-3 py-2 text-xs font-bold text-on-surface hover:bg-surface-container-low" type="submit">Set as default</button>
             </form>
             {% endif %}
-            <form method="post" onsubmit="return confirm('Remove this saved address?');">
+            <form method="post" class="confirmation-form" data-confirm-title="Remove this address?" data-confirm-message="This delivery address will be removed from your account." data-confirm-action="Remove address">
               {% csrf_token %}<input type="hidden" name="action" value="delete_address"><input type="hidden" name="address_id" value="{{ address.pk }}">
               <button class="rounded-lg px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-50" type="submit">Delete</button>
             </form>
@@ -114,10 +114,67 @@
   <section class="mt-8 rounded-2xl border border-red-200 bg-red-50/60 p-5 md:p-6">
     <h2 class="font-extrabold text-red-900">Delete account</h2>
     <p class="mt-1 text-sm text-red-800">This permanently deletes your account and saved addresses. Past order totals are retained for business records, but your contact, address, and location details are removed.</p>
-    <form method="post" action="{% url 'delete_customer_account' %}" class="mt-4" onsubmit="return confirm('Permanently delete your account and saved addresses? This cannot be undone.');">
+    <form method="post" action="{% url 'delete_customer_account' %}" class="confirmation-form mt-4" data-confirm-title="Delete your account?" data-confirm-message="This permanently removes your account and saved addresses. This action cannot be undone." data-confirm-action="Delete account">
       {% csrf_token %}
       <button type="submit" class="min-h-10 rounded-xl border border-red-300 px-4 text-sm font-bold text-red-800 hover:bg-red-100">Delete my account</button>
     </form>
   </section>
 </main>
+
+<div id="confirmation-modal" class="fixed inset-0 z-[80] hidden items-center justify-center p-4" aria-hidden="true">
+  <button id="confirmation-backdrop" type="button" class="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" aria-label="Close confirmation"></button>
+  <section role="dialog" aria-modal="true" aria-labelledby="confirmation-title" aria-describedby="confirmation-message" class="relative w-full max-w-md rounded-3xl border border-outline-variant/70 bg-surface-container-lowest p-6 shadow-2xl">
+    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-700">
+      <span class="material-symbols-outlined text-[27px]">warning</span>
+    </div>
+    <h2 id="confirmation-title" class="mt-4 text-xl font-black tracking-tight text-on-surface">Are you sure?</h2>
+    <p id="confirmation-message" class="mt-2 text-sm leading-relaxed text-on-surface-variant"></p>
+    <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <button id="confirmation-cancel" type="button" class="inline-flex min-h-11 items-center justify-center rounded-xl border border-outline-variant px-4 text-sm font-bold text-on-surface hover:bg-surface-container-low">Keep it</button>
+      <button id="confirmation-submit" type="button" class="inline-flex min-h-11 items-center justify-center rounded-xl bg-red-700 px-4 text-sm font-bold text-white hover:bg-red-800">Continue</button>
+    </div>
+  </section>
+</div>
+
+<script>
+  (() => {
+    const modal = document.getElementById('confirmation-modal');
+    const title = document.getElementById('confirmation-title');
+    const message = document.getElementById('confirmation-message');
+    const submit = document.getElementById('confirmation-submit');
+    const cancel = document.getElementById('confirmation-cancel');
+    const backdrop = document.getElementById('confirmation-backdrop');
+    let pendingForm = null;
+
+    const closeModal = () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      modal.setAttribute('aria-hidden', 'true');
+      pendingForm = null;
+    };
+
+    document.querySelectorAll('.confirmation-form').forEach((form) => {
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        pendingForm = form;
+        title.textContent = form.dataset.confirmTitle;
+        message.textContent = form.dataset.confirmMessage;
+        submit.textContent = form.dataset.confirmAction;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.setAttribute('aria-hidden', 'false');
+        submit.focus();
+      });
+    });
+
+    submit.addEventListener('click', () => {
+      if (pendingForm) pendingForm.submit();
+    });
+    cancel.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+    });
+  })();
+</script>
 {% endblock %}

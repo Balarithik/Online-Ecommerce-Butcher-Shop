@@ -1,12 +1,17 @@
-from django.test import TestCase, Client
+import re
+from unittest.mock import patch
+
+from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User
 from store.models import Products
-from orders.models import Order
+from orders.models import Cart, CartItem, Order
 from orders.forms import OrderForm
+from orders.notifications import send_order_confirmation
 from home.models import CustomerAddress
 from decimal import Decimal
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class OrderTestCase(TestCase):
     def setUp(self):
         # Create a test product
@@ -110,6 +115,7 @@ class OrderTestCase(TestCase):
     def test_order_price_tamper_prevention(self):
         # Test server-side price calculation and tamper prevention
         client = Client()
+        client.force_login(self.normal_user)
         post_data = {
             'name': 'Bala Test',
             'mobile': '7397511387',
@@ -128,7 +134,9 @@ class OrderTestCase(TestCase):
         self.assertEqual(order.product_name, "Test Chicken")
 
     def test_order_saves_customer_shared_gps_location(self):
-        response = Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+        client = Client()
+        client.force_login(self.normal_user)
+        response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
             'name': 'Bala Test',
             'mobile': '7397511387',
             'address': '9/427 Kamarajar Nagar, Uchipuli',
@@ -143,7 +151,9 @@ class OrderTestCase(TestCase):
         self.assertContains(response, 'Open shared GPS pin in Maps')
 
     def test_order_rejects_invalid_gps_coordinates(self):
-        response = Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+        client = Client()
+        client.force_login(self.normal_user)
+        response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
             'name': 'Bala Test',
             'mobile': '7397511387',
             'address': 'Test address',
@@ -178,7 +188,9 @@ class OrderTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_negative_quantity_is_rejected(self):
-        response = Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+        client = Client()
+        client.force_login(self.normal_user)
+        response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
             'name': 'Bala Test', 'mobile': '7397511387', 'address': 'Test address', 'quantity': '-1',
         })
         self.assertEqual(response.status_code, 400)
@@ -187,16 +199,129 @@ class OrderTestCase(TestCase):
     def test_unavailable_product_cannot_be_ordered(self):
         self.product.is_available = False
         self.product.save()
-        response = Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+        client = Client()
+        client.force_login(self.normal_user)
+        response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
             'name': 'Bala Test', 'mobile': '7397511387', 'address': 'Test address', 'quantity': '1',
         })
         self.assertEqual(response.status_code, 400)
         self.assertFalse(Order.objects.exists())
 
     def test_order_total_remains_historical_after_price_change(self):
-        Client().post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+        client = Client()
+        client.force_login(self.normal_user)
+        client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
             'name': 'Bala Test', 'mobile': '7397511387', 'address': 'Test address', 'quantity': '1',
         })
         self.product.price = Decimal('300.00')
         self.product.save()
         self.assertEqual(Order.objects.get().price, Decimal('200.00'))
+
+    def test_order_routes_require_sign_in_and_preserve_checkout_destination(self):
+        checkout_url = reverse('Checkout_direct', args=[self.product.id, '1'])
+
+        checkout_response = self.client.get(checkout_url)
+        order_response = self.client.post(reverse('Orders', args=[self.product.id]), {
+            'quantity': '1',
+        })
+
+        self.assertRedirects(checkout_response, f"{reverse('customer_login')}?next={checkout_url}")
+        self.assertRedirects(order_response, f"{reverse('customer_login')}?next={checkout_url}")
+        self.assertFalse(Order.objects.exists())
+
+    def test_cart_is_isolated_between_authenticated_customers(self):
+        other_user = User.objects.create_user('other', password='userpassword')
+        other_client = Client()
+        self.client.force_login(self.normal_user)
+        other_client.force_login(other_user)
+
+        self.client.post(reverse('cart_add_api'), {'product_id': self.product.id, 'qty': '1'})
+        other_cart = other_client.get(reverse('cart_data_api')).json()
+
+        self.assertEqual(Cart.objects.filter(user=self.normal_user).count(), 1)
+        self.assertEqual(Cart.objects.filter(user=other_user).count(), 1)
+        self.assertEqual(other_cart['items'], [])
+
+    def test_guest_cart_merges_into_account_cart_after_login(self):
+        guest_client = Client()
+        guest_client.post(reverse('cart_add_api'), {'product_id': self.product.id, 'qty': '0.500'})
+        guest_cart = Cart.objects.get(user__isnull=True)
+
+        response = guest_client.post(reverse('customer_login'), {
+            'username': 'normal',
+            'password': 'userpassword',
+            'next': reverse('cart'),
+        })
+
+        self.assertRedirects(response, reverse('cart'))
+        customer_cart = Cart.objects.get(user=self.normal_user)
+        self.assertEqual(CartItem.objects.get(cart=customer_cart, product=self.product).quantity, Decimal('0.500'))
+        self.assertFalse(Cart.objects.filter(pk=guest_cart.pk).exists())
+
+    def test_checkout_token_prevents_duplicate_orders(self):
+        self.client.force_login(self.normal_user)
+        checkout = self.client.get(reverse('Checkout_direct', args=[self.product.id, '1']))
+        token_match = re.search(r'name="order_token" value="([^"]+)"', checkout.content.decode())
+        self.assertIsNotNone(token_match)
+        order_data = {
+            'order_token': token_match.group(1),
+            'name': 'Test User',
+            'mobile': '9876543210',
+            'address': '1 Test Street, Uchipuli',
+            'quantity': '1',
+        }
+
+        first = self.client.post(reverse('Orders', args=[self.product.id]), order_data)
+        second = self.client.post(reverse('Orders', args=[self.product.id]), order_data)
+
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual(second.status_code, 200)
+        self.assertEqual(Order.objects.filter(user=self.normal_user).count(), 1)
+
+    def test_admin_status_update_changes_the_existing_order_only(self):
+        order = Order.objects.create(
+            user=self.normal_user,
+            product_name=self.product.name,
+            product_id=self.product.id,
+            name='Test User',
+            mobile='9876543210',
+            location='1 Test Street, Uchipuli',
+            quantity='1',
+            price='200.00',
+        )
+        self.client.force_login(self.superuser)
+
+        response = self.client.post(reverse('update_order', args=[order.order_id]), {'status': 'delivered'})
+
+        self.assertRedirects(response, reverse('admin_orders'))
+        order.refresh_from_db()
+        self.assertEqual(order.status, 'delivered')
+        self.assertEqual(Order.objects.count(), 1)
+
+    @override_settings(
+        TWILIO_ACCOUNT_SID='ACtest',
+        TWILIO_AUTH_TOKEN='test-token',
+        TWILIO_SMS_FROM='+15550000000',
+        TWILIO_WHATSAPP_FROM='whatsapp:+14155238886',
+        ORDER_NOTIFICATION_COUNTRY_CODE='91',
+    )
+    @patch('orders.notifications.requests.post')
+    def test_order_confirmation_sends_sms_and_whatsapp(self, post):
+        post.return_value.raise_for_status.return_value = None
+        order = Order.objects.create(
+            user=self.normal_user,
+            product_name=self.product.name,
+            product_id=self.product.id,
+            name='Test User',
+            mobile='9876543210',
+            location='1 Test Street, Uchipuli',
+            quantity='1',
+            price='200.00',
+        )
+
+        results = send_order_confirmation(order)
+
+        self.assertEqual(results, {'sms': True, 'whatsapp': True})
+        self.assertEqual(post.call_count, 2)
+        self.assertEqual(post.call_args_list[0].kwargs['data']['To'], '+919876543210')
+        self.assertEqual(post.call_args_list[1].kwargs['data']['To'], 'whatsapp:+919876543210')

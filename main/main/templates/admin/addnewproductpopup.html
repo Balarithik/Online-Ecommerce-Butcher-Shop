@@ -38,7 +38,7 @@
       {% endif %}
       {% if not cloudinary_upload_configured %}
       <div class="mx-4 mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs leading-relaxed text-amber-900 sm:mx-6" role="status">
-        Product image uploads need the Cloudinary cloud name, API key, and API secret configured in <code>main/.env</code>.
+        Configure <code>CLOUDINARY_URL</code> or the Cloudinary cloud name, API key, and API secret in the server environment to upload product images.
       </div>
       {% endif %}
       <div class="grid grid-cols-1 gap-5 p-4 sm:p-6 md:grid-cols-2">

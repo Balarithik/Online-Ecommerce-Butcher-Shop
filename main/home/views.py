@@ -17,28 +17,50 @@ def home(request):
 
 
 def customer_login(request):
+    next_url = request.POST.get('next', '') or request.GET.get('next', '')
     if request.user.is_authenticated:
+        if next_url and url_has_allowed_host_and_scheme(next_url, {request.get_host()}):
+            return redirect(next_url)
         return redirect('home')
     form = AuthenticationForm(request, data=request.POST or None)
     if request.method == 'POST' and form.is_valid():
-        login(request, form.get_user())
-        next_url = request.POST.get('next', '')
-        if url_has_allowed_host_and_scheme(next_url, {request.get_host()}):
+        guest_session_key = request.session.session_key
+        user = form.get_user()
+        login(request, user)
+        from orders.views import get_or_create_cart
+        get_or_create_cart(request, merge_session_key=guest_session_key)
+        next_url = request.POST.get('next', '') or request.GET.get('next', '')
+        if next_url and url_has_allowed_host_and_scheme(next_url, {request.get_host()}):
             return redirect(next_url)
         return redirect('home')
-    return render(request, 'accounts/login.html', {'form': form})
+    return render(request, 'accounts/login.html', {
+        'form': form,
+        'next': next_url
+    })
 
 
 def customer_signup(request):
+    next_url = request.POST.get('next', '') or request.GET.get('next', '')
     if request.user.is_authenticated:
+        if next_url and url_has_allowed_host_and_scheme(next_url, {request.get_host()}):
+            return redirect(next_url)
         return redirect('home')
     form = CustomerSignupForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
+        guest_session_key = request.session.session_key
         user = form.save()
         login(request, user)
+        from orders.views import get_or_create_cart
+        get_or_create_cart(request, merge_session_key=guest_session_key)
         messages.success(request, 'Your account has been created.')
+        if next_url and url_has_allowed_host_and_scheme(next_url, {request.get_host()}):
+            return redirect(next_url)
         return redirect('home')
-    return render(request, 'accounts/signup.html', {'form': form})
+    return render(request, 'accounts/signup.html', {
+        'form': form,
+        'next': next_url
+    })
+
 
 
 def customer_logout(request):
