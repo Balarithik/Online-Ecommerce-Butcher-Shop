@@ -11,6 +11,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.db import transaction
 from orders.forms import OrderForm
 from home.models import CustomerAddress, CustomerProfile
+from store.models import Products
 from .models import Order, Cart, CartItem, OrderItem
 from .notifications import send_order_confirmation
 
