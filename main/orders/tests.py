@@ -103,7 +103,7 @@ class OrderTestCase(TestCase):
             'mobile': '1111111111',
             'address': 'Forged Address',
             'quantity': '1',
-        })
+        }, follow=True)
 
         self.assertEqual(response.status_code, 200)
         order = Order.objects.get()
@@ -125,7 +125,7 @@ class OrderTestCase(TestCase):
             'price': '10.0'  # Try to set a fake low price of ₹10
         }
         url = reverse('Orders', kwargs={'product_id': self.product.id})
-        response = client.post(url, post_data)
+        response = client.post(url, post_data, follow=True)
         
         self.assertEqual(response.status_code, 200) # Order placement successful
         # Verify the saved price is calculated server-side: 200.0 * 2.5 = 500.0 (not 10.0)
@@ -143,7 +143,7 @@ class OrderTestCase(TestCase):
             'quantity': '0.25',
             'latitude': '9.310044',
             'longitude': '78.994671',
-        })
+        }, follow=True)
         self.assertEqual(response.status_code, 200)
         order = Order.objects.latest('order_id')
         self.assertEqual(order.latitude, Decimal('9.310044'))
@@ -271,8 +271,8 @@ class OrderTestCase(TestCase):
             'quantity': '1',
         }
 
-        first = self.client.post(reverse('Orders', args=[self.product.id]), order_data)
-        second = self.client.post(reverse('Orders', args=[self.product.id]), order_data)
+        first = self.client.post(reverse('Orders', args=[self.product.id]), order_data, follow=True)
+        second = self.client.post(reverse('Orders', args=[self.product.id]), order_data, follow=True)
 
         self.assertEqual(first.status_code, 200)
         self.assertEqual(second.status_code, 200)
