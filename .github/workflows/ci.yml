@@ -1,0 +1,52 @@
+name: AramCuts CI
+
+on:
+    push:
+        branches:
+            - main
+
+    pull_request:
+        branches:
+            - main
+
+    workflow_dispatch:
+
+    permissions:
+        contents: read
+
+    jobs:
+        django-tests:
+        name: Django checks and tests
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+
+    defaults:
+        run:
+            working-directory: main
+
+    env:
+        DEBUG: "True"
+        SECRET_KEY: "ci-only-not-a-production-secret"
+
+    steps:
+        - name: Checkout repository
+          uses: actions/checkout@v7
+        - name: Set up Python
+          uses: actions/setup-python@v7
+          with:
+            python-version: "3.14"
+            cache: pip
+            cache-dependency-path: main/requirements.txt
+
+        - name: Install dependencies
+        run: 
+            python -m pip install --upgrade pip
+            python -m pip install -r requirements.txt
+        - name: Check Django configuration
+        run: 
+            python manage.py check
+        - name: Run Django tests
+        run: 
+            python manage.py test
+
