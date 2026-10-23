@@ -1,16 +1,20 @@
 {% load static %}
+{csrf_token}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lakshmi Broliers - Admin Sign In</title>
-  <link rel="icon" href="{% static 'icons/logo.png' %}" type="image/png"/>
+  <link rel="icon" href="{% static 'icons/logo.png' %}" type="image/png" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet" />
   <script>
     tailwind.config = {
       theme: {
@@ -29,57 +33,73 @@
     };
   </script>
 </head>
+
 <body class="min-h-screen bg-surface font-sans text-on-surface antialiased">
   <main class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 sm:px-6">
-    <div aria-hidden="true" class="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
-    <div aria-hidden="true" class="pointer-events-none absolute -bottom-28 -right-24 h-80 w-80 rounded-full bg-amber-200/40 blur-3xl"></div>
+    <div aria-hidden="true"
+      class="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
+    <div aria-hidden="true"
+      class="pointer-events-none absolute -bottom-28 -right-24 h-80 w-80 rounded-full bg-amber-200/40 blur-3xl"></div>
 
-    <section class="relative w-full max-w-md overflow-hidden rounded-3xl border border-outline-variant/70 bg-white shadow-xl shadow-primary/5">
+    <section
+      class="relative w-full max-w-md overflow-hidden rounded-3xl border border-outline-variant/70 bg-white shadow-xl shadow-primary/5">
       <div class="h-1.5 bg-gradient-to-r from-primary via-primary-container to-amber-500"></div>
       <div class="p-6 sm:p-9">
-        <a href="{% url 'home' %}" class="mx-auto mb-6 flex w-fit items-center gap-3 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4">
-          <img src="{% static 'icons/logo.png' %}" alt="Lakshmi Broliers" class="h-14 w-14 rounded-xl object-contain"/>
+        <a href="{% url 'home' %}"
+          class="mx-auto mb-6 flex w-fit items-center gap-3 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4">
+          <img src="{% static 'icons/logo.png' %}" alt="Lakshmi Broliers" class="h-14 w-14 rounded-xl object-contain" />
           <span class="text-lg font-extrabold tracking-tight text-primary sm:text-xl">Lakshmi Broliers</span>
         </a>
 
         <div class="mb-7 text-center">
-          <span class="material-symbols-outlined mb-3 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/5 text-3xl text-primary">admin_panel_settings</span>
+          <span
+            class="material-symbols-outlined mb-3 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/5 text-3xl text-primary">admin_panel_settings</span>
           <p class="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-primary">Operations Hub</p>
           <h1 class="text-2xl font-extrabold tracking-tight sm:text-3xl">Admin sign in</h1>
-          <p class="mt-2 text-sm leading-relaxed text-on-surface-variant">Sign in to manage orders, product availability, and daily operations.</p>
+          <p class="mt-2 text-sm leading-relaxed text-on-surface-variant">Sign in to manage orders, product
+            availability, and daily operations.</p>
         </div>
 
         {% if messages %}
         <div class="mb-5 space-y-2" aria-live="polite">
           {% for message in messages %}
-          <p class="rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-sm font-medium text-red-800">{{ message }}</p>
+          <p class="rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-sm font-medium text-red-800">{{ message
+            }}</p>
           {% endfor %}
         </div>
         {% endif %}
 
         <form method="POST" action="{% url 'admin_login' %}" class="space-y-5">
           {% csrf_token %}
-          <input type="hidden" name="next" value="{{ next_url|default:'' }}"/>
+          <input type="hidden" name="next" value="{{ next_url|default:'' }}" />
           <div>
             <label for="username" class="mb-1.5 block text-sm font-semibold text-on-surface">Username</label>
             <div class="relative">
-              <span class="material-symbols-outlined pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant">person</span>
-              <input id="username" name="username" type="text" autocomplete="username" required autofocus placeholder="Enter admin username" class="h-12 w-full rounded-xl border border-outline-variant bg-surface pl-11 pr-4 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/15"/>
+              <span
+                class="material-symbols-outlined pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant">person</span>
+              <input id="username" name="username" type="text" autocomplete="username" required autofocus
+                placeholder="Enter admin username"
+                class="h-12 w-full rounded-xl border border-outline-variant bg-surface pl-11 pr-4 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/15" />
             </div>
           </div>
 
           <div>
             <label for="password" class="mb-1.5 block text-sm font-semibold text-on-surface">Password</label>
             <div class="relative">
-              <span class="material-symbols-outlined pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant">lock</span>
-              <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter your password" class="h-12 w-full rounded-xl border border-outline-variant bg-surface py-2 pl-11 pr-12 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/15"/>
-              <button id="togglePassword" type="button" aria-label="Show password" aria-pressed="false" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-2 text-on-surface-variant transition hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+              <span
+                class="material-symbols-outlined pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant">lock</span>
+              <input id="password" name="password" type="password" autocomplete="current-password" required
+                placeholder="Enter your password"
+                class="h-12 w-full rounded-xl border border-outline-variant bg-surface py-2 pl-11 pr-12 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/15" />
+              <button id="togglePassword" type="button" aria-label="Show password" aria-pressed="false"
+                class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-2 text-on-surface-variant transition hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                 <span id="passwordVisibilityIcon" class="material-symbols-outlined text-[20px]">visibility</span>
               </button>
             </div>
           </div>
 
-          <button type="submit" class="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.99]">
+          <button type="submit"
+            class="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.99]">
             <span>Sign in to admin</span>
             <span class="material-symbols-outlined text-[18px]">login</span>
           </button>
@@ -87,7 +107,8 @@
 
         <div class="mt-6 flex items-start gap-2.5 rounded-xl border border-outline-variant/50 bg-surface px-3.5 py-3">
           <span class="material-symbols-outlined mt-0.5 text-[18px] text-primary">shield_lock</span>
-          <p class="text-xs leading-relaxed text-on-surface-variant">Restricted to authorized administrators. Keep your sign-in details private.</p>
+          <p class="text-xs leading-relaxed text-on-surface-variant">Restricted to authorized administrators. Keep your
+            sign-in details private.</p>
         </div>
       </div>
     </section>
@@ -107,4 +128,5 @@
     });
   </script>
 </body>
+
 </html>
