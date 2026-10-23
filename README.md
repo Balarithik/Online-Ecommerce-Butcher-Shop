@@ -1,26 +1,101 @@
-# AramCuts V1
+# Lakshmi Broliers (AramCuts V1)
 
-A Django-template ordering site for one local poultry shop. Customers can browse available products and place a cash-on-delivery order; shop staff manage products and orders through the protected dashboard or Django admin.
+Django + React ecommerce storefront for a local poultry shop. Customers browse products, manage a cart, create an account, and place cash-on-delivery orders. Shop staff manage catalog and orders through a protected admin dashboard.
 
-## Local setup
+**Live app (Render):** `https://lakshmi-broliers.onrender.com`
 
-1. Create and activate a virtual environment, then run `pip install -r main/requirements.txt`.
-2. Copy `.env.example` to `.env` and set development values as needed.
-3. From `main/`, run `python manage.py migrate` and `python manage.py runserver`.
+---
 
-Run checks with `python manage.py check` and tests with `python manage.py test`.
+## Tech stack
 
-## Production
+| Layer | Technology |
+|-------|------------|
+| Backend | **Django 6.0.9**, Python 3.12+ (CI uses 3.14) |
+| App server | **Gunicorn** (`main/Procfile`) |
+| Database | **SQLite** locally; **PostgreSQL** via `DATABASE_URL` (`dj-database-url` + `psycopg`) in production |
+| Static files | **WhiteNoise** (`CompressedManifestStaticFilesStorage`) |
+| Media / images | **Cloudinary** (`django-cloudinary-storage`) when configured; local `MEDIA_ROOT` otherwise |
+| Frontend (store) | Django templates + **Tailwind CSS CDN** + Material Symbols |
+| Splash / warm-up UI | **React 19** + **Vite 8** (`SplashScreen/`) |
+| Notifications | Optional **Twilio** SMS / WhatsApp |
+| Auth | Django auth; customer signup/login + superuser admin dashboard |
+| Hosting | **Render** and/or **AWS Elastic Beanstalk** |
+| CI/CD | **GitHub Actions** (`.github/workflows/`) |
 
-Set `DEBUG=False`, a unique `SECRET_KEY`, and the deployed host in `ALLOWED_HOSTS`. Use the supplied build script to install dependencies, collect static files, and apply committed migrations. Serve Django via Gunicorn (not `runserver`). Cloudinary credentials are optional; without them, product uploads use local media storage, which must be persistent in production.
+---
+
+## Repository layout (what each top-level path is for)
+
+| Path | Purpose |
+|------|---------|
+| `main/` | **Deployable Django project** (`manage.py`, apps, templates, static, Procfile). Zip/upload this folder for EB/Render. |
+| `SplashScreen/` | React+Vite loading screen that health-checks the Django `/healthz/` endpoint, then redirects into the store. |
+| `.github/workflows/` | CI tests and Elastic Beanstalk deploy automation. |
+| `.elasticbeanstalk/` | EB CLI metadata at repo root (deploy target is still `main/`). |
+| `.env.example` | Documented environment variables (copy → `main/.env` for local Django). |
+| `.gitignore` | Ignores `.venv`, `.env`, `db.sqlite3`, `node_modules`, secrets, etc. |
+| `README.md` | This file — stack, workflows, and file map. |
+| `production_remediation_plan.md` | Status checklist of production/security remediation items. |
+| `Lakshmi_Broilers_Security_UI_Production_Audit.md` | Full security/UI audit report. |
+| `V1_PRODUCTION_AUDIT.md` | Earlier production audit notes. |
+
+---
+
+## Local development workflow
+
+### Django (store + APIs)
+
+1. Create a virtualenv and install deps:
+   ```bash
+   cd main
+   python -m venv .venv
+   # Windows: .venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+2. Copy env file: from repo root, copy `.env.example` → `main/.env` and set at least `SECRET_KEY`, `DEBUG=True`, and optional Cloudinary/Twilio/WhatsApp values.
+3. Migrate and run:
+   ```bash
+   python manage.py migrate
+   python manage.py runserver
+   ```
+4. Checks / tests:
+   ```bash
+   python manage.py check
+   python manage.py test
+   ```
+
+### Splash screen (optional)
+
+```bash
+cd SplashScreen
+npm install
+# Set VITE_API_BASE_URL to your Django origin, e.g. http://127.0.0.1:8000
+npm run dev
+```
+
+---
+
+## Production workflow
+
+1. Set `DEBUG=False`, a unique `SECRET_KEY`, `ALLOWED_HOSTS`, and `CSRF_TRUSTED_ORIGINS` (include every public HTTPS origin, e.g. `https://lakshmi-broliers.onrender.com`).
+2. Prefer `DATABASE_URL` (Postgres). SQLite is wiped on ephemeral hosts.
+3. Configure Cloudinary for persistent product images.
+4. Build/migrate with `main/build.sh` (or platform build command): install deps → `collectstatic` → `migrate`.
+5. Serve with Gunicorn (`main/Procfile`), not `runserver`.
+
+### Render
+
+- Root / start command should target `main/` (Gunicorn `main.wsgi:application`).
+- Set env vars from `.env.example` plus production secrets.
+- Ensure `CSRF_TRUSTED_ORIGINS` lists the exact Render URL.
 
 ### AWS Elastic Beanstalk
 
-Deploy the **`main/`** folder (it contains `manage.py`, `Procfile`, `requirements.txt`, and `.ebextensions/01-django.config`). Do not zip the repository root.
+Deploy the **`main/`** folder only (it contains `manage.py`, `Procfile`, `requirements.txt`, `.ebextensions/`).
 
-1. Create a Python 3.12 Amazon Linux 2023 environment.
-2. Upload a zip of `main/`, or from `main/` run `eb init` then `eb create` / `eb deploy`.
-3. Set environment properties in the Beanstalk console (do not put secrets in YAML):
+1. Python 3.12 Amazon Linux 2023 environment.
+2. Upload a zip of `main/`, or from `main/` run `eb init` / `eb create` / `eb deploy`.
+3. Set console env properties (never commit secrets):
 
 ```text
 DEBUG=false
@@ -31,17 +106,33 @@ DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
-SHOP_WHATSAPP_NUMBER=
+WHATSAPP_NUMBER=
 ```
 
-GitHub Actions deploys with [`.github/workflows/deploy-elastic-beanstalk.yml`](.github/workflows/deploy-elastic-beanstalk.yml). Add repository secrets `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, and optionally variables `AWS_REGION`, `EB_APPLICATION_NAME`, and `EB_ENVIRONMENT_NAME`.
+GitHub Actions deploy: [`.github/workflows/deploy-elastic-beanstalk.yml`](.github/workflows/deploy-elastic-beanstalk.yml). Secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`. Optional vars: `AWS_REGION`, `EB_APPLICATION_NAME`, `EB_ENVIRONMENT_NAME`.
 
-SQLite on Beanstalk is wiped when instances are replaced. Use RDS (`DATABASE_URL`) for real shop data. Product images should use Cloudinary or another persistent store.
+CI on every push/PR to `main`: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `manage.py check` and `manage.py test`.
 
-## Operations
+---
 
-Use `/admin_login/` with a Django superuser for the custom dashboard. Products can be marked unavailable to prevent public display and checkout. Order prices are stored as purchase-time totals.
+## Key product flows
 
-### SQLite backup and restore
+- **Browse / cart:** Storefront templates + `AramCart` JS in `base.html`; cart APIs under `orders/`.
+- **Account:** `/signup/`, `/login/`, `/account/` — CSRF-protected; signup/login use `@never_cache` + `@ensure_csrf_cookie`.
+- **Checkout:** Requires login; server-side cart, address validation, idempotent `placement_token`.
+- **Staff:** `/admin_login/` → `/admin_dashboard/` (superuser only); product CRUD + Cloudinary uploads.
+- **Health:** `GET /healthz/` → `{"status":"ok"}` (used by SplashScreen).
 
-With the app stopped, copy `main/db.sqlite3` to a secure backup location. To restore, stop the app, retain a copy of the current database, replace `main/db.sqlite3` with the backup, and run `python manage.py migrate`. The database is ignored by Git and must not be used as a deployment backup mechanism.
+---
+
+## Operations notes
+
+- Dashboard login: Django **superuser** at `/admin_login/`.
+- Mark products unavailable to hide them from catalog/checkout.
+- Order prices are stored as purchase-time totals.
+- SQLite backup: stop the app, copy `main/db.sqlite3`; restore by replacing the file and running `migrate`. Do not use SQLite as a production backup strategy on Render/EB.
+
+More detail:
+
+- Django/Cloudinary/Twilio env: [`main/README.md`](main/README.md)
+- Splash screen: [`SplashScreen/README.md`](SplashScreen/README.md)

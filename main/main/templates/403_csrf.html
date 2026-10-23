@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+{% block title %}Security Check Failed{% endblock %}
+
+{% block content %}
+<main class="min-h-[60vh] flex items-center justify-center px-margin-mobile md:px-margin-desktop py-xl">
+  <div class="max-w-md w-full text-center space-y-4">
+    <span class="material-symbols-outlined text-primary text-5xl">shield</span>
+    <h1 class="text-2xl font-bold text-on-surface">Please refresh and try again</h1>
+    <p class="text-sm text-on-surface-variant">
+      Your security token expired or did not match. This often happens if the sign-up page was left open too long or restored from browser history.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+      <a href="{% url 'customer_signup' %}" class="inline-flex items-center justify-center h-11 px-5 rounded-xl bg-primary-container text-white font-semibold hover:bg-primary transition-colors">
+        Create account
+      </a>
+      <a href="{% url 'customer_login' %}" class="inline-flex items-center justify-center h-11 px-5 rounded-xl border border-outline-variant text-on-surface font-semibold hover:bg-surface-container-low transition-colors">
+        Sign in
+      </a>
+    </div>
+  </div>
+</main>
+{% endblock %}
