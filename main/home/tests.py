@@ -1,5 +1,7 @@
+import re
+
 from django.contrib.auth.models import User
-from django.test import TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from orders.models import Order
 from store.models import Products
@@ -30,12 +32,57 @@ class CustomerAuthenticationTests(TestCase):
         self.assertTrue(User.objects.filter(username='customer').exists())
         self.assertEqual(str(self.client.get(reverse('home')).wsgi_request.user), 'customer')
 
+    def test_customer_signup_sets_csrf_cookie_and_accepts_matching_form_token(self):
+        csrf_client = Client(enforce_csrf_checks=True)
+        signup_page = csrf_client.get(
+            reverse('customer_signup'),
+            {'next': '/products/Checkout/1/1.000/'},
+        )
+        response_html = signup_page.content.decode()
+        csrf_match = re.search(r'name="csrfmiddlewaretoken" value="([^"]+)"', response_html)
+
+        self.assertEqual(signup_page.status_code, 200)
+        self.assertIsNotNone(csrf_match)
+        self.assertIn('csrftoken', csrf_client.cookies)
+        self.assertIn('no-store', signup_page['Cache-Control'])
+
+        rejected = csrf_client.post(reverse('customer_signup'), {
+            'username': 'csrf-customer',
+            'password1': 'A-strong-password123',
+            'password2': 'A-strong-password123',
+            'next': '/products/Checkout/1/1.000/',
+        })
+        self.assertEqual(rejected.status_code, 403)
+
+        response = csrf_client.post(reverse('customer_signup'), {
+            'csrfmiddlewaretoken': csrf_match.group(1),
+            'username': 'csrf-customer',
+            'password1': 'A-strong-password123',
+            'password2': 'A-strong-password123',
+            'next': '/products/Checkout/1/1.000/',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(User.objects.filter(username='csrf-customer').exists())
+
     def test_customer_can_log_in(self):
         User.objects.create_user('customer', password='A-strong-password123')
         response = self.client.post(reverse('customer_login'), {
             'username': 'customer', 'password': 'A-strong-password123',
         })
         self.assertRedirects(response, reverse('home'))
+
+    def test_customer_login_sets_csrf_cookie_and_rejects_missing_token(self):
+        User.objects.create_user('customer', password='A-strong-password123')
+        csrf_client = Client(enforce_csrf_checks=True)
+        login_page = csrf_client.get(reverse('customer_login'))
+        self.assertIn('csrftoken', csrf_client.cookies)
+        self.assertIn('no-store', login_page['Cache-Control'])
+
+        rejected = csrf_client.post(reverse('customer_login'), {
+            'username': 'customer',
+            'password': 'A-strong-password123',
+        })
+        self.assertEqual(rejected.status_code, 403)
 
     @override_settings(WHATSAPP_NUMBER='919876543210')
     def test_whatsapp_link_uses_the_environment_backed_setting(self):

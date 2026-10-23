@@ -1,16 +1,65 @@
-# React + Vite
+# SplashScreen (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Warm-up / branding screen shown before customers enter the Django storefront. It polls the Django **`/healthz/`** endpoint, then redirects to `VITE_API_BASE_URL` when the backend is ready (with a capped retry count so it does not loop forever).
 
-Currently, two official plugins are available:
+## Tech stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Piece | Version / tool |
+|-------|----------------|
+| UI | React 19 |
+| Build | Vite 8 |
+| Lint | Oxlint |
+| Language | JavaScript (JSX) |
 
-## React Compiler
+## Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+```
 
-## Expanding the Oxlint configuration
+Create `SplashScreen/.env` (gitignored):
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```dotenv
+VITE_API_BASE_URL=https://lakshmi-broliers.onrender.com
+```
+
+Local Django example: `VITE_API_BASE_URL=http://127.0.0.1:8000`
+
+`VITE_API_BASE_URL` is **required** — the app throws at startup if it is missing.
+
+## Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Vite dev server with HMR |
+| `npm run build` | Production build → `dist/` |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Oxlint |
+
+## File map
+
+| Path | Purpose |
+|------|---------|
+| `package.json` / `package-lock.json` | npm deps and scripts. |
+| `vite.config.js` | Vite + React plugin config. |
+| `index.html` | HTML shell Vite injects the React bundle into. |
+| `.oxlintrc.json` | Oxlint rules. |
+| `.gitignore` | Ignores `node_modules/`, `dist/`, `.env`. |
+| `.env` | Local `VITE_API_BASE_URL` (not committed). |
+| `public/favicon.svg` | Tab icon. |
+| `public/icons.svg` | Static SVG sprite/icons for the splash UI. |
+| `src/main.jsx` | React root mount. |
+| `src/App.jsx` | Splash UI, health-check polling (`MAX_RETRIES=10`), redirect logic. |
+| `src/App.css` / `src/index.css` | Splash styling. |
+| `src/assets/logo.png` | Brand mark on the splash. |
+| `src/assets/logo_aramcuts.png` | Alternate brand asset. |
+| `src/assets/hero.png` | Hero imagery. |
+| `src/assets/react.svg` / `vite.svg` | Template leftovers (optional). |
+| `dist/` | Built static site from `npm run build` (deploy separately if used as a static host). |
+
+## Workflow with Django
+
+1. Start Django (`main/` → `runserver` or production Gunicorn).
+2. Confirm `GET {VITE_API_BASE_URL}/healthz/` returns `{"status":"ok"}`.
+3. Run or deploy this splash; it redirects users into the store when healthy.
+4. After 10 failed health checks it stops retrying and shows an error/ready state instead of hammering localhost or the API forever.

@@ -786,6 +786,18 @@
     document.addEventListener('DOMContentLoaded', () => {
       AramCart.sync();
     });
+
+    // Keep hidden CSRF fields aligned with the live cookie (mobile bfcache / stale tabs).
+    function syncCsrfFormTokens() {
+      const token = AramCart.getCookie('csrftoken');
+      if (!token) return;
+      document.querySelectorAll('input[name="csrfmiddlewaretoken"]').forEach((input) => {
+        input.value = token;
+      });
+    }
+    window.addEventListener('pageshow', syncCsrfFormTokens);
+    document.addEventListener('submit', syncCsrfFormTokens, true);
+    document.addEventListener('DOMContentLoaded', syncCsrfFormTokens);
   </script>
 </body>
 

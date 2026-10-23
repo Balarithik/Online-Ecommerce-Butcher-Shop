@@ -1,0 +1,9 @@
+branch-defaults:
+  main:
+    environment: AramCutsV1-env
+global:
+  application_name: AramCutsV1
+  default_platform: Python 3.12 running on 64bit Amazon Linux 2023
+  default_region: ap-south-1
+  sc: git
+  workspace_type: Application

@@ -53,9 +53,23 @@ except OSError:
 if os.environ.get("ALLOWED_HOSTS"):
     ALLOWED_HOSTS = [host.strip() for host in os.environ["ALLOWED_HOSTS"].split(",") if host.strip()]
 
-CSRF_TRUSTED_ORIGINS = [
+DEFAULT_CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
+    "https://lakshmi-broliers.onrender.com",
+    "https://*.elasticbeanstalk.com",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+env_csrf_origins = [
     origin.strip() for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if origin.strip()
 ]
+CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(DEFAULT_CSRF_TRUSTED_ORIGINS + env_csrf_origins))
+CSRF_FAILURE_VIEW = "main.views.csrf_failure"
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_HTTPONLY = False  # JS cart/auth forms read csrftoken for X-CSRFToken headers
 
 
 # Application definition
@@ -117,6 +131,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'django.template.context_processors.csrf',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'main.context_processors.site_settings',
@@ -278,3 +293,6 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "True").lower() == "true"
     SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "31536000"))
+    # Keep auth pages and CSRF cookies aligned behind Render/EB reverse proxies.
+    SESSION_COOKIE_SAMESITE = "Lax"
+    CSRF_COOKIE_SAMESITE = "Lax"
