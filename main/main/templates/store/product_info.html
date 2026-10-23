@@ -7,261 +7,288 @@
     #product-main-image.is-fading {
         opacity: 0;
     }
+
     .product-thumbnail {
         border: 2px solid transparent;
     }
+
     .product-thumbnail.is-active {
         border-color: #8f000d;
         box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     }
+
     .product-thumbnail:not(.is-active) {
         border-color: #e2beba;
     }
+
     .product-thumbnail:not(.is-active):hover {
         border-color: #8f000d;
     }
+
     .product-thumbnail img {
         pointer-events: none;
     }
 </style>
 
 <main class="max-w-[1280px] mx-auto pb-xl">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-lg p-margin-mobile md:p-margin-desktop">
-<!-- Breadcrumbs (Mobile Hidden) -->
-<nav class="hidden md:flex col-span-12 gap-xs items-center mb-sm text-on-surface-variant font-label-md text-label-md">
-<span class="hover:text-primary cursor-pointer" ><a href="{% url 'home' %}">Home</a></span>
-<span class="material-symbols-outlined text-[16px]">chevron_right</span>
-<span class="hover:text-primary cursor-pointer" ><a href="{% url 'products' %}">Products</a></span>
-<span class="material-symbols-outlined text-[16px]">chevron_right</span>
-<span class="text-on-surface">{{ product.name }}</span>
-</nav>
-<!-- Product Image Section (Bento Style Layout) -->
-<div class="col-span-12 md:col-span-7 space-y-md">
-<div class="relative product-image-container aspect-square md:aspect-[4/3] rounded-xl overflow-hidden bg-white border border-outline-variant shadow-sm group">
-<img id="product-main-image" alt="{{ product.name }}" class="w-full h-full object-cover transition-opacity duration-300 group-hover:scale-105" src="{{ product.image1.url }}"/>
-<div class="absolute top-md left-md">
-<div class="bg-[#10B981]/10 text-[#10B981] px-md py-xs rounded-full font-label-sm text-label-sm flex items-center gap-xs backdrop-blur-sm border border-[#10B981]/20">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
-                            Fresh Cut
-                        </div>
-</div>
-</div>
-<div id="product-image-thumbnails" class="grid grid-cols-4 gap-sm" aria-label="Product images">
-<button type="button" class="product-thumbnail is-active aspect-square rounded-lg overflow-hidden bg-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image1.url }}" data-image-alt="{{ product.name }} image 1" aria-label="Show image 1 of {{ product.name }}" aria-current="true">
-<img class="w-full h-full object-cover" alt="" src="{{ product.image1.url }}"/>
-</button>
-{% if product.image2 %}
-<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden bg-white cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image2.url }}" data-image-alt="{{ product.name }} image 2" aria-label="Show image 2 of {{ product.name }}" aria-current="false">
-<img class="w-full h-full object-cover" alt="" src="{{ product.image2.url }}"/>
-</button>
-{% endif %}
-{% if product.image3 %}
-<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden bg-white cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image3.url }}" data-image-alt="{{ product.name }} image 3" aria-label="Show image 3 of {{ product.name }}" aria-current="false">
-<img class="w-full h-full object-cover" alt="" src="{{ product.image3.url }}"/>
-</button>
-{% endif %}
-{% if product.image4 %}
-<button type="button" class="product-thumbnail aspect-square rounded-lg overflow-hidden bg-white cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" data-image-src="{{ product.image4.url }}" data-image-alt="{{ product.name }} image 4" aria-label="Show image 4 of {{ product.name }}" aria-current="false">
-<img class="w-full h-full object-cover" alt="" src="{{ product.image4.url }}"/>
-</button>
-{% endif %}
-</div>
-</div>
-<!-- Product Details Section -->
-<div class="col-span-12 md:col-span-5 flex flex-col">
-<div class="mb-lg">
-<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">{{ product.name }}</h1>
-<div class="flex items-baseline gap-xs mb-md">
-<span class="font-headline-lg text-headline-lg text-primary font-black">₹{{ product.price }}</span>
-<span class="font-label-md text-label-md text-on-surface-variant font-medium">per kg</span>
-</div>
-</div>
-<div class="p-5 bg-white rounded-xl border border-stone-200 shadow-xs mb-lg">
-<p class="font-body-md text-body-md text-stone-600 mb-4 leading-relaxed">
-    {{ product.description }}
-</p>
-<ul class="space-y-2 text-xs text-stone-600 font-medium">
-<li class="flex items-center gap-2">
-    <span class="material-symbols-outlined text-emerald-700 text-[18px]">check_circle</span>
-    100% Halal Certified & Daily Fresh Farm Supply
-</li>
-<li class="flex items-center gap-2">
-    <span class="material-symbols-outlined text-emerald-700 text-[18px]">check_circle</span>
-    Cleaned & cut only after order confirmation
-</li>
-</ul>
-</div>
-<!-- Quantity and CTA -->
-<div class="space-y-md mt-auto">
-<div class="flex items-center justify-between">
-<span class="font-label-md text-label-md font-semibold text-stone-800">Quantity</span>
-<div class="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-stone-50">
-<button class="w-10 h-10 flex items-center justify-center hover:bg-stone-200 transition-colors" onclick="changeQty(-0.250)">
-<span class="material-symbols-outlined text-[18px]">remove</span>
-</button>
-<input class="w-16 text-center border-none focus:ring-0 font-medium text-sm bg-transparent" id="qty" min="0.250" step="0.250" type="number" value="1"/>
-<button class="w-10 h-10 flex items-center justify-center hover:bg-stone-200 transition-colors" onclick="changeQty(0.250)">
-<span class="material-symbols-outlined text-[18px]">add</span>
-</button>
-</div>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-<button type="button" class="min-h-12 w-full bg-primary hover:bg-primary-container text-white font-bold text-xs uppercase tracking-wider rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xs" onclick="addToCartCurrentProduct()">
-<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
-Add to Cart
-</button>
-<button type="button" class="min-h-12 w-full bg-stone-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xs" onclick="goToCheckout({{ product.id }})">
-<span class="material-symbols-outlined text-[18px]">bolt</span>
-Buy Now
-</button>
-</div>
-</div>
-</div>
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-lg p-margin-mobile md:p-margin-desktop">
+        <!-- Breadcrumbs (Mobile Hidden) -->
+        <nav
+            class="hidden md:flex col-span-12 gap-xs items-center mb-sm text-on-surface-variant font-label-md text-label-md">
+            <span class="hover:text-primary cursor-pointer"><a href="{% url 'home' %}">Home</a></span>
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+            <span class="hover:text-primary cursor-pointer"><a href="{% url 'products' %}">Products</a></span>
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+            <span class="text-on-surface">{{ product.name }}</span>
+        </nav>
+        <!-- Product Image Section (Bento Style Layout) -->
+        <div class="col-span-12 md:col-span-7 space-y-md">
+            <div
+                class="relative product-image-container aspect-square md:aspect-[4/3] rounded-xl overflow-hidden bg-white border border-outline-variant shadow-sm group">
+                <img id="product-main-image" alt="{{ product.name }}"
+                    class="w-full h-full object-cover transition-opacity duration-300 group-hover:scale-105"
+                    src="{{ product.image1.url }}" />
+                <div class="absolute top-md left-md">
+                    <div
+                        class="bg-[#10B981]/10 text-[#10B981] px-md py-xs rounded-full font-label-sm text-label-sm flex items-center gap-xs backdrop-blur-sm border border-[#10B981]/20">
+                        <span class="material-symbols-outlined text-[16px]"
+                            style="font-variation-settings: 'FILL' 1;">verified</span>
+                        Fresh Cut
+                    </div>
+                </div>
+            </div>
+            <div id="product-image-thumbnails" class="grid grid-cols-4 gap-sm" aria-label="Product images">
+                <button type="button"
+                    class="product-thumbnail is-active aspect-square rounded-lg overflow-hidden bg-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                    data-image-src="{{ product.image1.url }}" data-image-alt="{{ product.name }} image 1"
+                    aria-label="Show image 1 of {{ product.name }}" aria-current="true">
+                    <img class="w-full h-full object-cover" alt="" src="{{ product.image1.url }}" />
+                </button>
+                {% if product.image2 %}
+                <button type="button"
+                    class="product-thumbnail aspect-square rounded-lg overflow-hidden bg-white cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                    data-image-src="{{ product.image2.url }}" data-image-alt="{{ product.name }} image 2"
+                    aria-label="Show image 2 of {{ product.name }}" aria-current="false">
+                    <img class="w-full h-full object-cover" alt="" src="{{ product.image2.url }}" />
+                </button>
+                {% endif %}
+                {% if product.image3 %}
+                <button type="button"
+                    class="product-thumbnail aspect-square rounded-lg overflow-hidden bg-white cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                    data-image-src="{{ product.image3.url }}" data-image-alt="{{ product.name }} image 3"
+                    aria-label="Show image 3 of {{ product.name }}" aria-current="false">
+                    <img class="w-full h-full object-cover" alt="" src="{{ product.image3.url }}" />
+                </button>
+                {% endif %}
+                {% if product.image4 %}
+                <button type="button"
+                    class="product-thumbnail aspect-square rounded-lg overflow-hidden bg-white cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                    data-image-src="{{ product.image4.url }}" data-image-alt="{{ product.name }} image 4"
+                    aria-label="Show image 4 of {{ product.name }}" aria-current="false">
+                    <img class="w-full h-full object-cover" alt="" src="{{ product.image4.url }}" />
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Product Details Section -->
+        <div class="col-span-12 md:col-span-5 flex flex-col">
+            <div class="mb-lg">
+                <h1
+                    class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">
+                    {{ product.name }}</h1>
+                <div class="flex items-baseline gap-xs mb-md">
+                    <span class="font-headline-lg text-headline-lg text-primary font-black">₹{{ product.price }}</span>
+                    <span class="font-label-md text-label-md text-on-surface-variant font-medium">per kg</span>
+                </div>
+            </div>
+            <div class="p-5 bg-white rounded-xl border border-stone-200 shadow-xs mb-lg">
+                <p class="font-body-md text-body-md text-stone-600 mb-4 leading-relaxed">
+                    {{ product.description }}
+                </p>
+                <ul class="space-y-2 text-xs text-stone-600 font-medium">
+                    <li class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-emerald-700 text-[18px]">check_circle</span>
+                        100% Halal Certified & Daily Fresh Farm Supply
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-emerald-700 text-[18px]">check_circle</span>
+                        Cleaned & cut only after order confirmation
+                    </li>
+                </ul>
+            </div>
+            <!-- Quantity and CTA -->
+            <div class="space-y-md mt-auto">
+                <div class="flex items-center justify-between">
+                    <span class="font-label-md text-label-md font-semibold text-stone-800">Quantity</span>
+                    <div class="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-stone-50">
+                        <button class="w-10 h-10 flex items-center justify-center hover:bg-stone-200 transition-colors"
+                            onclick="changeQty(-0.250)">
+                            <span class="material-symbols-outlined text-[18px]">remove</span>
+                        </button>
+                        <input class="w-16 text-center border-none focus:ring-0 font-medium text-sm bg-transparent"
+                            id="qty" min="0.250" step="0.250" type="number" value="1" />
+                        <button class="w-10 h-10 flex items-center justify-center hover:bg-stone-200 transition-colors"
+                            onclick="changeQty(0.250)">
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button type="button"
+                        class="min-h-12 w-full bg-primary hover:bg-primary-container text-white font-bold text-xs uppercase tracking-wider rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xs"
+                        onclick="AramCart.addItem({id : {{ product.id }}, name : '{{ product.name|escapejs }}', price : {{ product.price }}, image : '{{ product.image1.url }}', qty : document.getElementById('qty').value})">
+                        <span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                        Add to Cart
+                    </button>
+                    <button type="button"
+                        class="min-h-12 w-full bg-stone-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xs"
+                        onclick="goToCheckout({{ product.id }})">
+                        <span class="material-symbols-outlined text-[18px]">bolt</span>
+                        Buy Now
+                    </button>
+                </div>
+            </div>
+        </div>
 
-<!-- "Why Buy From Us" Section -->
-<section class="col-span-12 mt-xl border-t border-outline-variant pt-xl">
-<h2 class="font-headline-md text-headline-md mb-lg text-center">Why Trust Lakshmi Broliers?</h2>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
-<div class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
-<div class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
-<span class="material-symbols-outlined text-[32px]">sanitizer</span>
-</div>
-<h3 class="font-headline-md text-headline-md mb-sm">Hygienic Processing</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Our facility follows strict ISO 22000 hygiene standards to ensure zero contamination.</p>
-</div>
-<div class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
-<div class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
-<span class="material-symbols-outlined text-[32px]">nest_eco_leaf</span>
-</div>
-<h3 class="font-headline-md text-headline-md mb-sm">Always Fresh</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">From farm to your doorstep within 2 hours. We never freeze our poultry products.</p>
-</div>
-<div class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
-<div class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
-<span class="material-symbols-outlined text-[32px]">local_shipping</span>
-</div>
-<h3 class="font-headline-md text-headline-md mb-sm">Fast Delivery</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Delivery around 10km radius from our shop.</p>
-</div>
-</div>
-</section>
-</div>
+        <!-- "Why Buy From Us" Section -->
+        <section class="col-span-12 mt-xl border-t border-outline-variant pt-xl">
+            <h2 class="font-headline-md text-headline-md mb-lg text-center">Why Trust Lakshmi Broliers?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+                <div
+                    class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
+                    <div
+                        class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
+                        <span class="material-symbols-outlined text-[32px]">sanitizer</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md mb-sm">Hygienic Processing</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Our facility follows strict ISO 22000
+                        hygiene standards to ensure zero contamination.</p>
+                </div>
+                <div
+                    class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
+                    <div
+                        class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
+                        <span class="material-symbols-outlined text-[32px]">nest_eco_leaf</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md mb-sm">Always Fresh</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">From farm to your doorstep within 2
+                        hours. We never freeze our poultry products.</p>
+                </div>
+                <div
+                    class="flex flex-col items-center text-center p-lg rounded-xl bg-surface-container shadow-sm border border-outline-variant/30">
+                    <div
+                        class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-md text-primary">
+                        <span class="material-symbols-outlined text-[32px]">local_shipping</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md mb-sm">Fast Delivery</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Delivery around 10km radius from our
+                        shop.</p>
+                </div>
+            </div>
+        </section>
+    </div>
 </main>
 
 <script>
-function changeQty(delta) {
-    const input = document.getElementById('qty');
-    let val = parseFloat(input.value) + delta;   // use parseFloat
-    const min = parseFloat(input.min) || 0.25;   // respect min
-    if (val < min) val = min;
-    input.value = val.toFixed(3);                // keep decimal precision
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const mainImage = document.getElementById('product-main-image');
-    const gallery = document.getElementById('product-image-thumbnails');
-    const thumbnails = gallery
-        ? Array.from(gallery.querySelectorAll('.product-thumbnail'))
-        : [];
-    const changeInterval = 5000;
-    let activeIndex = 0;
-    let carouselTimer;
-
-    if (!mainImage || thumbnails.length === 0) return;
-
-    function setActiveThumbnail(index) {
-        thumbnails.forEach((item, itemIndex) => {
-            const isSelected = itemIndex === index;
-            item.classList.toggle('is-active', isSelected);
-            item.setAttribute('aria-current', String(isSelected));
-        });
+    function changeQty(delta) {
+        const input = document.getElementById('qty');
+        let val = parseFloat(input.value) + delta;   // use parseFloat
+        const min = parseFloat(input.min) || 0.25;   // respect min
+        if (val < min) val = min;
+        input.value = val.toFixed(3);                // keep decimal precision
     }
 
-    function selectImage(index, { restartAuto = true } = {}) {
-        activeIndex = (index + thumbnails.length) % thumbnails.length;
-        const thumbnail = thumbnails[activeIndex];
-        const nextSrc = thumbnail.dataset.imageSrc;
-        const nextAlt = thumbnail.dataset.imageAlt;
+    document.addEventListener('DOMContentLoaded', () => {
+        const mainImage = document.getElementById('product-main-image');
+        const gallery = document.getElementById('product-image-thumbnails');
+        const thumbnails = gallery
+            ? Array.from(gallery.querySelectorAll('.product-thumbnail'))
+            : [];
+        const changeInterval = 5000;
+        let activeIndex = 0;
+        let carouselTimer;
 
-        setActiveThumbnail(activeIndex);
+        if (!mainImage || thumbnails.length === 0) return;
 
-        if (mainImage.src.endsWith(nextSrc) || mainImage.getAttribute('src') === nextSrc) {
-            mainImage.alt = nextAlt;
-            if (restartAuto && thumbnails.length > 1) restartCarousel();
-            return;
+        function setActiveThumbnail(index) {
+            thumbnails.forEach((item, itemIndex) => {
+                const isSelected = itemIndex === index;
+                item.classList.toggle('is-active', isSelected);
+                item.setAttribute('aria-current', String(isSelected));
+            });
         }
 
-        mainImage.classList.add('is-fading');
-        window.setTimeout(() => {
-            mainImage.src = nextSrc;
-            mainImage.alt = nextAlt;
-            mainImage.classList.remove('is-fading');
-        }, 150);
+        function selectImage(index, { restartAuto = true } = {}) {
+            activeIndex = (index + thumbnails.length) % thumbnails.length;
+            const thumbnail = thumbnails[activeIndex];
+            const nextSrc = thumbnail.dataset.imageSrc;
+            const nextAlt = thumbnail.dataset.imageAlt;
 
-        if (restartAuto && thumbnails.length > 1) restartCarousel();
-    }
+            setActiveThumbnail(activeIndex);
 
-    function stopCarousel() {
-        window.clearInterval(carouselTimer);
-        carouselTimer = null;
-    }
+            if (mainImage.src.endsWith(nextSrc) || mainImage.getAttribute('src') === nextSrc) {
+                mainImage.alt = nextAlt;
+                if (restartAuto && thumbnails.length > 1) restartCarousel();
+                return;
+            }
 
-    function restartCarousel() {
-        stopCarousel();
-        carouselTimer = window.setInterval(() => selectImage(activeIndex + 1, { restartAuto: false }), changeInterval);
-    }
+            mainImage.classList.add('is-fading');
+            window.setTimeout(() => {
+                mainImage.src = nextSrc;
+                mainImage.alt = nextAlt;
+                mainImage.classList.remove('is-fading');
+            }, 150);
 
-    thumbnails.forEach((thumbnail, index) => {
-        thumbnail.addEventListener('click', () => selectImage(index));
+            if (restartAuto && thumbnails.length > 1) restartCarousel();
+        }
+
+        function stopCarousel() {
+            window.clearInterval(carouselTimer);
+            carouselTimer = null;
+        }
+
+        function restartCarousel() {
+            stopCarousel();
+            carouselTimer = window.setInterval(() => selectImage(activeIndex + 1, { restartAuto: false }), changeInterval);
+        }
+
+        thumbnails.forEach((thumbnail, index) => {
+            thumbnail.addEventListener('click', () => selectImage(index));
+        });
+
+        if (gallery && thumbnails.length > 1) {
+            gallery.addEventListener('mouseenter', stopCarousel);
+            gallery.addEventListener('mouseleave', restartCarousel);
+            gallery.addEventListener('focusin', stopCarousel);
+            gallery.addEventListener('focusout', (event) => {
+                if (!gallery.contains(event.relatedTarget)) restartCarousel();
+            });
+            restartCarousel();
+        } else {
+            setActiveThumbnail(0);
+        }
     });
 
-    if (gallery && thumbnails.length > 1) {
-        gallery.addEventListener('mouseenter', stopCarousel);
-        gallery.addEventListener('mouseleave', restartCarousel);
-        gallery.addEventListener('focusin', stopCarousel);
-        gallery.addEventListener('focusout', (event) => {
-            if (!gallery.contains(event.relatedTarget)) restartCarousel();
-        });
-        restartCarousel();
-    } else {
-        setActiveThumbnail(0);
-    }
-});
+    // Add a subtle scroll reveal effect
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        if (window.scrollY > 20) {
+            header.classList.add('shadow-md');
+        } else {
+            header.classList.remove('shadow-md');
+        }
+    });
 
-// Add a subtle scroll reveal effect
-window.addEventListener('scroll', () => {
-    const header = document.querySelector('header');
-    if (window.scrollY > 20) {
-        header.classList.add('shadow-md');
-    } else {
-        header.classList.remove('shadow-md');
+    function goToCheckout(productId) {
+        const quantity = parseFloat(document.getElementById('qty').value);
+        if (!Number.isFinite(quantity) || quantity < 0.25 || quantity > 100) {
+            alert("Please select a quantity");
+            return;
+        }
+        window.location.href = `/products/Checkout/${productId}/${quantity.toFixed(3)}/`;
     }
-});
 
-function goToCheckout(productId) {
-    const quantity = parseFloat(document.getElementById('qty').value);
-    if (!Number.isFinite(quantity) || quantity < 0.25 || quantity > 100) {
-        alert("Please select a quantity");
-        return;
-    }
-    window.location.href = `/products/Checkout/${productId}/${quantity.toFixed(3)}/`;
-}
-
-function addToCartCurrentProduct() {
-    const qtyInput = document.getElementById('qty');
-    const qty = parseFloat(qtyInput ? qtyInput.value : 1.0) || 1.0;
-    const cartPayload = {
-        id: {{ product.id }},
-        name: "{{ product.name|escapejs }}",
-        price: {{ product.price }},
-        image: "{% if product.image1 %}{{ product.image1.url }}{% endif %}",
-        qty: qty
-    };
-    if (window.AramCart && typeof window.AramCart.addItem === 'function') {
-        window.AramCart.addItem(cartPayload);
-    } else {
-        console.error("AramCart is not initialized yet.");
-    }
+    
 }
 </script>
 {% endblock %}
