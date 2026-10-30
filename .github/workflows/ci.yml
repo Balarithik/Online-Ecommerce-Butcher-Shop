@@ -13,6 +13,9 @@ permissions:
   contents: read
 
 jobs:
+  # ===========================================
+  # Job 1: Django checks and unit tests
+  # ===========================================
   django-tests:
     name: Django checks and tests
     runs-on: ubuntu-latest
@@ -47,3 +50,73 @@ jobs:
 
       - name: Run Django tests
         run: python manage.py test
+
+  # ===========================================
+  # Job 2: Build & verify Docker images
+  # ===========================================
+  docker-build:
+    name: Docker Compose build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: django-tests
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build main backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./main
+          file: ./main/Dockerfile
+          push: false
+          load: true
+          tags: aramcuts-main:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build splashscreen image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./SplashScreen
+          file: ./SplashScreen/Dockerfile
+          push: false
+          load: true
+          tags: aramcuts-splashscreen:ci
+          build-args: |
+            VITE_API_BASE_URL=http://localhost:8000
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Verify docker-compose config
+        run: docker compose config --quiet
+
+      - name: Smoke-test main backend
+        run: |
+          docker run -d --name ci-main \
+            -e DEBUG=True \
+            -e SECRET_KEY=ci-smoke-test-key \
+            -e SECURE_SSL_REDIRECT=False \
+            -p 8000:8000 \
+            aramcuts-main:ci
+
+          echo "Waiting for backend to start..."
+          for i in $(seq 1 30); do
+            if docker exec ci-main python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz/')" 2>/dev/null; then
+              echo "Backend is healthy!"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "Backend failed to start"
+              docker logs ci-main
+              exit 1
+            fi
+            sleep 2
+          done
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f ci-main 2>/dev/null || true

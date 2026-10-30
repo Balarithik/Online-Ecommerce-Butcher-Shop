@@ -10,6 +10,7 @@ class CustomerProfile(models.Model):
         related_name="customer_profile",
     )
     mobile = models.CharField(max_length=10, blank=True)
+    number_of_orders = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"Profile for {self.user.username}"
@@ -33,6 +34,7 @@ class CustomerAddress(models.Model):
     address = models.CharField(max_length=500)
     is_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    
 
     class Meta:
         ordering = ("-is_default", "created_at", "pk")

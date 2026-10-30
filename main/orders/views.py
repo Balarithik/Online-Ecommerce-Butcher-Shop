@@ -408,8 +408,10 @@ def my_orders(request):
         return redirect(f"{reverse('customer_login')}?next={reverse('my_orders')}")
 
     orders = Order.objects.filter(user=request.user).order_by('-order_id')
+    user = CustomerProfile.objects.filter(user=request.user).first()
     return render(request, 'orders/my_orders.html', {
         'orders': orders,
+        'user': user,
     })
 
 
@@ -419,6 +421,10 @@ def order_confirmation_view(request, order_id):
         return redirect(f"{reverse('customer_login')}?next={reverse('order_confirmation', kwargs={'order_id': order_id})}")
 
     order = get_object_or_404(Order, order_id=order_id, user=request.user)
+    user = CustomerProfile.objects.filter(user=request.user).first()
+    if user:
+        user.number_of_orders += 1
+        user.save(update_fields=['number_of_orders'])
     items = order.get_items()
     return render(request, 'orders/order_confirmation.html', {
         'order': order,

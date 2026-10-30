@@ -1,0 +1,64 @@
+services:
+  # ==========================================
+  # Django Backend Application
+  # ==========================================
+  main:
+    build:
+      context: ./main
+      dockerfile: Dockerfile
+    container_name: aramcuts-main
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=${DEBUG:-True}
+      - SECRET_KEY=${SECRET_KEY:-django-insecure-docker-compose-dev-key-change-in-prod}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,main}
+      - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT:-False}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000,http://localhost:5173,http://127.0.0.1:5173}
+      - WHATSAPP_NUMBER=${WHATSAPP_NUMBER:-919943708688}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-peppedvp}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-147298183525882}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-UDB-cqlDM6NccQN4ONvVaYqemgQ}
+    volumes:
+      # Persist SQLite database and uploaded media files
+      - ./main/db.sqlite3:/app/db.sqlite3
+      - ./main/main/media:/app/main/media
+    networks:
+      - aramcuts-network
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz/')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ==========================================
+  # SplashScreen Frontend (React + Vite + Nginx)
+  # ==========================================
+  splashscreen:
+    build:
+      context: ./SplashScreen
+      dockerfile: Dockerfile
+      args:
+        # Client browser connects directly to backend URL
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8000}
+    container_name: aramcuts-splashscreen
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    networks:
+      - aramcuts-network
+    depends_on:
+      main:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  aramcuts-network:
+    driver: bridge
