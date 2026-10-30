@@ -21,7 +21,14 @@ COPY . ./
 RUN npm run build
 
 # Stage 2: Serve with lightweight Nginx
-FROM nginx:alpine
+# nginx:alpine is not executable in the current Docker Desktop Linux engine.
+# Use the Debian-based runtime image instead.
+FROM nginx:stable
+
+# Keep a small HTTP client for the container health check.
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
@@ -33,6 +40,6 @@ EXPOSE 80
 
 # Health check for Nginx server
 HEALTHCHECK --interval=15s --timeout=5s --start-period=5s --retries=3 \
-    CMD wget -q --spider http://localhost:80/ || exit 1
+    CMD curl --fail --silent http://localhost:80/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

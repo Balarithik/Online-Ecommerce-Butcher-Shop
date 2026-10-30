@@ -1,6 +1,7 @@
 .env
 .audit-venv/
 .venv/
+.uv-cache/
 main/db.sqlite3
 __pycache__/
 *.pyc

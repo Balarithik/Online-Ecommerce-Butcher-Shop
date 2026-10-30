@@ -37,6 +37,7 @@ services:
   # SplashScreen Frontend (React + Vite + Nginx)
   # ==========================================
   splashscreen:
+    platform: linux/amd64
     build:
       context: ./SplashScreen
       dockerfile: Dockerfile
