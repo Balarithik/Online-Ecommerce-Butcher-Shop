@@ -29,3 +29,14 @@ class AvailabilityTests(TestCase):
             response,
             f'data-image-src="{default_storage.url("products_images/two.png")}"',
         )
+
+    def test_product_quantity_controls_are_wired_and_bounded(self):
+        product = Products.objects.create(
+            name='Quantity chicken', price='100.00', description='Quantity control',
+            image1='products_images/quantity.png',
+        )
+        response = self.client.get(reverse('selected_product', args=[product.id]))
+        self.assertContains(response, 'id="qty-decrease"')
+        self.assertContains(response, 'id="qty-increase"')
+        self.assertContains(response, 'function buySelectedProductNow()')
+        self.assertContains(response, f'/products/Checkout/{product.id}/')
