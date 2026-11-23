@@ -19,7 +19,7 @@ Copy repo-root `.env.example` to `main/.env` (never commit `.env`).
 
 | Variable | Use |
 |----------|-----|
-| `SECRET_KEY` | Django secret (required when `DEBUG=False`) |
+| `SECRET_KEY` | Django secret (required when `DEBUG=False`) |\n| `DJANGO_SUPERUSER_USERNAME` | Initial admin username (required for automatic bootstrap) |\n| `DJANGO_SUPERUSER_EMAIL` | Initial admin email (required for automatic bootstrap) |\n| `DJANGO_SUPERUSER_PASSWORD` | Initial admin password (required for automatic bootstrap) |
 | `DEBUG` | `True` locally; `False` in production |
 | `ALLOWED_HOSTS` | Comma-separated hostnames |
 | `CSRF_TRUSTED_ORIGINS` | Comma-separated origins with scheme (e.g. `https://lakshmi-broliers.onrender.com`) |
@@ -71,7 +71,7 @@ python manage.py test
 python manage.py collectstatic      # production / WhiteNoise
 ```
 
-Production entry: Gunicorn via `Procfile`. Build helper: `build.sh` (install dependencies → collectstatic). Apply committed migrations with `python manage.py migrate --noinput` during deployment. The Docker entrypoint bootstraps an initial superuser only when all three `DJANGO_SUPERUSER_*` variables are explicitly set, and skips it safely on later restarts.
+Production entry: Gunicorn via `Procfile`. Build helper: `build.sh` (install dependencies → collectstatic). Apply committed migrations with `python manage.py migrate --noinput` during deployment. The `bootstrap_superuser` management command creates the initial superuser when all three `DJANGO_SUPERUSER_*` variables are set. The native Render Procfile and Docker entrypoint both run this command on startup; it is safe on restarts and never resets an existing account's password.
 
 ---
 
