@@ -23,7 +23,7 @@ PAYMENT_METHOD_CHOICES = [
 
 
 class OrderForm(forms.ModelForm):
-    address = forms.CharField(max_length=500, required=True)
+    address = forms.CharField(max_length=500, required=False)
     quantity = forms.DecimalField(
         required=True,
         min_value=Decimal('0.250'),
@@ -72,7 +72,9 @@ class OrderForm(forms.ModelForm):
 
     def clean_address(self):
         address = (self.cleaned_data.get('address') or '').strip()
-        if not address or len(address) < 10:
+        if not address:
+            return ''
+        if len(address) < 10:
             raise forms.ValidationError('Please enter a complete delivery address including house/flat and street details.')
         
         parts = [p.strip() for p in address.split(',') if p.strip()]
@@ -93,6 +95,9 @@ class OrderForm(forms.ModelForm):
         longitude = cleaned_data.get('longitude')
         if (latitude is None) != (longitude is None):
             raise forms.ValidationError('Share both location coordinates, or leave both blank.')
+        address = (cleaned_data.get('address') or '').strip()
+        if not address and (latitude is None or longitude is None):
+            raise forms.ValidationError('Enter a delivery address or share your current GPS location.')
         return cleaned_data
 
     class Meta:
