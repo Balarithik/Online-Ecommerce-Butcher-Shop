@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
+# Build-time tasks only. Create migrations during development and commit them.
 pip install -r requirements.txt
-
 python manage.py collectstatic --noinput
-
-python manage.py makemigrations
-
-python manage.py createsuperuser --noinput
-
-python manage.py migrate
