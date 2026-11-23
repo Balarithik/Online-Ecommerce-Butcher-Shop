@@ -342,3 +342,27 @@ class OrderTestCase(TestCase):
         self.assertEqual(post.call_count, 2)
         self.assertEqual(post.call_args_list[0].kwargs['data']['To'], '+919876543210')
         self.assertEqual(post.call_args_list[1].kwargs['data']['To'], 'whatsapp:+919876543210')
+
+    def test_checkout_renders_manual_address_and_gps_options_for_saved_address_users(self):
+        CustomerAddress.objects.create(
+            user=self.normal_user, label='Home', recipient_name='Normal',
+            mobile='9876543210', address='12 Main Road', is_default=True,
+        )
+        self.client.force_login(self.normal_user)
+        response = self.client.get(reverse('Checkout_direct', args=[self.product.id, '1']))
+        self.assertContains(response, 'manual_address_override')
+        self.assertContains(response, 'Share my current location')
+
+    def test_gps_only_checkout_works_even_when_customer_has_saved_addresses(self):
+        CustomerAddress.objects.create(
+            user=self.normal_user, label='Home', recipient_name='Normal',
+            mobile='9876543210', address='12 Main Road', is_default=True,
+        )
+        self.client.force_login(self.normal_user)
+        response = self.client.post(reverse('Orders', args=[self.product.id]), {
+            'name': 'Normal', 'mobile': '9876543210', 'quantity': '1',
+            'latitude': '9.310044', 'longitude': '78.994671',
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        order = Order.objects.get(user=self.normal_user)
+        self.assertIn('GPS location shared', order.location)
