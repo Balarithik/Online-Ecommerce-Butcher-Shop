@@ -360,3 +360,56 @@ class AdminEndpointTests(TestCase):
                 settings.STORAGES['default']['BACKEND'],
                 'django.core.files.storage.FileSystemStorage',
             )
+
+
+class SuperuserBootstrapCommandTests(TestCase):
+    def test_bootstrap_creates_superuser_from_environment(self):
+        from unittest.mock import patch
+        from django.core.management import call_command
+
+        with patch.dict("os.environ", {
+            "DJANGO_SUPERUSER_USERNAME": "initial-admin",
+            "DJANGO_SUPERUSER_EMAIL": "initial-admin@example.com",
+            "DJANGO_SUPERUSER_PASSWORD": "Strong-test-password-123!",
+        }, clear=False):
+            call_command("bootstrap_superuser")
+
+        admin = get_user_model().objects.get(username="initial-admin")
+        self.assertTrue(admin.is_superuser)
+        self.assertTrue(admin.is_staff)
+        self.assertTrue(admin.check_password("Strong-test-password-123!"))
+
+    def test_bootstrap_is_idempotent_and_does_not_reset_existing_password(self):
+        from unittest.mock import patch
+        from django.core.management import call_command
+
+        User = get_user_model()
+        admin = User.objects.create_superuser(
+            "initial-admin", "old@example.com", "original-password"
+        )
+        with patch.dict("os.environ", {
+            "DJANGO_SUPERUSER_USERNAME": "initial-admin",
+            "DJANGO_SUPERUSER_EMAIL": "new@example.com",
+            "DJANGO_SUPERUSER_PASSWORD": "new-password",
+        }, clear=False):
+            call_command("bootstrap_superuser")
+
+        admin.refresh_from_db()
+        self.assertTrue(admin.check_password("original-password"))
+        self.assertEqual(admin.email, "old@example.com")
+        self.assertEqual(User.objects.filter(username="initial-admin").count(), 1)
+
+    def test_bootstrap_skips_when_environment_is_incomplete(self):
+        from unittest.mock import patch
+        from django.core.management import call_command
+
+        with patch.dict("os.environ", {
+            "DJANGO_SUPERUSER_USERNAME": "",
+            "DJANGO_SUPERUSER_EMAIL": "",
+            "DJANGO_SUPERUSER_PASSWORD": "",
+        }, clear=False):
+            call_command("bootstrap_superuser")
+
+        self.assertFalse(
+            get_user_model().objects.filter(username="initial-admin").exists()
+        )
