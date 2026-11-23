@@ -80,13 +80,13 @@ npm run dev
 1. Set `DEBUG=False`, a unique `SECRET_KEY`, `ALLOWED_HOSTS`, and `CSRF_TRUSTED_ORIGINS` (include every public HTTPS origin, e.g. `https://lakshmi-broliers.onrender.com`).
 2. Prefer `DATABASE_URL` (Postgres). SQLite is wiped on ephemeral hosts.
 3. Configure Cloudinary for persistent product images.
-4. For Render with the service root directory set to `main`, use build command `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput` and start command `gunicorn main.wsgi:application`. Do not run `makemigrations` during deployment.
+4. For Render with the service root directory set to `main`, use build command `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`. Set the start command to `python manage.py bootstrap_superuser && gunicorn main.wsgi:application`. The bootstrap command creates the initial superuser from environment variables on startup and safely leaves an existing superuser unchanged. Do not run `makemigrations` during deployment.
 5. Serve with Gunicorn (`main/Procfile`), not `runserver`.
 
 ### Render
 
 - Root / start command should target `main/` (Gunicorn `main.wsgi:application`).
-- Set `DEBUG=False`, `SECRET_KEY`, `ALLOWED_HOSTS=lakshmi-broliers.onrender.com`, `CSRF_TRUSTED_ORIGINS=https://lakshmi-broliers.onrender.com`, `DATABASE_URL`, and either `CLOUDINARY_URL` or the three `CLOUDINARY_*` values. Use the exact active API key/secret pair from the same Cloudinary product environment; do not use the values in old local files or Docker images. Set `WHATSAPP_NUMBER` as required.
+- Set `DEBUG=False`, `SECRET_KEY`, `ALLOWED_HOSTS=lakshmi-broliers.onrender.com`, `CSRF_TRUSTED_ORIGINS=https://lakshmi-broliers.onrender.com`, `DATABASE_URL`, `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, `DJANGO_SUPERUSER_PASSWORD`, and either `CLOUDINARY_URL` or the three `CLOUDINARY_*` values. Use the exact active API key/secret pair from the same Cloudinary product environment; do not use the values in old local files or Docker images. Set `WHATSAPP_NUMBER` as required.
 - Ensure `CSRF_TRUSTED_ORIGINS` lists the exact Render URL.
 
 ### AWS Elastic Beanstalk
@@ -126,7 +126,7 @@ CI on every push/PR to `main`: [`.github/workflows/ci.yml`](.github/workflows/ci
 
 ## Operations notes
 
-- Dashboard login: Django **superuser** at `/admin_login/`.
+- Dashboard login: Django **superuser** at `/admin_login/`. On Render, set all three `DJANGO_SUPERUSER_*` environment variables before deploying. The first startup creates the account; subsequent startups do not change its password or profile.
 - Mark products unavailable to hide them from catalog/checkout.
 - Order prices are stored as purchase-time totals.
 - SQLite backup: stop the app, copy `main/db.sqlite3`; restore by replacing the file and running `migrate`. Do not use SQLite as a production backup strategy on Render/EB.
