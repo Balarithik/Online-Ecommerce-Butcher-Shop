@@ -1,0 +1,13 @@
+Hello {{ order.name }},
+
+{% if event == "order_placed" %}We received your order.{% else %}Your order status has been updated.{% endif %}
+Order: #{{ order.order_id }}
+Status: {{ status_label }}
+{% for item in item_lines %}{{ item }}
+{% endfor %}Total: Rs. {{ order.price }}
+Delivery: {{ order.delivery_slot }}
+Address: {{ order.location }}
+
+Track your order: {{ tracking_url }}
+
+Thank you for choosing Lakshmi Broliers.

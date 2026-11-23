@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from decimal import Decimal
@@ -44,6 +45,7 @@ class Order(models.Model):
     cut_preference = models.CharField(max_length=100, default='Curry Cut (Medium)', null=True, blank=True)
     payment_method = models.CharField(max_length=50, default='Cash on Delivery')
     status = models.CharField(max_length=30, choices=status_choices, default='pending')
+    whatsapp_opt_in = models.BooleanField(default=False)
     # A checkout form submits this opaque value so a refresh/double-click cannot
     # turn one purchase into multiple order rows.
     placement_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -128,3 +130,36 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity}kg x {self.product.name} in Cart #{self.cart.id}"
+
+
+
+class NotificationDelivery(models.Model):
+    CHANNEL_CHOICES = [("email", "Email"), ("whatsapp", "WhatsApp")]
+    EVENT_CHOICES = [
+        ("order_placed", "Order placed"), ("pending", "Order confirmed"),
+        ("preparing", "Preparing"), ("out_for_delivery", "Out for delivery"),
+        ("delivered", "Delivered"), ("cancelled", "Cancelled"),
+    ]
+    STATUS_CHOICES = [("pending", "Pending"), ("processing", "Processing"),
+                      ("sent", "Sent"), ("failed", "Failed")]
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="notification_deliveries")
+    channel = models.CharField(max_length=12, choices=CHANNEL_CHOICES)
+    event = models.CharField(max_length=24, choices=EVENT_CHOICES)
+    recipient = models.CharField(max_length=254)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default="pending")
+    attempt_count = models.PositiveSmallIntegerField(default=0)
+    provider_message_id = models.CharField(max_length=255, blank=True)
+    last_error = models.TextField(blank=True)
+    next_attempt_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        constraints = [models.UniqueConstraint(
+            fields=("order", "channel", "event"), name="unique_order_notification_event"
+        )]
+
+    def __str__(self):
+        return f"Order #{self.order_id} {self.channel} {self.event} ({self.status})"
