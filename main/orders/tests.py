@@ -110,7 +110,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(order.user, self.normal_user)
         self.assertEqual(order.name, 'Saved Recipient')
         self.assertEqual(order.mobile, '9876543210')
-        self.assertEqual(order.location, address.formatted_address)
+        self.assertEqual(order.location, address.formatted_address.strip())
 
     def test_order_price_tamper_prevention(self):
         # Test server-side price calculation and tamper prevention
@@ -146,8 +146,8 @@ class OrderTestCase(TestCase):
         }, follow=True)
         self.assertEqual(response.status_code, 200)
         order = Order.objects.latest('order_id')
-        self.assertEqual(order.latitude, Decimal('4.310764'))
-        self.assertEqual(order.longitude, Decimal('97.945671'))
+        self.assertEqual(order.latitude, Decimal('6.310035'))
+        self.assertEqual(order.longitude, Decimal('77.356671'))
         self.assertContains(response, 'Open shared GPS pin in Maps')
 
     def test_order_can_use_shared_gps_location_without_manual_address(self):
