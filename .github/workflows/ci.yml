@@ -194,12 +194,15 @@ jobs:
         run: python tests/e2e/test_store_checkout.py
       - name: OWASP ZAP baseline scan
         run: |
-          docker run --rm --network host -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+          mkdir -p "$RUNNER_TEMP/zap-work"
+          docker run --rm --network host \
+            -v "$RUNNER_TEMP/zap-work:/zap/wrk:rw" \
+            -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
             -t http://127.0.0.1:8000 -m 2 -T 5 -I -J zap-report.json
       - name: Upload ZAP report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: owasp-zap-baseline-report
-          path: zap-report.json
+          path: ${{ runner.temp }}/zap-work/zap-report.json
           if-no-files-found: ignore
