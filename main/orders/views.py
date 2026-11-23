@@ -171,6 +171,9 @@ def cart_update_api(request):
         except (ArithmeticError, ValueError, TypeError):
             return JsonResponse({'error': 'Quantity must be a valid number.'}, status=400)
 
+        if not new_qty.is_finite():
+            return JsonResponse({'error': 'Quantity must be a finite number.'}, status=400)
+
         if new_qty < Decimal('0.250'):
             cart_item.delete()
         else:
