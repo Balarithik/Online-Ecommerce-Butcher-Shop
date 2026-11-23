@@ -164,7 +164,7 @@ class OrderTestCase(TestCase):
         order = Order.objects.get()
         self.assertEqual(order.latitude, Decimal('9.310044'))
         self.assertEqual(order.longitude, Decimal('78.994671'))
-        self.assertIn('Current GPS location', order.location)
+        self.assertIn('GPS location shared by customer', order.location)
         self.assertContains(response, 'Open shared GPS pin in Maps')
 
     def test_order_rejects_invalid_gps_coordinates(self):
