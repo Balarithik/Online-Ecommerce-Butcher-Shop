@@ -132,3 +132,74 @@ jobs:
       - name: Cleanup
         if: always()
         run: docker rm -f ci-main 2>/dev/null || true
+
+
+  # Dependency vulnerability scan against the exact locked runtime dependency graph.
+  dependency-audit:
+    name: Dependency vulnerability audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: main
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.19"
+      - name: Export locked production dependencies
+        run: uv export --locked --no-dev --format requirements-txt --output-file /tmp/requirements-audit.txt
+      - name: Run pip-audit
+        run: |
+          python -m pip install --disable-pip-version-check pip-audit
+          pip-audit --requirement /tmp/requirements-audit.txt
+
+  browser-and-dast:
+    name: Playwright browser tests and OWASP ZAP baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: django-tests
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version-file: main/.python-version
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.19"
+      - name: Install locked backend dependencies
+        working-directory: main
+        run: uv sync --locked --no-dev
+      - name: Install Playwright
+        run: |
+          python -m pip install --disable-pip-version-check playwright
+          python -m playwright install --with-deps chromium
+      - name: Start Django and seed browser-test product
+        working-directory: main
+        env:
+          DEBUG: "True"
+          SECRET_KEY: ci-browser-test-key
+        run: |
+          uv run --no-sync python manage.py migrate --noinput
+          uv run --no-sync python manage.py shell -c "from store.models import Products; Products.objects.get_or_create(id=98765, defaults={'name':'Browser Test Chicken','price':'200.00','description':'CI product','image1':'products_images/ci.png'})"
+          uv run --no-sync python manage.py runserver 0.0.0.0:8000 > /tmp/django-browser.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl --fail http://127.0.0.1:8000/healthz/ && break
+            sleep 2
+          done
+      - name: Run Playwright quantity and checkout navigation tests
+        working-directory: .
+        env:
+          BASE_URL: http://127.0.0.1:8000
+        run: python tests/e2e/test_store_checkout.py
+      - name: OWASP ZAP baseline scan
+        run: |
+          docker run --rm --network host -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+            -t http://127.0.0.1:8000 -m 2 -T 5 -I -J zap-report.json
+      - name: Upload ZAP report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: owasp-zap-baseline-report
+          path: zap-report.json
+          if-no-files-found: ignore
