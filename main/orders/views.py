@@ -308,10 +308,10 @@ def Orders(request, product_id):
         name = form.cleaned_data.get('name', '').strip()
         mobile = form.cleaned_data.get('mobile', '').strip()
         location = form.cleaned_data.get('address', '').strip()
-        if not location and latitude is not None and longitude is not None:
-            location = f'GPS location shared by customer ({latitude}, {longitude})'
         latitude = form.cleaned_data.get('latitude')
         longitude = form.cleaned_data.get('longitude')
+        if not location and latitude is not None and longitude is not None:
+            location = f'GPS location shared by customer ({latitude}, {longitude})'
         instructions = form.cleaned_data.get('instructions', '').strip()
         quantity = form.cleaned_data.get('quantity', Decimal('1.000'))
         delivery_slot = form.cleaned_data.get('delivery_slot', 'Express Delivery (45-60 Mins)')
