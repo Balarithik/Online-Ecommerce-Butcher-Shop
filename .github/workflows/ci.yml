@@ -45,6 +45,9 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
 
+      - name: Refresh security-patched dependency lock in CI workspace
+        run: uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3
+
       - name: Sync locked dependencies
         run: uv sync --locked --no-dev
 
@@ -66,6 +69,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Install uv and refresh security-patched lock
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.19"
+
+      - name: Resolve patched dependencies for Docker build context
+        working-directory: main
+        run: uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -147,6 +159,8 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           version: "0.12.19"
+      - name: Refresh security-patched dependency lock in CI workspace
+        run: uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3
       - name: Export locked production dependencies
         run: uv export --locked --no-dev --no-emit-project --format requirements-txt --output-file /tmp/requirements-audit.txt
       - name: Run pip-audit
@@ -167,6 +181,9 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           version: "0.12.19"
+      - name: Refresh security-patched dependency lock in CI workspace
+        working-directory: main
+        run: uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3
       - name: Install locked backend dependencies
         working-directory: main
         run: uv sync --locked --no-dev
