@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 from store.models import Products
 from orders.models import Cart, CartItem, Order
 from orders.forms import OrderForm
-from orders.notifications import send_order_confirmation
+from orders.notifications import enqueue_order_event, deliver_notification
+from orders.models import NotificationDelivery
 from home.models import CustomerAddress
 from decimal import Decimal
 
@@ -315,33 +316,66 @@ class OrderTestCase(TestCase):
         self.assertEqual(order.status, 'delivered')
         self.assertEqual(Order.objects.count(), 1)
 
-    @override_settings(
-        TWILIO_ACCOUNT_SID='ACtest',
-        TWILIO_AUTH_TOKEN='test-token',
-        TWILIO_SMS_FROM='+15550000000',
-        TWILIO_WHATSAPP_FROM='whatsapp:+14155238886',
-        ORDER_NOTIFICATION_COUNTRY_CODE='91',
-    )
-    @patch('orders.notifications.requests.post')
-    def test_order_confirmation_sends_sms_and_whatsapp(self, post):
-        post.return_value.raise_for_status.return_value = None
+    def test_notification_enqueue_is_idempotent_and_respects_whatsapp_consent(self):
         order = Order.objects.create(
-            user=self.normal_user,
-            product_name=self.product.name,
-            product_id=self.product.id,
-            name='Test User',
-            mobile='9876543210',
-            location='1 Test Street, Uchipuli',
-            quantity='1',
-            price='200.00',
+            user=self.normal_user, product_name=self.product.name, product_id=self.product.id,
+            name='Test User', mobile='9876543210', location='1 Test Street',
+            quantity='1', price='200.00', whatsapp_opt_in=False,
+        )
+        first = enqueue_order_event(order, 'order_placed')
+        second = enqueue_order_event(order, 'order_placed')
+        self.assertEqual(len(first), 1)
+        self.assertEqual(second, [])
+        self.assertEqual(NotificationDelivery.objects.count(), 1)
+        self.assertEqual(NotificationDelivery.objects.get().channel, 'email')
+
+    def test_whatsapp_delivery_is_queued_only_after_explicit_consent(self):
+        order = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name, product_id=self.product.id,
+            name='Test User', mobile='9876543210', location='1 Test Street',
+            quantity='1', price='200.00', whatsapp_opt_in=True,
+        )
+        enqueue_order_event(order, 'order_placed')
+        self.assertSetEqual(
+            set(NotificationDelivery.objects.values_list('channel', flat=True)),
+            {'email', 'whatsapp'},
         )
 
-        results = send_order_confirmation(order)
+    @override_settings(RESEND_API_KEY='re_test', RESEND_FROM_EMAIL='orders@example.com',
+                       NOTIFICATION_SITE_URL='https://example.com')
+    @patch('orders.notifications.requests.post')
+    def test_email_notification_marks_delivery_sent(self, post):
+        post.return_value.raise_for_status.return_value = None
+        post.return_value.json.return_value = {'id': 'email-test-id'}
+        order = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name, product_id=self.product.id,
+            name='Test User', mobile='9876543210', location='1 Test Street',
+            quantity='1', price='200.00',
+        )
+        enqueue_order_event(order, 'order_placed')
+        delivery = NotificationDelivery.objects.get(channel='email')
+        self.assertTrue(deliver_notification(delivery))
+        delivery.refresh_from_db()
+        self.assertEqual(delivery.status, 'sent')
+        self.assertEqual(delivery.provider_message_id, 'email-test-id')
+        self.assertEqual(post.call_args.kwargs['json']['to'], ['user@test.com'])
 
-        self.assertEqual(results, {'sms': True, 'whatsapp': True})
-        self.assertEqual(post.call_count, 2)
-        self.assertEqual(post.call_args_list[0].kwargs['data']['To'], '+919876543210')
-        self.assertEqual(post.call_args_list[1].kwargs['data']['To'], 'whatsapp:+919876543210')
+    @patch('orders.notifications.requests.post')
+    def test_failed_notification_is_scheduled_for_retry(self, post):
+        import requests
+        post.side_effect = requests.Timeout('provider timeout')
+        order = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name, product_id=self.product.id,
+            name='Test User', mobile='9876543210', location='1 Test Street',
+            quantity='1', price='200.00',
+        )
+        enqueue_order_event(order, 'order_placed')
+        delivery = NotificationDelivery.objects.get(channel='email')
+        self.assertFalse(deliver_notification(delivery))
+        delivery.refresh_from_db()
+        self.assertEqual(delivery.status, 'pending')
+        self.assertEqual(delivery.attempt_count, 1)
+        self.assertIsNotNone(delivery.next_attempt_at)
 
     def test_checkout_renders_manual_address_and_gps_options_for_saved_address_users(self):
         CustomerAddress.objects.create(
