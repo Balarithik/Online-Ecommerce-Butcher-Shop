@@ -80,13 +80,13 @@ npm run dev
 1. Set `DEBUG=False`, a unique `SECRET_KEY`, `ALLOWED_HOSTS`, and `CSRF_TRUSTED_ORIGINS` (include every public HTTPS origin, e.g. `https://lakshmi-broliers.onrender.com`).
 2. Prefer `DATABASE_URL` (Postgres). SQLite is wiped on ephemeral hosts.
 3. Configure Cloudinary for persistent product images.
-4. Build/migrate with `main/build.sh` (or platform build command): install deps → `collectstatic` → `migrate`.
+4. For Render with the service root directory set to `main`, use build command `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput` and start command `gunicorn main.wsgi:application`. Do not run `makemigrations` during deployment.
 5. Serve with Gunicorn (`main/Procfile`), not `runserver`.
 
 ### Render
 
 - Root / start command should target `main/` (Gunicorn `main.wsgi:application`).
-- Set env vars from `.env.example` plus production secrets.
+- Set `DEBUG=False`, `SECRET_KEY`, `ALLOWED_HOSTS=lakshmi-broliers.onrender.com`, `CSRF_TRUSTED_ORIGINS=https://lakshmi-broliers.onrender.com`, `DATABASE_URL`, and either `CLOUDINARY_URL` or the three `CLOUDINARY_*` values. Use the exact active API key/secret pair from the same Cloudinary product environment; do not use the values in old local files or Docker images. Set `WHATSAPP_NUMBER` as required.
 - Ensure `CSRF_TRUSTED_ORIGINS` lists the exact Render URL.
 
 ### AWS Elastic Beanstalk
@@ -103,9 +103,8 @@ SECRET_KEY=<stable-secret>
 ALLOWED_HOSTS=<env-url>.elasticbeanstalk.com,your-domain.com
 CSRF_TRUSTED_ORIGINS=https://<env-url>.elasticbeanstalk.com,https://your-domain.com
 DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
+CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+# Or set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET separately.
 WHATSAPP_NUMBER=
 ```
 
