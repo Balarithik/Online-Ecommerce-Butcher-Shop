@@ -70,6 +70,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Install uv and refresh security-patched lock
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.19"
+
+      - name: Resolve patched dependencies for Docker build context
+        working-directory: main
+        run: uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
