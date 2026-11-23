@@ -52,9 +52,7 @@ Local Django example: `VITE_API_BASE_URL=http://127.0.0.1:8000`
 | `src/App.jsx` | Splash UI, health-check polling (`MAX_RETRIES=10`), redirect logic. |
 | `src/App.css` / `src/index.css` | Splash styling. |
 | `src/assets/logo.png` | Brand mark on the splash. |
-| `src/assets/logo_aramcuts.png` | Alternate brand asset. |
 | `src/assets/hero.png` | Hero imagery. |
-| `src/assets/react.svg` / `vite.svg` | Template leftovers (optional). |
 | `dist/` | Built static site from `npm run build` (deploy separately if used as a static host). |
 
 ## Workflow with Django
@@ -62,4 +60,4 @@ Local Django example: `VITE_API_BASE_URL=http://127.0.0.1:8000`
 1. Start Django (`main/` → `runserver` or production Gunicorn).
 2. Confirm `GET {VITE_API_BASE_URL}/healthz/` returns `{"status":"ok"}`.
 3. Run or deploy this splash; it redirects users into the store when healthy.
-4. After 10 failed health checks it stops retrying and shows an error/ready state instead of hammering localhost or the API forever.
+4. After 10 failed health checks it displays a connection error and a Try again button; it does not redirect to a failed backend.
