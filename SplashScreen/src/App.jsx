@@ -22,6 +22,8 @@ export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
   const [serverOnline, setServerOnline] = useState(false);
+  const [connectionFailed, setConnectionFailed] = useState(false);
+  const [retryNonce, setRetryNonce] = useState(0);
 
   // Cycle loading messages
   useEffect(() => {
@@ -59,7 +61,7 @@ export default function App() {
     const checkServerHealth = async () => {
       if (retryCount >= MAX_RETRIES) {
         setServerOnline(false);
-        setIsReady(true);
+        setConnectionFailed(true);
         setProgress(100);
         return;
       }
@@ -79,6 +81,7 @@ export default function App() {
 
         if (!cancelled) {
           setServerOnline(true);
+          setConnectionFailed(false);
           setIsReady(true);
           setProgress(100);
 
@@ -110,7 +113,7 @@ export default function App() {
       clearTimeout(redirectTimer);
       clearTimeout(fadeTimer);
     };
-  }, []);
+  }, [retryNonce]);
 
 
   return (
@@ -121,7 +124,7 @@ export default function App() {
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full ${isReady ? 'bg-emerald-600' : 'bg-primary'}`} />
           <span className="font-semibold uppercase tracking-wider text-[11px]">
-            {serverOnline ? 'Delivery Hub Active' : 'Connecting to Hub'}
+            {connectionFailed ? 'Connection unavailable' : serverOnline ? 'Delivery Hub Active' : 'Connecting to Hub'}
           </span>
         </div>
 
@@ -153,7 +156,7 @@ export default function App() {
         {/* Dynamic Loading Message & Linear Minimal Progress Bar */}
         <div className="w-full mt-8">
           <div className="flex items-center justify-between text-xs text-stone-600 mb-2 font-medium">
-            <span className="truncate">{isReady ? "Ready! Launching Store..." : LOADING_MESSAGES[messageIndex]}</span>
+            <span className="truncate">{connectionFailed ? "We could not reach the store. Check your connection and try again." : isReady ? "Ready! Launching Store..." : LOADING_MESSAGES[messageIndex]}</span>
             <span className="text-primary font-bold ml-2 shrink-0">{isReady ? '100%' : `${progress}%`}</span>
           </div>
 
@@ -163,6 +166,19 @@ export default function App() {
               style={{ width: `${progress}%` }}
             />
           </div>
+          {connectionFailed && (
+            <button
+              type="button"
+              onClick={() => {
+                setConnectionFailed(false);
+                setProgress(15);
+                setRetryNonce((value) => value + 1);
+              }}
+              className="mt-5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              Try again
+            </button>
+          )}
         </div>
       </div>
 
