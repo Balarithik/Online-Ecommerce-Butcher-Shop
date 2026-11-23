@@ -101,7 +101,7 @@ class CustomerOrderSecurityTests(TestCase):
 
     def test_order_price_is_calculated_from_database_not_posted_price(self):
         self.client.force_login(self.customer)
-        with patch("orders.views.send_order_confirmation"):
+        with patch("orders.views.enqueue_order_event"):
             response = self.client.post(reverse("Orders", args=[self.product.pk]), {
                 "name": "Alice", "mobile": "9876543210",
                 "address": "12 Main Street, Uchipuli", "quantity": "2.5",
@@ -118,7 +118,7 @@ class CustomerOrderSecurityTests(TestCase):
             "address": "12 Main Street, Uchipuli", "quantity": "1",
             "order_token": "b82a6e61-efb6-4d58-8e42-2e501e7c04c3",
         }
-        with patch("orders.views.send_order_confirmation"):
+        with patch("orders.views.enqueue_order_event"):
             first = self.client.post(reverse("Orders", args=[self.product.pk]), payload)
             second = self.client.post(reverse("Orders", args=[self.product.pk]), payload)
         self.assertEqual(first.status_code, 302)
@@ -135,7 +135,7 @@ class CustomerOrderSecurityTests(TestCase):
         CartItem.objects.create(cart=cart, product=self.product, quantity=Decimal("1.000"))
         CartItem.objects.create(cart=cart, product=second_product, quantity=Decimal("0.500"))
         self.client.force_login(self.customer)
-        with patch("orders.views.send_order_confirmation"):
+        with patch("orders.views.enqueue_order_event"):
             response = self.client.post(reverse("Orders", args=[self.product.pk]), {
                 "name": "Alice", "mobile": "9876543210",
                 "address": "12 Main Street, Uchipuli", "quantity": "1",
@@ -187,7 +187,7 @@ class CustomerOrderSecurityTests(TestCase):
             "address": "12 Main Street, Uchipuli", "quantity": "1",
             "order_token": "e04e5988-0c75-4eab-99d4-c3a9d22f7f3a",
         }
-        with patch("orders.views.send_order_confirmation"):
+        with patch("orders.views.enqueue_order_event"):
             self.client.post(reverse("Orders", args=[self.product.pk]), payload)
             self.client.post(reverse("Orders", args=[self.product.pk]), payload)
         profile.refresh_from_db()
