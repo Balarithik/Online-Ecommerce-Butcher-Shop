@@ -71,7 +71,7 @@ python manage.py test
 python manage.py collectstatic      # production / WhiteNoise
 ```
 
-Production entry: Gunicorn via `Procfile`. Build helper: `build.sh` (install → collectstatic → migrate → optional createsuperuser).
+Production entry: Gunicorn via `Procfile`. Build helper: `build.sh` (install dependencies → collectstatic). Apply committed migrations with `python manage.py migrate --noinput` during deployment. The Docker entrypoint bootstraps an initial superuser only when all three `DJANGO_SUPERUSER_*` variables are explicitly set, and skips it safely on later restarts.
 
 ---
 
@@ -85,7 +85,7 @@ Production entry: Gunicorn via `Procfile`. Build helper: `build.sh` (install →
 | `requirements.txt` | Pip dependencies for deploy and local install. |
 | `pyproject.toml` / `uv.lock` | Optional uv/project metadata; pip still uses `requirements.txt`. |
 | `Procfile` | Gunicorn web process for Render/EB/Heroku-style hosts. |
-| `build.sh` | Install deps, collectstatic, migrate, create superuser (noinput). |
+| `build.sh` | Install dependencies and collect static files; does not generate migrations or create accounts. |
 | `.python-version` | Preferred Python version for platform tooling. |
 | `.env` | Local secrets (gitignored). |
 | `.ebignore` | Files excluded from EB bundles. |
@@ -95,7 +95,7 @@ Production entry: Gunicorn via `Procfile`. Build helper: `build.sh` (install →
 | `README.md` | This document. |
 | `static/` | Project static sources (icons, CSS assets) collected into `staticfiles/`. |
 | `staticfiles/` | Output of `collectstatic` (served by WhiteNoise). |
-| `src/` | Legacy/empty package stub; not used by runtime URLconf. |
+
 
 ### Project package `main/main/`
 
