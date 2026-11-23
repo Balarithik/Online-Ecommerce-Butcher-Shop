@@ -14,7 +14,7 @@ from orders.forms import OrderForm
 from home.models import CustomerAddress, CustomerProfile
 from store.models import Products
 from .models import Order, Cart, CartItem, OrderItem
-from .notifications import send_order_confirmation
+from .notifications import enqueue_order_event
 
 
 def get_or_create_cart(request, merge_session_key=None):
@@ -347,6 +347,7 @@ def Orders(request, product_id):
             'quantity': quantity,
             'price': price,
             'status': 'pending',
+            'whatsapp_opt_in': bool(request.POST.get('whatsapp_opt_in')),
         }
         with transaction.atomic():
             if order_token:
@@ -392,7 +393,7 @@ def Orders(request, product_id):
                         price=price,
                         cut_preference=cut_preference,
                     )
-                transaction.on_commit(lambda: send_order_confirmation(order))
+                enqueue_order_event(order, 'order_placed')
 
         # Save session data for reference
         request.session['customer_name'] = name
