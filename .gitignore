@@ -12,3 +12,7 @@ main/staticfiles/
 data.json
 main/data.json
 main/debug-3df742.log
+
+# Runtime/debug output
+*.log
+main/_debug_csrf_signup.py
