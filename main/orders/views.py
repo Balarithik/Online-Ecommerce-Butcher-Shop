@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.db import transaction
+from django.db.models import F
 from orders.forms import OrderForm
 from home.models import CustomerAddress, CustomerProfile
 from store.models import Products
@@ -353,6 +354,11 @@ def Orders(request, product_id):
                 created = True
 
             if created:
+                # Update the aggregate at the point the order is committed, not
+                # when the confirmation page is viewed/refreshed.
+                CustomerProfile.objects.filter(user=request.user).update(
+                    number_of_orders=F('number_of_orders') + 1
+                )
                 cart = get_or_create_cart(request)
                 cart_items = list(cart.items.select_related('product').all())
                 if cart_items:
@@ -422,9 +428,6 @@ def order_confirmation_view(request, order_id):
 
     order = get_object_or_404(Order, order_id=order_id, user=request.user)
     user = CustomerProfile.objects.filter(user=request.user).first()
-    if user:
-        user.number_of_orders += 1
-        user.save(update_fields=['number_of_orders'])
     items = order.get_items()
     return render(request, 'orders/order_confirmation.html', {
         'order': order,
