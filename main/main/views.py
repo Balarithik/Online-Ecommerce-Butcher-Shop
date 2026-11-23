@@ -1,7 +1,4 @@
-import json
 import logging
-import time
-from pathlib import Path
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -43,23 +40,6 @@ def health_check(request):
 
 def csrf_failure(request, reason=""):
     """Log CSRF failures without exposing token values, then show Django's page."""
-    # #region agent log
-    _agent_log(
-        "A",
-        "main/views.py:csrf_failure",
-        "csrf failure",
-        {
-            "path": request.path,
-            "method": request.method,
-            "reason": str(reason)[:200],
-            "has_cookie": "csrftoken" in request.COOKIES,
-            "has_post_token": bool(request.POST.get("csrfmiddlewaretoken")),
-            "is_secure": request.is_secure(),
-            "origin": (request.META.get("HTTP_ORIGIN") or "")[:120],
-            "referer": (request.META.get("HTTP_REFERER") or "")[:120],
-        },
-    )
-    # #endregion
     logger.warning(
         "CSRF failure on %s %s (%s); cookie=%s post_token=%s secure=%s",
         request.method,
