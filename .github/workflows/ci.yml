@@ -105,6 +105,9 @@ jobs:
             -e DEBUG=True \
             -e SECRET_KEY=ci-smoke-test-key \
             -e SECURE_SSL_REDIRECT=False \
+            -e DJANGO_SUPERUSER_USERNAME=ci-admin \
+            -e DJANGO_SUPERUSER_EMAIL=ci-admin@example.com \
+            -e DJANGO_SUPERUSER_PASSWORD=ci-only-test-password \
             -p 8000:8000 \
             aramcuts-main:ci
 
@@ -121,6 +124,10 @@ jobs:
             fi
             sleep 2
           done
+
+      - name: Verify entrypoint created the initial superuser
+        run: |
+          docker exec ci-main python manage.py shell -c "from django.contrib.auth import get_user_model; u=get_user_model().objects.get(username='ci-admin'); assert u.is_superuser and u.is_staff; print('Entrypoint superuser bootstrap verified.')"
 
       - name: Cleanup
         if: always()
