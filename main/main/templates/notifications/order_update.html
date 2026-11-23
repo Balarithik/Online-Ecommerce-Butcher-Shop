@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><body style="margin:0;background:#f6f7fb;font-family:Arial,sans-serif;color:#242424">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:24px"><tr><td align="center">
+<table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;background:#fff;border-radius:14px;padding:28px">
+<tr><td><h1 style="color:#99000d">Lakshmi Broliers</h1><h2>Order #{{ order.order_id }}</h2>
+<p>Hello {{ order.name }},</p><p>{% if event == "order_placed" %}We received your order successfully.{% else %}Your order status has been updated.{% endif %}</p>
+<p><strong>Status:</strong> {{ status_label }}</p><ul>{% for item in item_lines %}<li>{{ item }}</li>{% endfor %}</ul>
+<p><strong>Total:</strong> Rs. {{ order.price }}</p><p><strong>Delivery:</strong> {{ order.delivery_slot }}</p>
+<p><strong>Address:</strong> {{ order.location }}</p>
+<p><a href="{{ tracking_url }}" style="display:inline-block;background:#99000d;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Track your order</a></p>
+<p>Thank you for choosing Lakshmi Broliers.</p></td></tr></table></td></tr></table></body></html>

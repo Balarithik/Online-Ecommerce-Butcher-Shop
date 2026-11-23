@@ -176,3 +176,33 @@ Production entry: Gunicorn via `Procfile`. Build helper: `build.sh` (install dep
 ## CSRF / auth notes
 
 Customer `/signup/` and `/login/` (and admin login) use `@never_cache` + `@ensure_csrf_cookie` so browsers/proxies do not cache a stale CSRF form token. Production must set `CSRF_TRUSTED_ORIGINS` to the public HTTPS origin. `base.html` also re-syncs hidden CSRF fields from the `csrftoken` cookie on `pageshow`/`submit` (helps mobile back-forward cache).
+
+## Customer order notifications
+
+The notification system uses a database-backed outbox. Order placement and every subsequent order status transition enqueue one email delivery and, only when the customer explicitly checks the WhatsApp consent box, one WhatsApp delivery. A unique `(order, channel, event)` constraint prevents duplicate queue rows.
+
+### Render environment variables
+
+Set these in the web service and notification worker service:
+
+- `RESEND_API_KEY`: Resend API key (secret).
+- `RESEND_FROM_EMAIL`: verified sender, e.g. `Lakshmi Broilers <orders@your-verified-domain.in>`.
+- `NOTIFICATION_SITE_URL`: public HTTPS base URL, e.g. `https://lakshmi-broliers.onrender.com`.
+- `WHATSAPP_CLOUD_ACCESS_TOKEN`: Meta permanent/system-user token (secret).
+- `WHATSAPP_PHONE_NUMBER_ID`: WhatsApp Cloud API phone-number ID.
+- `WHATSAPP_ORDER_TEMPLATE`: approved utility template name.
+- `WHATSAPP_TEMPLATE_LANGUAGE`: approved template language code (default `en`).
+- `WHATSAPP_GRAPH_API_VERSION`: supported Graph API version (default `v22.0`).
+- `ORDER_NOTIFICATION_COUNTRY_CODE`: default `91` for India.
+
+The WhatsApp utility template must contain four body placeholders in this order: order ID, current order status, order total, and order-tracking URL. Configure and approve the template in Meta WhatsApp Manager before enabling live WhatsApp delivery. Never commit API keys or tokens.
+
+### Deploy the worker
+
+1. Deploy the web service first so migration `0007_notification_delivery` runs through the existing entrypoint.
+2. In Render, create a Cron Job using the same repository, Dockerfile `main/Dockerfile`, and build context `main`.
+3. Set its command to `python manage.py process_notifications --limit 100` and schedule it every minute.
+4. Copy the same notification environment variables to the cron job. The worker and web service must use the same persistent PostgreSQL database; do not use separate SQLite files.
+5. Verify a test order produces an email delivery row and that the worker changes it to Sent. Test WhatsApp only after explicit customer consent and Meta template approval.
+
+The queue retries provider failures with increasing delays, up to six attempts. Review and manually investigate terminal Failed entries in Django Admin → Orders → Notification deliveries. Email is skipped when the account has no email address; WhatsApp is never sent without recorded order-level consent.

@@ -24,6 +24,7 @@ PAYMENT_METHOD_CHOICES = [
 
 class OrderForm(forms.ModelForm):
     address = forms.CharField(max_length=500, required=False)
+    whatsapp_opt_in = forms.BooleanField(required=False)
     quantity = forms.DecimalField(
         required=True,
         min_value=Decimal('0.250'),
