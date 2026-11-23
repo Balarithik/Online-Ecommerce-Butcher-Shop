@@ -222,8 +222,8 @@
 
           <div class="flex justify-between pt-2">
             <span>Payment Mode</span>
-            <span class="font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">{{ payment_method|default:'Cash
-              on Delivery' }}</span>
+            <span class="font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">{{% payment_method|default:'Cash
+              on Delivery' %}}</span>
           </div>
           <div class="flex justify-between">
             <span>Delivery Fee</span>
