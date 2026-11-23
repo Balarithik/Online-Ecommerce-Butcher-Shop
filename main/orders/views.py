@@ -356,6 +356,7 @@ def Orders(request, product_id):
             if created:
                 # Update the aggregate at the point the order is committed, not
                 # when the confirmation page is viewed/refreshed.
+                CustomerProfile.objects.get_or_create(user=request.user)
                 CustomerProfile.objects.filter(user=request.user).update(
                     number_of_orders=F('number_of_orders') + 1
                 )
