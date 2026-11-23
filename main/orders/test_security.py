@@ -165,3 +165,30 @@ class CustomerOrderSecurityTests(TestCase):
         self.client.get(url)
         profile.refresh_from_db()
         self.assertEqual(profile.number_of_orders, 1)
+
+    def test_cart_update_rejects_nan_delta_without_server_error(self):
+        cart = Cart.objects.create(user=self.customer)
+        CartItem.objects.create(cart=cart, product=self.product, quantity=Decimal("1.000"))
+        self.client.force_login(self.customer)
+        response = self.client.post(
+            reverse("cart_update_api"),
+            data=json.dumps({"product_id": self.product.pk, "delta": "NaN"}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+        item = CartItem.objects.get(cart=cart, product=self.product)
+        self.assertEqual(item.quantity, Decimal("1.000"))
+
+    def test_customer_order_count_increments_once_when_order_is_placed(self):
+        profile = CustomerProfile.objects.create(user=self.customer, number_of_orders=0)
+        self.client.force_login(self.customer)
+        payload = {
+            "name": "Alice", "mobile": "9876543210",
+            "address": "12 Main Street, Uchipuli", "quantity": "1",
+            "order_token": "e04e5988-0c75-4eab-99d4-c3a9d22f7f3a",
+        }
+        with patch("orders.views.send_order_confirmation"):
+            self.client.post(reverse("Orders", args=[self.product.pk]), payload)
+            self.client.post(reverse("Orders", args=[self.product.pk]), payload)
+        profile.refresh_from_db()
+        self.assertEqual(profile.number_of_orders, 1)
