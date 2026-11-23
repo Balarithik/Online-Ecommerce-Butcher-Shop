@@ -7,26 +7,7 @@ from django.views.decorators.http import require_GET
 
 logger = logging.getLogger(__name__)
 
-# #region agent log
-_AGENT_LOG_PATH = Path(__file__).resolve().parents[2] / "debug-3df742.log"
 
-
-def _agent_log(hypothesis_id, location, message, data, run_id="post-fix"):
-    try:
-        payload = {
-            "sessionId": "3df742",
-            "runId": run_id,
-            "hypothesisId": hypothesis_id,
-            "location": location,
-            "message": message,
-            "data": data,
-            "timestamp": int(time.time() * 1000),
-        }
-        with _AGENT_LOG_PATH.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(payload) + "\n")
-    except OSError:
-        pass
-# #endregion
 
 
 @require_GET
