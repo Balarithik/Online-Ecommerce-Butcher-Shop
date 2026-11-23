@@ -96,6 +96,8 @@ jobs:
 
       - name: Verify docker-compose config
         run: docker compose config --quiet
+        env:
+          SECRET_KEY: ci-compose-validation-only
 
       - name: Smoke-test main backend
         run: |
