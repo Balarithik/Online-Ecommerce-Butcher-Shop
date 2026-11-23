@@ -11,7 +11,5 @@ __pycache__/
 .ebextensions/
 .ebignore
 .env
-debug-3df742.log
-_debug_csrf_signup.py
 staticfiles/
 *.log
