@@ -1,7 +1,3 @@
-import json
-import time
-from pathlib import Path
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -68,18 +64,6 @@ def customer_login(request):
         'form': form,
         'next': next_url
     })
-    # #region agent log
-    _agent_log(
-        "A",
-        "home/views.py:customer_login",
-        "customer login rendered",
-        {
-            "method": request.method,
-            "has_csrf_cookie": "csrftoken" in request.COOKIES or bool(request.META.get("CSRF_COOKIE")),
-        },
-        run_id="post-fix",
-    )
-    # #endregion
     return response
 
 
@@ -99,15 +83,6 @@ def customer_signup(request):
         from orders.views import get_or_create_cart
         get_or_create_cart(request, merge_session_key=guest_session_key)
         messages.success(request, 'Your account has been created.')
-        # #region agent log
-        _agent_log(
-            "A",
-            "home/views.py:customer_signup",
-            "signup succeeded after csrf",
-            {"username_len": len(user.username), "has_next": bool(next_url)},
-            run_id="post-fix",
-        )
-        # #endregion
         if next_url and url_has_allowed_host_and_scheme(next_url, {request.get_host()}):
             return redirect(next_url)
         return redirect('home')
@@ -115,19 +90,6 @@ def customer_signup(request):
         'form': form,
         'next': next_url
     })
-    # #region agent log
-    _agent_log(
-        "A",
-        "home/views.py:customer_signup",
-        "customer signup rendered",
-        {
-            "method": request.method,
-            "has_csrf_cookie": "csrftoken" in request.COOKIES or bool(request.META.get("CSRF_COOKIE")),
-            "form_errors": bool(form.errors),
-        },
-        run_id="post-fix",
-    )
-    # #endregion
     return response
 
 
