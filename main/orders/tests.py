@@ -73,7 +73,7 @@ class OrderTestCase(TestCase):
             label='Home',
             recipient_name='Delivery Recipient',
             mobile='9876543210',
-            address='12/4, Main Road, Uchipuli',
+            address='12/4, Main Road, ',
             is_default=True,
         )
         self.client.force_login(self.normal_user)
@@ -92,7 +92,7 @@ class OrderTestCase(TestCase):
             label='Home',
             recipient_name='Saved Recipient',
             mobile='9876543210',
-            address='12/4, Saved Street, Uchipuli',
+            address='12/4, Saved Street, ',
             is_default=True,
         )
         self.client.force_login(self.normal_user)
@@ -117,9 +117,9 @@ class OrderTestCase(TestCase):
         client = Client()
         client.force_login(self.normal_user)
         post_data = {
-            'name': 'Bala Test',
-            'mobile': '7397511387',
-            'address': '9/427 Kamarajar Nagar, Uchipuli',
+            'name': 'Test',
+            'mobile': '0987654321',
+            'address': '9837 unknown city',
             'instructions': 'None',
             'quantity': '2.5',
             'price': '10.0'  # Try to set a fake low price of ₹10
@@ -138,24 +138,41 @@ class OrderTestCase(TestCase):
         client.force_login(self.normal_user)
         response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
             'name': 'Bala Test',
-            'mobile': '7397511387',
-            'address': '9/427 Kamarajar Nagar, Uchipuli',
+            'mobile': '9999999999',
+            'address': 'Unknown Street',
+            'quantity': '0.25',
+            'latitude': '6.310035',
+            'longitude': '77.356671',
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        order = Order.objects.latest('order_id')
+        self.assertEqual(order.latitude, Decimal('4.310764'))
+        self.assertEqual(order.longitude, Decimal('97.945671'))
+        self.assertContains(response, 'Open shared GPS pin in Maps')
+
+    def test_order_can_use_shared_gps_location_without_manual_address(self):
+        self.client.force_login(self.normal_user)
+        response = self.client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
+            'name': 'Test',
+            'mobile': '0987654321',
             'quantity': '0.25',
             'latitude': '9.310044',
             'longitude': '78.994671',
         }, follow=True)
+
         self.assertEqual(response.status_code, 200)
-        order = Order.objects.latest('order_id')
+        order = Order.objects.get()
         self.assertEqual(order.latitude, Decimal('9.310044'))
         self.assertEqual(order.longitude, Decimal('78.994671'))
+        self.assertIn('Current GPS location', order.location)
         self.assertContains(response, 'Open shared GPS pin in Maps')
 
     def test_order_rejects_invalid_gps_coordinates(self):
         client = Client()
         client.force_login(self.normal_user)
         response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
-            'name': 'Bala Test',
-            'mobile': '7397511387',
+            'name': 'Test',
+            'mobile': '0987654321',
             'address': 'Test address',
             'quantity': '1',
             'latitude': '91',
@@ -202,7 +219,7 @@ class OrderTestCase(TestCase):
         client = Client()
         client.force_login(self.normal_user)
         response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
-            'name': 'Bala Test', 'mobile': '7397511387', 'address': 'Test address', 'quantity': '1',
+            'name': 'Bala Test', 'mobile': '0987654321', 'address': 'Test address', 'quantity': '1',
         })
         self.assertEqual(response.status_code, 400)
         self.assertFalse(Order.objects.exists())
@@ -211,7 +228,7 @@ class OrderTestCase(TestCase):
         client = Client()
         client.force_login(self.normal_user)
         client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
-            'name': 'Bala Test', 'mobile': '7397511387', 'address': 'Test address', 'quantity': '1',
+            'name': 'Test', 'mobile': '0987654321', 'address': 'Test address', 'quantity': '1',
         })
         self.product.price = Decimal('300.00')
         self.product.save()
@@ -267,7 +284,7 @@ class OrderTestCase(TestCase):
             'order_token': token_match.group(1),
             'name': 'Test User',
             'mobile': '9876543210',
-            'address': '1 Test Street, Uchipuli',
+            'address': '1 Test Street,',
             'quantity': '1',
         }
 
@@ -285,7 +302,7 @@ class OrderTestCase(TestCase):
             product_id=self.product.id,
             name='Test User',
             mobile='9876543210',
-            location='1 Test Street, Uchipuli',
+            location='1 Test Street, ',
             quantity='1',
             price='200.00',
         )
