@@ -54,7 +54,8 @@ def _send_email(delivery):
     context = _order_context(delivery)
     response = requests.post(
         "https://api.resend.com/emails",
-        headers={"Authorization": f"Bearer {settings.RESEND_API_KEY}"},
+        headers={"Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                 "Idempotency-Key": f"lb-order-{delivery.order_id}-{delivery.event}-email"},
         json={
             "from": settings.RESEND_FROM_EMAIL, "to": [delivery.recipient],
             "subject": f"Lakshmi Broilers: Order #{delivery.order_id} update",
