@@ -298,8 +298,10 @@ def Orders(request, product_id):
         order_data['name'] = selected_address.recipient_name
         order_data['mobile'] = selected_address.mobile
         order_data['address'] = selected_address.formatted_address
-    elif request.user.saved_addresses.exists() and not order_data.get('address'):
-        return HttpResponseBadRequest("Choose one of your saved delivery addresses.")
+    elif request.user.saved_addresses.exists() and not order_data.get('address') and not (
+        order_data.get('latitude') and order_data.get('longitude')
+    ):
+        return HttpResponseBadRequest("Choose a saved address, enter a manual address, or share your GPS location.")
 
     form = OrderForm(order_data)
     if form.is_valid():
