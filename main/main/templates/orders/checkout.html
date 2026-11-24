@@ -433,7 +433,7 @@
           </div>
           <div class="flex-grow min-w-0">
             <h4 class="font-bold text-sm text-on-surface truncate">{{ product.name }}</h4>
-            <p class="text-xs text-on-surface-variant font-medium">₹{{ product.price|floatformat:2 }} / kg</p>
+            <p class="text-xs text-on-surface-variant font-medium">₹{{ product.display_price|floatformat:2 }} / kg</p>
             
             <!-- Quantity Stepper -->
             <div class="flex items-center gap-2 mt-1.5">
@@ -510,7 +510,7 @@
 </main>
 
 <script>
-  const unitPrice = parseFloat("{{ product.price }}") || 0;
+  const unitPrice = parseFloat("{{ product.display_price }}") || 0;
   let currentQty = parseFloat("{{ qty }}") || 1.0;
   let addressTag = "Home";
 
