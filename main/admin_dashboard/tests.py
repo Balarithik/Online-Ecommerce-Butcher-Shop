@@ -80,6 +80,57 @@ class AdminEndpointTests(TestCase):
         self.assertContains(inventory, 'md:hidden')
         self.assertContains(inventory, 'Mark Out of Stock')
 
+    def test_orders_page_sorts_pending_orders_before_other_statuses(self):
+        cancelled = Order.objects.create(
+            product_id=1,
+            product_name='Cancelled Chicken',
+            name='Cancelled Customer',
+            mobile='9876543210',
+            quantity='0.250',
+            price='62.50',
+            location='Cancelled address',
+            status='cancelled',
+        )
+        delivered = Order.objects.create(
+            product_id=1,
+            product_name='Delivered Chicken',
+            name='Delivered Customer',
+            mobile='9876543210',
+            quantity='0.250',
+            price='62.50',
+            location='Delivered address',
+            status='delivered',
+        )
+        pending_older = Order.objects.create(
+            product_id=1,
+            product_name='Pending Older Chicken',
+            name='Pending Older Customer',
+            mobile='9876543210',
+            quantity='0.250',
+            price='62.50',
+            location='Pending older address',
+            status='pending',
+        )
+        pending_newer = Order.objects.create(
+            product_id=1,
+            product_name='Pending Newer Chicken',
+            name='Pending Newer Customer',
+            mobile='9876543210',
+            quantity='0.250',
+            price='62.50',
+            location='Pending newer address',
+            status='pending',
+        )
+
+        response = self.client.get(reverse('admin_orders'))
+
+        self.assertEqual(response.status_code, 200)
+        ordered_ids = list(response.context['orders'].values_list('order_id', flat=True))
+        self.assertEqual(
+            ordered_ids,
+            [pending_newer.order_id, pending_older.order_id, delivered.order_id, cancelled.order_id],
+        )
+
     def test_orders_page_renders_mobile_order_cards(self):
         Order.objects.create(
             product_id=1,
