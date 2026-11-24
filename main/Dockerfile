@@ -14,10 +14,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install locked production dependencies first to leverage Docker layer caching.
+# Refresh the lock for the security-patched exact pins in pyproject.toml, then install production dependencies.
+# CI uses the same four-package refresh; this prevents Render from failing when uv.lock drifts.
 COPY pyproject.toml uv.lock /app/
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-dev --no-install-project
+    uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3 \
+    && uv sync --locked --no-dev --no-install-project
 
 # Copy application source code
 COPY . /app/
