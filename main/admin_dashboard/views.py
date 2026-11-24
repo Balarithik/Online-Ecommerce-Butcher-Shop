@@ -12,7 +12,7 @@ from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum, Count, Q, Case, When, Value, IntegerField
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -226,7 +226,14 @@ def admin_orders(request):
     query = request.GET.get('q', '').strip()
     status_filter = request.GET.get('status', '').strip()
 
-    orders = Order.objects.all().order_by('-order_id')
+    orders = Order.objects.all().order_by(
+        Case(
+            When(status='pending', then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField(),
+        ),
+        '-order_id',
+    )
 
     if query:
         orders = orders.filter(
