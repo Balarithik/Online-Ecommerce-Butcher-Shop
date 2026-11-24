@@ -4,7 +4,7 @@ from unittest.mock import patch
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User
-from store.models import Products
+from store.models import Products, StorePricing
 from orders.models import Cart, CartItem, Order
 from orders.forms import OrderForm
 from orders.notifications import enqueue_order_event, deliver_notification
@@ -15,6 +15,8 @@ from decimal import Decimal
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class OrderTestCase(TestCase):
     def setUp(self):
+        # Keep legacy tamper tests explicit about the configured shop-wide rate.
+        StorePricing.objects.update_or_create(pk=1, defaults={"common_price": Decimal("200.00")})
         # Create a test product
         self.product = Products.objects.create(
             name="Test Chicken",
@@ -251,8 +253,7 @@ class OrderTestCase(TestCase):
         client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
             'name': 'Test', 'mobile': '0987654321', 'address': 'Test address', 'quantity': '1',
         })
-        self.product.price = Decimal('300.00')
-        self.product.save()
+        StorePricing.objects.update_or_create(pk=1, defaults={"common_price": Decimal("300.00")})
         self.assertEqual(Order.objects.get().price, Decimal('200.00'))
 
     def test_order_routes_require_sign_in_and_preserve_checkout_destination(self):

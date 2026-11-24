@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from home.models import CustomerProfile
 from orders.models import Cart, CartItem, Order, OrderItem
-from store.models import Products
+from store.models import Products, StorePricing
 
 
 @override_settings(PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"])
@@ -17,6 +17,7 @@ class CustomerOrderSecurityTests(TestCase):
     def setUp(self):
         self.customer = User.objects.create_user("alice", password="Strong-password-123!")
         self.other = User.objects.create_user("bob", password="Strong-password-123!")
+        StorePricing.objects.update_or_create(pk=1, defaults={"common_price": Decimal("200.00")})
         self.product = Products.objects.create(
             name="Chicken", price=Decimal("200.00"), description="Fresh chicken",
             image1="products_images/chicken.png", is_available=True,
@@ -144,7 +145,7 @@ class CustomerOrderSecurityTests(TestCase):
         self.assertEqual(response.status_code, 302)
         order = Order.objects.get(user=self.customer)
         self.assertEqual(order.items.count(), 2)
-        self.assertEqual(order.price, Decimal("500.00"))
+        self.assertEqual(order.price, Decimal("300.00"))
 
     def test_invalid_gps_pair_is_rejected(self):
         self.client.force_login(self.customer)

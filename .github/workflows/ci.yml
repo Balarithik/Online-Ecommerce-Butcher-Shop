@@ -181,6 +181,9 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           version: "0.12.19"
+          # This job launches a long-running Django process. Disable the action's
+          # cache-prune post-step to avoid waiting on uv's active cache lock.
+          enable-cache: false
       - name: Refresh security-patched dependency lock in CI workspace
         working-directory: main
         run: uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3
@@ -199,9 +202,17 @@ jobs:
         run: |
           uv run --no-sync python manage.py migrate --noinput
           uv run --no-sync python manage.py shell -c "from store.models import Products; Products.objects.get_or_create(id=98765, defaults={'name':'Browser Test Chicken','price':'200.00','description':'CI product','image1':'products_images/ci.png'})"
-          uv run --no-sync python manage.py runserver 0.0.0.0:8000 > /tmp/django-browser.log 2>&1 &
+          .venv/bin/python manage.py runserver 0.0.0.0:8000 > /tmp/django-browser.log 2>&1 &
+          echo $! > /tmp/django-browser.pid
           for i in $(seq 1 30); do
-            curl --fail http://127.0.0.1:8000/healthz/ && break
+            if curl --fail http://127.0.0.1:8000/healthz/; then
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "Django did not become healthy"
+              cat /tmp/django-browser.log
+              exit 1
+            fi
             sleep 2
           done
       - name: Run Playwright quantity and checkout navigation tests
@@ -212,10 +223,19 @@ jobs:
       - name: OWASP ZAP baseline scan
         run: |
           mkdir -p "$RUNNER_TEMP/zap-work"
+          # ZAP runs as an unprivileged user inside the container; allow it to
+          # create its YAML and JSON report in the mounted runner directory.
+          chmod 0777 "$RUNNER_TEMP/zap-work"
           docker run --rm --network host \
             -v "$RUNNER_TEMP/zap-work:/zap/wrk:rw" \
             -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
             -t http://127.0.0.1:8000 -m 2 -T 5 -I -J zap-report.json
+      - name: Stop browser-test Django server
+        if: always()
+        run: |
+          if [ -f /tmp/django-browser.pid ]; then
+            kill "$(cat /tmp/django-browser.pid)" 2>/dev/null || true
+          fi
       - name: Upload ZAP report
         if: always()
         uses: actions/upload-artifact@v4
