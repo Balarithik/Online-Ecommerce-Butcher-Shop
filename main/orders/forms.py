@@ -18,7 +18,6 @@ CUT_PREFERENCE_CHOICES = [
 
 PAYMENT_METHOD_CHOICES = [
     ('Cash on Delivery', 'Cash on Delivery'),
-    ('UPI / QR Code on Delivery', 'UPI / QR Code on Delivery'),
 ]
 
 
