@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
 from PIL import Image, UnidentifiedImageError
-from store.models import Products
+from store.models import Products, StorePricing
 from orders.models import Order
 from .forms import CloudinaryProductForm
 
@@ -187,6 +187,19 @@ def admin_dashboard(request):
 @login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_product(request):
+    if request.method == "POST":
+        raw_price = (request.POST.get("common_price") or "").strip()
+        try:
+            common_price = Decimal(raw_price)
+            if not common_price.is_finite() or common_price <= 0 or common_price > Decimal("1000000"):
+                raise InvalidOperation
+        except (InvalidOperation, ValueError):
+            messages.error(request, "Enter a valid common price greater than ₹0 and not above ₹10,00,000.")
+            return redirect("admin_products")
+        StorePricing.objects.update_or_create(pk=1, defaults={"common_price": common_price.quantize(Decimal("0.01"))})
+        messages.success(request, f"Common product price updated to ₹{common_price:,.2f} per kg.")
+        return redirect("admin_products")
+
     query = request.GET.get('q', '').strip()
     status_filter = request.GET.get('status', '').strip()
 
@@ -206,6 +219,7 @@ def admin_product(request):
         'unavailable_products': Products.objects.filter(is_available=False).count(),
         'query': query,
         'status_filter': status_filter,
+        'common_price': StorePricing.get_common_price(),
     })
 
 
@@ -214,8 +228,12 @@ def admin_product(request):
 @require_POST
 def toggle_product_availability(request, product_id):
     product = get_object_or_404(Products, id=product_id)
-    product.is_available = not product.is_available
-    product.save()
+    requested_state = request.POST.get("is_available")
+    if requested_state in {"true", "false"}:
+        product.is_available = requested_state == "true"
+    else:
+        product.is_available = not product.is_available
+    product.save(update_fields=["is_available"])
     messages.success(request, f"Updated stock status for '{product.name}'.")
     return redirect('admin_products')
 
