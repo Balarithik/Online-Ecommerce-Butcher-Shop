@@ -203,6 +203,7 @@ jobs:
           uv run --no-sync python manage.py migrate --noinput
           uv run --no-sync python manage.py shell -c "from store.models import Products; Products.objects.get_or_create(id=98765, defaults={'name':'Browser Test Chicken','price':'200.00','description':'CI product','image1':'products_images/ci.png'})"
           .venv/bin/python manage.py runserver 0.0.0.0:8000 > /tmp/django-browser.log 2>&1 &
+          echo $! > /tmp/django-browser.pid
           for i in $(seq 1 30); do
             if curl --fail http://127.0.0.1:8000/healthz/; then
               break
@@ -232,7 +233,9 @@ jobs:
       - name: Stop browser-test Django server
         if: always()
         run: |
-          pkill -f "manage.py runserver 0.0.0.0:8000" || true
+          if [ -f /tmp/django-browser.pid ]; then
+            kill "$(cat /tmp/django-browser.pid)" 2>/dev/null || true
+          fi
       - name: Upload ZAP report
         if: always()
         uses: actions/upload-artifact@v4
