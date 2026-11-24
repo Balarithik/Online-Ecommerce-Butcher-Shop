@@ -58,6 +58,26 @@ class OrderTestCase(TestCase):
         form = OrderForm(data=data)
         self.assertFalse(form.is_valid())
 
+    def test_my_orders_displays_each_persisted_order_id(self):
+        first = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name,
+            product_id=self.product.id, name='Test User', mobile='9876543210',
+            location='1 First Street', quantity='1', price='200.00',
+        )
+        second = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name,
+            product_id=self.product.id, name='Test User', mobile='9876543210',
+            location='2 Second Street', quantity='1', price='200.00',
+        )
+        self.client.force_login(self.normal_user)
+
+        response = self.client.get(reverse('my_orders'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'Order #{first.order_id}')
+        self.assertContains(response, f'Order #{second.order_id}')
+        self.assertNotContains(response, 'Order #0')
+
     def test_authenticated_customer_can_view_orders(self):
         self.client.force_login(self.normal_user)
 
