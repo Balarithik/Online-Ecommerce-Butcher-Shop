@@ -400,3 +400,42 @@ class OrderTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         order = Order.objects.get(user=self.normal_user)
         self.assertIn('GPS location shared', order.location)
+
+
+    def test_first_manual_order_saves_default_address_for_future_checkout(self):
+        self.client.force_login(self.normal_user)
+        response = self.client.post(reverse('Orders', args=[self.product.id]), {
+            'name': 'First Order Customer',
+            'mobile': '9876543210',
+            'address': '12/4 Main Road, Uchipuli, PIN: 623534',
+            'quantity': '1',
+            'payment_method': 'Cash on Delivery',
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        saved = CustomerAddress.objects.get(user=self.normal_user)
+        self.assertTrue(saved.is_default)
+        self.assertEqual(saved.recipient_name, 'First Order Customer')
+        self.assertEqual(saved.mobile, '9876543210')
+        self.assertEqual(saved.address, '12/4 Main Road, Uchipuli, PIN: 623534')
+
+        checkout = self.client.get(reverse('Checkout_direct', args=[self.product.id, '1']))
+        self.assertContains(checkout, '12/4 Main Road, Uchipuli, PIN: 623534')
+        self.assertContains(checkout, 'Choose a saved delivery address')
+
+    def test_upi_payment_is_rejected_until_it_is_launched(self):
+        form = OrderForm(data={
+            'name': 'Test Customer',
+            'mobile': '9876543210',
+            'address': '12 Main Road, Uchipuli',
+            'quantity': '1',
+            'payment_method': 'UPI / QR Code on Delivery',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('payment_method', form.errors)
+
+    def test_checkout_marks_upi_as_coming_soon_and_posts_cod_field(self):
+        self.client.force_login(self.normal_user)
+        response = self.client.get(reverse('Checkout_direct', args=[self.product.id, '1']))
+        self.assertContains(response, 'name="payment_method"')
+        self.assertContains(response, 'Coming soon')
+        self.assertContains(response, 'disabled')

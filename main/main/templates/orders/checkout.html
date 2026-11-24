@@ -197,7 +197,6 @@
               <input 
                 type="text" 
                 id="addr_house" 
-                required
                 placeholder="e.g. Flat 3B, Door 12/4" 
                 class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                 oninput="syncFullAddress()"
@@ -210,7 +209,6 @@
               <input 
                 type="text" 
                 id="addr_street" 
-                required
                 placeholder="e.g. Green Valley Street, Main Rd" 
                 class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                 oninput="syncFullAddress()"
@@ -226,7 +224,6 @@
               <input 
                 type="text" 
                 id="addr_area" 
-                required
                 value="Uchipuli" 
                 placeholder="e.g. Uchipuli / Vedalai" 
                 class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
@@ -252,7 +249,6 @@
               <input 
                 type="text" 
                 id="addr_pincode" 
-                required
                 value="623534" 
                 placeholder="e.g. 623534" 
                 class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant bg-surface-bright text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
@@ -389,7 +385,7 @@
         <div class="space-y-3">
           <!-- COD -->
           <label class="relative flex items-center p-3.5 border-2 border-primary bg-primary/5 rounded-xl cursor-pointer transition-all">
-            <input type="radio" name="payment" value="Cash on Delivery" checked class="w-4 h-4 text-primary focus:ring-primary">
+            <input type="radio" name="payment_method" value="Cash on Delivery" checked class="w-4 h-4 text-primary focus:ring-primary">
             <div class="ml-3 flex-grow">
               <div class="flex items-center gap-2">
                 <span class="font-bold text-xs md:text-sm text-on-surface">Cash on Delivery (COD)</span>
@@ -401,14 +397,14 @@
           </label>
 
           <!-- UPI / Online -->
-          <label class="relative flex items-center p-3.5 border border-outline-variant bg-surface-bright hover:border-primary/50 rounded-xl cursor-pointer transition-all">
-            <input type="radio" name="payment" value="UPI / QR Code" class="w-4 h-4 text-primary focus:ring-primary">
+          <label class="relative flex items-center p-3.5 border border-outline-variant bg-surface-bright rounded-xl cursor-not-allowed opacity-75">
+            <input type="radio" name="payment_method" value="UPI / QR Code on Delivery" disabled class="w-4 h-4 text-primary focus:ring-primary">
             <div class="ml-3 flex-grow">
               <div class="flex items-center gap-2">
-                <span class="font-bold text-xs md:text-sm text-on-surface">UPI / QR Code on Delivery</span>
-                <span class="text-[10px] text-on-surface-variant font-medium">GPay • PhonePe • Paytm</span>
+                <span class="font-bold text-xs md:text-sm text-on-surface">UPI Payment</span>
+                <span class="text-[10px] text-amber-800 bg-amber-100 font-bold px-2 py-0.5 rounded-full">Coming soon</span>
               </div>
-              <p class="text-[11px] text-on-surface-variant">Driver will present dynamic QR code at your door.</p>
+              <p class="text-[11px] text-on-surface-variant">Online UPI payments are not available yet. Please choose Cash on Delivery.</p>
             </div>
             <span class="material-symbols-outlined text-on-surface-variant text-[22px]">qr_code_scanner</span>
           </label>
@@ -693,14 +689,18 @@
     } else if (!savedAddressSelect) {
       const house = document.getElementById('addr_house')?.value.trim();
       const street = document.getElementById('addr_street')?.value.trim();
-      if (!house || !street) {
+      const hasGpsBeforeAddressCheck = Boolean(
+        document.getElementById('location_latitude').value &&
+        document.getElementById('location_longitude').value
+      );
+      if ((!house || !street) && !hasGpsBeforeAddressCheck) {
         e.preventDefault();
         alert("Please enter both your House/Flat number and Street name for delivery.");
         if (!house) document.getElementById('addr_house')?.focus();
         else document.getElementById('addr_street')?.focus();
         return;
       }
-      syncFullAddress();
+      if (house && street) syncFullAddress();
     }
     const manualOverride = document.getElementById('manual_address_override');
     const addr = document.getElementById('hidden_address').value.trim();
