@@ -1,4 +1,5 @@
-from decimal import Decimal\nimport re
+from decimal import Decimal
+import re
 from io import BytesIO
 from unittest.mock import patch
 
