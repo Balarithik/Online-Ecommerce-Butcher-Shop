@@ -1,4 +1,4 @@
-import re
+from decimal import Decimal\nimport re
 from io import BytesIO
 from unittest.mock import patch
 
@@ -464,3 +464,48 @@ class SuperuserBootstrapCommandTests(TestCase):
         self.assertFalse(
             get_user_model().objects.filter(username="initial-admin").exists()
         )
+
+
+class StorePricingAndTestingBannerTests(TestCase):
+    def setUp(self):
+        self.admin = get_user_model().objects.create_superuser(
+            'pricing-admin', 'pricing@example.com', 'test-password'
+        )
+        self.client.force_login(self.admin)
+
+    def test_common_price_updates_every_product_and_is_shown_in_inventory(self):
+        first = Products.objects.create(
+            name='Chicken A', price='300.00', description='Cut A',
+            image1='products_images/a.png',
+        )
+        second = Products.objects.create(
+            name='Chicken B', price='350.00', description='Cut B',
+            image1='products_images/b.png',
+        )
+        response = self.client.post(reverse('admin_products'), {
+            'action': 'set_common_price',
+            'common_price_per_kg': '240',
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        first.refresh_from_db()
+        second.refresh_from_db()
+        self.assertEqual(first.price, Decimal('240.00'))
+        self.assertEqual(second.price, Decimal('240.00'))
+        self.assertContains(response, 'Current common rate: ₹240.00/kg')
+
+    def test_common_price_rejects_invalid_values_without_changing_products(self):
+        product = Products.objects.create(
+            name='Chicken C', price='315.00', description='Cut C',
+            image1='products_images/c.png',
+        )
+        response = self.client.post(reverse('admin_products'), {
+            'action': 'set_common_price',
+            'common_price_per_kg': '-5',
+        })
+        self.assertEqual(response.status_code, 302)
+        product.refresh_from_db()
+        self.assertEqual(product.price, Decimal('315.00'))
+
+    def test_public_base_template_shows_testing_notice(self):
+        response = self.client.get(reverse('home'))
+        self.assertContains(response, 'Currently in Testing')
