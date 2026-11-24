@@ -66,6 +66,26 @@ class OrderTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Lakshmi Broliers Order Center')
 
+    def test_my_orders_displays_each_persisted_order_id_not_customer_order_count(self):
+        first = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name,
+            product_id=self.product.id, name='Normal', mobile='9876543210',
+            location='First address', quantity='1', price='200.00',
+        )
+        second = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name,
+            product_id=self.product.id, name='Normal', mobile='9876543210',
+            location='Second address', quantity='2', price='400.00',
+        )
+
+        self.client.force_login(self.normal_user)
+        response = self.client.get(reverse('my_orders'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'Order #{first.order_id}')
+        self.assertContains(response, f'Order #{second.order_id}')
+        self.assertNotContains(response, 'Order #0')
+
     def test_checkout_uses_saved_account_address_without_manual_entry(self):
         self.normal_user.first_name = 'Normal Customer'
         self.normal_user.save()
