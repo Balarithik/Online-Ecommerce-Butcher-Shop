@@ -24,8 +24,13 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Copy application source code
 COPY . /app/
 
-# Verify the copied project still matches the lockfile without re-resolving it.
-RUN uv sync --locked --no-dev --no-install-project
+# COPY . /app/ also copies the repository's original uv.lock over the
+# refreshed lockfile from the dependency layer. Refresh again AFTER copying
+# source, then install against that exact lockfile. This is required for a
+# clean Render build from the repository context.
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3 \
+    && uv sync --locked --no-dev --no-install-project
 
 # Ensure entrypoint script is executable with Unix line endings
 RUN chmod +x /app/entrypoint.sh && sed -i 's/\r$//' /app/entrypoint.sh
