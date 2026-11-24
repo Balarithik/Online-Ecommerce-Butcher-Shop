@@ -364,10 +364,32 @@ def Orders(request, product_id):
             if created:
                 # Update the aggregate at the point the order is committed, not
                 # when the confirmation page is viewed/refreshed.
-                CustomerProfile.objects.get_or_create(user=request.user)
+                profile, _ = CustomerProfile.objects.get_or_create(user=request.user)
                 CustomerProfile.objects.filter(user=request.user).update(
-                    number_of_orders=F('number_of_orders') + 1
+                    number_of_orders=F('number_of_orders') + 1,
+                    mobile=mobile,
                 )
+
+                # Save a manually entered delivery address on the customer's first
+                # order so it is available at the next checkout. Never store a GPS
+                # coordinate placeholder as a postal address.
+                if location and not location.startswith('GPS location shared by customer'):
+                    existing_address = CustomerAddress.objects.filter(
+                        user=request.user,
+                        recipient_name=name,
+                        mobile=mobile,
+                        address__iexact=location,
+                    ).first()
+                    if not existing_address:
+                        has_saved_addresses = request.user.saved_addresses.exists()
+                        CustomerAddress.objects.create(
+                            user=request.user,
+                            label='Other' if has_saved_addresses else 'Home',
+                            recipient_name=name,
+                            mobile=mobile,
+                            address=location,
+                            is_default=not has_saved_addresses,
+                        )
                 cart = get_or_create_cart(request)
                 cart_items = list(cart.items.select_related('product').all())
                 if cart_items:

@@ -35,6 +35,53 @@ class OrderTestCase(TestCase):
             email="user@test.com"
         )
 
+
+    def test_first_order_saves_manual_address_as_default_for_next_checkout(self):
+        self.client.force_login(self.normal_user)
+        response = self.client.post(reverse('Orders', args=[self.product.id]), {
+            'name': 'First Order Customer',
+            'mobile': '9876543210',
+            'address': '9/427 Kamarajar Nagar, Uchippuli',
+            'quantity': '2.5',
+            'payment_method': 'Cash on Delivery',
+            'order_token': 'a0a8a2f3-57ab-4b87-b4d1-2a7a5d91e902',
+        })
+        self.assertEqual(response.status_code, 302)
+        saved = CustomerAddress.objects.get(user=self.normal_user)
+        self.assertTrue(saved.is_default)
+        self.assertEqual(saved.label, 'Home')
+        self.assertEqual(saved.recipient_name, 'First Order Customer')
+        self.assertEqual(saved.mobile, '9876543210')
+        self.assertEqual(saved.address, '9/427 Kamarajar Nagar, Uchippuli')
+
+        checkout = self.client.get(reverse('Checkout_direct', args=[self.product.id, '1']))
+        self.assertEqual(checkout.status_code, 200)
+        self.assertContains(checkout, '9/427 Kamarajar Nagar, Uchippuli')
+
+    def test_gps_only_order_does_not_save_coordinates_as_postal_address(self):
+        self.client.force_login(self.normal_user)
+        response = self.client.post(reverse('Orders', args=[self.product.id]), {
+            'name': 'GPS Customer',
+            'mobile': '9876543210',
+            'latitude': '9.310044',
+            'longitude': '78.994671',
+            'quantity': '1',
+            'order_token': 'd78e14b7-3c81-48d1-a65a-9f88f53c9f42',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(CustomerAddress.objects.filter(user=self.normal_user).exists())
+
+    def test_checkout_accepts_only_cash_on_delivery_until_online_upi_launch(self):
+        form = OrderForm(data={
+            'name': 'Test User',
+            'mobile': '9876543210',
+            'address': '12 Test Street, Uchippuli',
+            'quantity': '1',
+            'payment_method': 'UPI / Online Payment',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('payment_method', form.errors)
+
     def test_order_form_valid(self):
         # Test OrderForm validation
         data = {

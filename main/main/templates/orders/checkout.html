@@ -382,14 +382,14 @@
           </div>
           <div>
             <h2 class="font-bold text-base text-on-surface">4. Payment Method</h2>
-            <p class="text-xs text-on-surface-variant">Safe & secure payments upon delivery or via UPI</p>
+            <p class="text-xs text-on-surface-variant">Cash on Delivery is available. Online UPI payments are coming soon.</p>
           </div>
         </div>
 
         <div class="space-y-3">
           <!-- COD -->
           <label class="relative flex items-center p-3.5 border-2 border-primary bg-primary/5 rounded-xl cursor-pointer transition-all">
-            <input type="radio" name="payment" value="Cash on Delivery" checked class="w-4 h-4 text-primary focus:ring-primary">
+            <input type="radio" name="payment_method" value="Cash on Delivery" checked class="w-4 h-4 text-primary focus:ring-primary">
             <div class="ml-3 flex-grow">
               <div class="flex items-center gap-2">
                 <span class="font-bold text-xs md:text-sm text-on-surface">Cash on Delivery (COD)</span>
@@ -400,18 +400,17 @@
             <span class="material-symbols-outlined text-primary text-[22px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
           </label>
 
-          <!-- UPI / Online -->
-          <label class="relative flex items-center p-3.5 border border-outline-variant bg-surface-bright hover:border-primary/50 rounded-xl cursor-pointer transition-all">
-            <input type="radio" name="payment" value="UPI / QR Code" class="w-4 h-4 text-primary focus:ring-primary">
+          <!-- Online UPI is visible as a planned option but cannot be selected yet. -->
+          <div aria-disabled="true" class="relative flex items-center p-3.5 border border-outline-variant/70 bg-surface-container-low rounded-xl opacity-75 cursor-not-allowed">
+            <span class="material-symbols-outlined text-on-surface-variant text-[22px]">qr_code_2</span>
             <div class="ml-3 flex-grow">
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-xs md:text-sm text-on-surface">UPI / QR Code on Delivery</span>
-                <span class="text-[10px] text-on-surface-variant font-medium">GPay • PhonePe • Paytm</span>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-bold text-xs md:text-sm text-on-surface">UPI / Online Payment</span>
+                <span class="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">COMING SOON</span>
               </div>
-              <p class="text-[11px] text-on-surface-variant">Driver will present dynamic QR code at your door.</p>
+              <p class="text-[11px] text-on-surface-variant">GPay • PhonePe • Paytm. Online payments will be enabled soon.</p>
             </div>
-            <span class="material-symbols-outlined text-on-surface-variant text-[22px]">qr_code_scanner</span>
-          </label>
+          </div>
         </div>
       </div>
 
