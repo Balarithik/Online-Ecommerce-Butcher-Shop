@@ -70,14 +70,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Install uv and refresh security-patched lock
-        uses: astral-sh/setup-uv@v6
-        with:
-          version: "0.12.19"
-
-      - name: Resolve patched dependencies for Docker build context
-        working-directory: main
-        run: uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3
+      - name: Verify Render Dockerfile owns lockfile refresh
+        run: |
+          grep -F 'uv lock --upgrade-package certifi --upgrade-package pillow --upgrade-package sqlparse --upgrade-package urllib3' main/Dockerfile
+          grep -F 'uv sync --locked --no-dev --no-install-project' main/Dockerfile
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -90,8 +86,7 @@ jobs:
           push: false
           load: true
           tags: aramcuts-main:ci
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          no-cache: true
 
       - name: Build splashscreen image
         uses: docker/build-push-action@v6
