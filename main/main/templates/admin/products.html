@@ -38,6 +38,27 @@
     </div>
   </div>
 
+  <!-- Store-wide common price -->
+  <section class="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 md:p-5">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h2 class="font-bold text-sm text-emerald-950">Common price per kg</h2>
+        <p class="mt-1 text-xs text-emerald-800">Set one rate for every product. Saving applies it to the full catalog and future product forms use this rate by default.</p>
+        {% if common_price %}<p class="mt-1 text-xs font-bold text-emerald-900">Current common rate: ₹{{ common_price|floatformat:2 }}/kg</p>{% endif %}
+      </div>
+      <form method="POST" action="{% url 'admin_products' %}" class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="set_common_price">
+        <label class="sr-only" for="common-price-input">Common price per kg in rupees</label>
+        <div class="flex items-center rounded-xl border border-emerald-300 bg-white px-3 focus-within:ring-2 focus-within:ring-emerald-500/30">
+          <span class="font-bold text-emerald-800">₹</span>
+          <input id="common-price-input" name="common_price_per_kg" type="number" min="0.01" max="100000" step="0.01" required value="{{ common_price|default:'' }}" placeholder="e.g. 240" class="w-full border-0 bg-transparent py-2 text-sm font-bold text-slate-900 focus:ring-0 sm:w-32">
+        </div>
+        <button type="submit" class="rounded-xl bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white hover:bg-emerald-800">Apply to all products</button>
+      </form>
+    </div>
+  </section>
+
   <!-- Stock Status Tabs -->
   <div class="flex min-w-0 flex-wrap items-center gap-2">
     <a 
@@ -116,16 +137,15 @@
               {% endif %}
             </td>
 
-            <!-- Toggle Availability Button -->
+            <!-- Shared stock status selector -->
             <td class="py-3.5 px-4 text-center">
               <form method="POST" action="{% url 'toggle_product_availability' product.id %}" class="inline-block">
                 {% csrf_token %}
-                <button 
-                  type="submit" 
-                  class="px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all {% if product.is_available %}border-red-300 text-red-700 hover:bg-red-50{% else %}border-emerald-300 text-emerald-700 hover:bg-emerald-50{% endif %}"
-                >
-                  {% if product.is_available %}Mark Out of Stock{% else %}Mark In Stock{% endif %}
-                </button>
+                <label class="sr-only" for="stock-{{ product.id }}">Stock status for {{ product.name }}</label>
+                <select id="stock-{{ product.id }}" name="is_available" onchange="this.form.submit()" class="max-w-[135px] rounded-xl border border-outline-variant bg-white px-2 py-2 text-[11px] font-bold text-on-surface focus:border-primary focus:ring-primary">
+                  <option value="true" {% if product.is_available %}selected{% endif %}>In Stock</option>
+                  <option value="false" {% if not product.is_available %}selected{% endif %}>Out of Stock</option>
+                </select>
               </form>
             </td>
 
@@ -190,9 +210,11 @@
       <div class="mt-4 grid grid-cols-1 gap-2 border-t border-outline-variant/40 pt-3">
         <form method="POST" action="{% url 'toggle_product_availability' product.id %}">
           {% csrf_token %}
-          <button type="submit" class="w-full rounded-xl border px-3 py-2.5 text-xs font-bold transition-all {% if product.is_available %}border-red-200 text-red-700 hover:bg-red-50{% else %}border-emerald-200 text-emerald-700 hover:bg-emerald-50{% endif %}">
-            {% if product.is_available %}Mark Out of Stock{% else %}Mark In Stock{% endif %}
-          </button>
+          <label class="mb-1 block text-[10px] font-bold uppercase text-on-surface-variant" for="stock-mobile-{{ product.id }}">Stock status</label>
+          <select id="stock-mobile-{{ product.id }}" name="is_available" onchange="this.form.submit()" class="w-full rounded-xl border border-outline-variant bg-white px-3 py-2.5 text-xs font-bold text-on-surface focus:border-primary focus:ring-primary">
+            <option value="true" {% if product.is_available %}selected{% endif %}>In Stock</option>
+            <option value="false" {% if not product.is_available %}selected{% endif %}>Out of Stock</option>
+          </select>
         </form>
         <div class="grid grid-cols-2 gap-2">
           <button hx-get="{% url 'edit_product_modal' product.id %}" hx-target="#edit_product_modal-container" class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary/5 px-3 py-2.5 text-xs font-bold text-primary transition-colors hover:bg-primary/10">

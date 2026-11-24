@@ -17,3 +17,26 @@ class Products(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class StoreSettings(models.Model):
+    """Singleton-like store-wide pricing configuration managed from inventory."""
+    common_price_per_kg = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal('0.00'),
+        validators=[MinValueValidator(Decimal('0.01'))],
+        help_text="When saved, this rate is applied to every product currently in the catalog.",
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def current(cls):
+        return cls.objects.first()
+
+    def __str__(self):
+        return f"Common price: ₹{self.common_price_per_kg}/kg"

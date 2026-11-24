@@ -12,13 +12,14 @@ from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import Sum, Count, Q, Case, When, Value, IntegerField
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
 from PIL import Image, UnidentifiedImageError
-from store.models import Products
+from store.models import Products, StoreSettings
 from orders.models import Order
 from .forms import CloudinaryProductForm
 
@@ -187,6 +188,27 @@ def admin_dashboard(request):
 @login_required(login_url='/admin_login/')
 @user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
 def admin_product(request):
+    if request.method == "POST" and request.POST.get("action") == "set_common_price":
+        from decimal import Decimal, InvalidOperation
+        raw_price = (request.POST.get("common_price_per_kg") or "").strip()
+        try:
+            common_price = Decimal(raw_price)
+            if not common_price.is_finite() or common_price <= 0 or common_price > Decimal("100000"):
+                raise InvalidOperation
+            common_price = common_price.quantize(Decimal("0.01"))
+        except (InvalidOperation, ValueError, TypeError):
+            messages.error(request, "Enter a valid common price greater than ₹0 and no more than ₹1,00,000 per kg.")
+            return redirect("admin_products")
+
+        with transaction.atomic():
+            StoreSettings.objects.update_or_create(
+                pk=1,
+                defaults={"common_price_per_kg": common_price},
+            )
+            updated = Products.objects.all().update(price=common_price)
+        messages.success(request, f"Common rate updated to ₹{common_price:.2f}/kg for {updated} products.")
+        return redirect("admin_products")
+
     query = request.GET.get('q', '').strip()
     status_filter = request.GET.get('status', '').strip()
 
@@ -206,6 +228,7 @@ def admin_product(request):
         'unavailable_products': Products.objects.filter(is_available=False).count(),
         'query': query,
         'status_filter': status_filter,
+        'common_price': StoreSettings.current().common_price_per_kg if StoreSettings.current() else None,
     })
 
 
@@ -214,7 +237,11 @@ def admin_product(request):
 @require_POST
 def toggle_product_availability(request, product_id):
     product = get_object_or_404(Products, id=product_id)
-    product.is_available = not product.is_available
+    submitted_status = request.POST.get('is_available')
+    if submitted_status in {'true', 'false'}:
+        product.is_available = submitted_status == 'true'
+    else:
+        product.is_available = not product.is_available
     product.save()
     messages.success(request, f"Updated stock status for '{product.name}'.")
     return redirect('admin_products')
@@ -309,7 +336,7 @@ def add_product_modal(request):
         return render(
             request,
             "admin/addnewproductpopup.html",
-            _product_form_context(CloudinaryProductForm(initial={"is_available": True})),
+            _product_form_context(CloudinaryProductForm(initial={"is_available": True, "price": StoreSettings.current().common_price_per_kg if StoreSettings.current() else None})),
         )
 
     return HttpResponse(f"Invalid request method ({request.method})", status=405)

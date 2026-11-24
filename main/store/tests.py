@@ -40,3 +40,15 @@ class AvailabilityTests(TestCase):
         self.assertContains(response, 'id="qty-increase"')
         self.assertContains(response, 'function buySelectedProductNow()')
         self.assertContains(response, f'/products/Checkout/{product.id}/')
+
+
+class CommonPriceRenderingTests(TestCase):
+    def test_product_page_uses_catalog_price_after_common_rate_update(self):
+        from store.models import StoreSettings
+        product = Products.objects.create(
+            name='Common rate chicken', price='240.00',
+            description='Common rate', image1='products_images/common.png',
+        )
+        StoreSettings.objects.create(common_price_per_kg='240.00')
+        response = self.client.get(reverse('selected_product', args=[product.id]))
+        self.assertContains(response, '₹240.00')
