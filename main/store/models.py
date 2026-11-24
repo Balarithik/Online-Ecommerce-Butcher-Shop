@@ -15,5 +15,40 @@ class Products(models.Model):
     image3 = models.ImageField(upload_to='products_images/', blank=True, null=True)
     image4 = models.ImageField(upload_to='products_images/', blank=True, null=True)
 
+    @property
+    def display_price(self):
+        return get_common_price()
+
     def __str__(self):
         return self.name
+
+
+class StorePricing(models.Model):
+    """Single shop-wide per-kilogram price managed from the admin inventory page."""
+    common_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal('240.00'),
+        validators=[MinValueValidator(Decimal('0.01'))],
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Store pricing"
+        verbose_name_plural = "Store pricing"
+
+    def __str__(self):
+        return f"Common price: ₹{self.common_price}/kg"
+
+    @classmethod
+    def get_common_price(cls):
+        setting = cls.objects.order_by('pk').first()
+        return setting.common_price if setting else Decimal('240.00')
+
+
+def get_common_price():
+    return StorePricing.get_common_price()
+
+
+def get_product_price(product):
+    return get_common_price()
