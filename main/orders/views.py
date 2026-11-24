@@ -393,6 +393,20 @@ def Orders(request, product_id):
                         price=price,
                         cut_preference=cut_preference,
                     )
+                # Save the customer's first manually entered delivery address for future checkouts.
+                # GPS-only coordinates remain attached to this order and are not stored as a postal address.
+                if (not selected_address and location
+                        and not location.startswith('GPS location shared by customer')
+                        and not request.user.saved_addresses.exists()):
+                    CustomerAddress.objects.create(
+                        user=request.user,
+                        label='Home',
+                        recipient_name=name,
+                        mobile=mobile,
+                        address=location,
+                        is_default=True,
+                    )
+
                 enqueue_order_event(order, 'order_placed')
 
         # Save session data for reference
