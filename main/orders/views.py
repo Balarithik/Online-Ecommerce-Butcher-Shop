@@ -12,7 +12,7 @@ from django.db import transaction
 from django.db.models import F
 from orders.forms import OrderForm
 from home.models import CustomerAddress, CustomerProfile
-from store.models import Products
+from store.models import Products, get_common_price
 from .models import Order, Cart, CartItem, OrderItem
 from .notifications import enqueue_order_event
 
@@ -84,7 +84,7 @@ def _format_cart_response(cart):
             'id': prod.id,
             'cart_item_id': item.id,
             'name': prod.name,
-            'price': float(prod.price),
+            'price': float(get_common_price()),
             'image': image_url,
             'qty': float(item.quantity),
             'cut_preference': item.cut_preference,
@@ -323,7 +323,7 @@ def Orders(request, product_id):
             return HttpResponseBadRequest("This product is no longer available.")
         
         product_name = product.name
-        price = (product.price * quantity).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        price = (get_common_price() * quantity).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
         raw_token = request.POST.get('order_token', '')
         try:

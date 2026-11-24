@@ -1,8 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.core.files.storage import default_storage
+from decimal import Decimal
 
-from store.models import Products
+from store.models import Products, StorePricing
 
 
 class AvailabilityTests(TestCase):
@@ -40,3 +41,16 @@ class AvailabilityTests(TestCase):
         self.assertContains(response, 'id="qty-increase"')
         self.assertContains(response, 'function buySelectedProductNow()')
         self.assertContains(response, f'/products/Checkout/{product.id}/')
+
+
+class GlobalPricingTests(TestCase):
+    def test_product_pages_use_common_price_instead_of_individual_product_price(self):
+        StorePricing.objects.create(common_price="240.00")
+        product = Products.objects.create(
+            name="Common priced chicken", price="175.00",
+            description="Common price test", image1="products_images/common.png",
+        )
+        self.assertEqual(product.display_price, Decimal("240.00"))
+        response = self.client.get(reverse("selected_product", args=[product.id]))
+        self.assertContains(response, "240.00")
+        self.assertNotContains(response, "175.00")

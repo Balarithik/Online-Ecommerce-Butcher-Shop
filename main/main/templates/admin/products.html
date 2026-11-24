@@ -38,6 +38,18 @@
     </div>
   </div>
 
+  <section class="rounded-2xl border border-primary/15 bg-white p-4 shadow-sm md:p-5">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div><h2 class="text-sm font-extrabold text-on-surface">Common price for all products</h2><p class="mt-1 text-xs text-on-surface-variant">One price per kg is used across product pages, carts and new orders.</p></div>
+      <form method="POST" action="{% url 'admin_products' %}" class="flex items-center gap-2">{% csrf_token %}
+        <label for="common-price" class="sr-only">Common price per kg in rupees</label>
+        <div class="flex items-center rounded-xl border border-outline-variant bg-surface px-3"><span class="font-bold text-on-surface-variant">₹</span>
+          <input id="common-price" name="common_price" type="number" min="0.01" max="1000000" step="0.01" required value="{{ common_price|floatformat:2 }}" class="w-28 border-0 bg-transparent py-2 text-sm font-extrabold focus:ring-0"><span class="text-xs text-on-surface-variant">/ kg</span>
+        </div><button type="submit" class="rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-white hover:bg-primary-container">Save Price</button>
+      </form>
+    </div>
+  </section>
+
   <!-- Stock Status Tabs -->
   <div class="flex min-w-0 flex-wrap items-center gap-2">
     <a 
@@ -98,7 +110,7 @@
 
             <!-- Price -->
             <td class="py-3.5 px-4 font-black text-sm text-primary">
-              ₹{{ product.price|floatformat:2 }} <span class="text-[10px] font-normal text-on-surface-variant">/ kg</span>
+              ₹{{ product.display_price|floatformat:2 }} <span class="text-[10px] font-normal text-on-surface-variant">/ kg</span>
             </td>
 
             <!-- Status Badge -->
@@ -118,15 +130,16 @@
 
             <!-- Toggle Availability Button -->
             <td class="py-3.5 px-4 text-center">
-              <form method="POST" action="{% url 'toggle_product_availability' product.id %}" class="inline-block">
-                {% csrf_token %}
-                <button 
-                  type="submit" 
-                  class="px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all {% if product.is_available %}border-red-300 text-red-700 hover:bg-red-50{% else %}border-emerald-300 text-emerald-700 hover:bg-emerald-50{% endif %}"
-                >
-                  {% if product.is_available %}Mark Out of Stock{% else %}Mark In Stock{% endif %}
-                </button>
-              </form>
+              <div class="inline-flex items-center gap-1 rounded-xl border border-outline-variant/70 bg-surface p-1">
+                <form method="POST" action="{% url 'toggle_product_availability' product.id %}">{% csrf_token %}
+                  <input type="hidden" name="is_available" value="true">
+                  <button type="submit" class="rounded-lg px-2.5 py-1.5 text-[10px] font-bold {% if product.is_available %}bg-emerald-700 text-white{% else %}text-emerald-800 hover:bg-emerald-50{% endif %}">In Stock</button>
+                </form>
+                <form method="POST" action="{% url 'toggle_product_availability' product.id %}">{% csrf_token %}
+                  <input type="hidden" name="is_available" value="false">
+                  <button type="submit" class="rounded-lg px-2.5 py-1.5 text-[10px] font-bold {% if not product.is_available %}bg-red-700 text-white{% else %}text-red-800 hover:bg-red-50{% endif %}">Out of Stock</button>
+                </form>
+              </div>
             </td>
 
             <!-- Actions -->
@@ -179,7 +192,7 @@
         <div class="min-w-0 flex-1">
           <h2 class="break-words font-bold text-sm text-on-surface">{{ product.name }}</h2>
           <p class="mt-0.5 line-clamp-2 text-[11px] text-on-surface-variant">{{ product.description }}</p>
-          <p class="mt-2 font-black text-primary">₹{{ product.price|floatformat:2 }} <span class="text-[10px] font-normal text-on-surface-variant">/ kg</span></p>
+          <p class="mt-2 font-black text-primary">₹{{ product.display_price|floatformat:2 }} <span class="text-[10px] font-normal text-on-surface-variant">/ kg</span></p>
         </div>
         {% if product.is_available %}
         <span class="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-extrabold uppercase text-emerald-800">In Stock</span>
@@ -188,12 +201,16 @@
         {% endif %}
       </div>
       <div class="mt-4 grid grid-cols-1 gap-2 border-t border-outline-variant/40 pt-3">
-        <form method="POST" action="{% url 'toggle_product_availability' product.id %}">
-          {% csrf_token %}
-          <button type="submit" class="w-full rounded-xl border px-3 py-2.5 text-xs font-bold transition-all {% if product.is_available %}border-red-200 text-red-700 hover:bg-red-50{% else %}border-emerald-200 text-emerald-700 hover:bg-emerald-50{% endif %}">
-            {% if product.is_available %}Mark Out of Stock{% else %}Mark In Stock{% endif %}
-          </button>
-        </form>
+        <div class="inline-flex items-center gap-1 rounded-xl border border-outline-variant/70 bg-surface p-1">
+                <form method="POST" action="{% url 'toggle_product_availability' product.id %}">{% csrf_token %}
+                  <input type="hidden" name="is_available" value="true">
+                  <button type="submit" class="rounded-lg px-2.5 py-1.5 text-[10px] font-bold {% if product.is_available %}bg-emerald-700 text-white{% else %}text-emerald-800 hover:bg-emerald-50{% endif %}">In Stock</button>
+                </form>
+                <form method="POST" action="{% url 'toggle_product_availability' product.id %}">{% csrf_token %}
+                  <input type="hidden" name="is_available" value="false">
+                  <button type="submit" class="rounded-lg px-2.5 py-1.5 text-[10px] font-bold {% if not product.is_available %}bg-red-700 text-white{% else %}text-red-800 hover:bg-red-50{% endif %}">Out of Stock</button>
+                </form>
+              </div>
         <div class="grid grid-cols-2 gap-2">
           <button hx-get="{% url 'edit_product_modal' product.id %}" hx-target="#edit_product_modal-container" class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary/5 px-3 py-2.5 text-xs font-bold text-primary transition-colors hover:bg-primary/10">
             <span class="material-symbols-outlined text-[16px]">edit</span>

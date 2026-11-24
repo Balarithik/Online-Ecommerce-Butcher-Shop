@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from decimal import Decimal
 import uuid
+from store.models import get_common_price
 
 # Create your models here.
 
@@ -126,7 +127,7 @@ class CartItem(models.Model):
 
     @property
     def subtotal(self):
-        return (self.product.price * self.quantity).quantize(Decimal('0.01'))
+        return (get_common_price() * self.quantity).quantize(Decimal('0.01'))
 
     def __str__(self):
         return f"{self.quantity}kg x {self.product.name} in Cart #{self.cart.id}"
