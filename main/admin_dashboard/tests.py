@@ -79,7 +79,8 @@ class AdminEndpointTests(TestCase):
         self.assertEqual(inventory.status_code, 200)
         self.assertContains(inventory, 'Test Poultry Cut')
         self.assertContains(inventory, 'md:hidden')
-        self.assertContains(inventory, 'Mark Out of Stock')
+        self.assertContains(inventory, 'In Stock')
+        self.assertContains(inventory, 'Out of Stock')
 
     def test_admin_can_update_common_price_and_it_is_used_for_all_products(self):
         product_a = Products.objects.create(name="Price A", price="190.00", description="A", image1="products_images/a.png")
