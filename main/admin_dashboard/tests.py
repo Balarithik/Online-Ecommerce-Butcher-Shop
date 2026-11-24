@@ -1,4 +1,5 @@
 import re
+from decimal import Decimal
 from io import BytesIO
 from unittest.mock import patch
 
@@ -13,7 +14,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from cloudinary.exceptions import Error as CloudinaryError
 from main.settings import _cloudinary_credentials
-from store.models import Products
+from store.models import Products, StorePricing
 from orders.models import Order
 
 
@@ -79,6 +80,28 @@ class AdminEndpointTests(TestCase):
         self.assertContains(inventory, 'Test Poultry Cut')
         self.assertContains(inventory, 'md:hidden')
         self.assertContains(inventory, 'Mark Out of Stock')
+
+    def test_admin_can_update_common_price_and_it_is_used_for_all_products(self):
+        product_a = Products.objects.create(name="Price A", price="190.00", description="A", image1="products_images/a.png")
+        product_b = Products.objects.create(name="Price B", price="320.00", description="B", image1="products_images/b.png")
+        response = self.client.post(reverse("admin_products"), {"common_price": "240"})
+        self.assertRedirects(response, reverse("admin_products"))
+        self.assertEqual(StorePricing.get_common_price(), Decimal("240.00"))
+        self.assertEqual(product_a.display_price, Decimal("240.00"))
+        self.assertEqual(product_b.display_price, Decimal("240.00"))
+
+    def test_common_price_rejects_invalid_values(self):
+        before = StorePricing.get_common_price()
+        response = self.client.post(reverse("admin_products"), {"common_price": "-1"})
+        self.assertRedirects(response, reverse("admin_products"))
+        self.assertEqual(StorePricing.get_common_price(), before)
+
+    def test_admin_can_set_stock_state_explicitly(self):
+        product = Products.objects.create(name="Stock toggle", price="200.00", description="Stock", image1="products_images/s.png", is_available=True)
+        response = self.client.post(reverse("toggle_product_availability", args=[product.id]), {"is_available": "false"})
+        product.refresh_from_db()
+        self.assertFalse(product.is_available)
+        self.assertRedirects(response, reverse("admin_products"))
 
     def test_orders_page_sorts_pending_orders_before_other_statuses(self):
         cancelled = Order.objects.create(
