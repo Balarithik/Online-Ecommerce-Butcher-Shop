@@ -466,8 +466,14 @@ class OrderTestCase(TestCase):
             'address': '12/4 Main Road, Uchipuli, PIN: 623534',
             'quantity': '1',
             'payment_method': 'Cash on Delivery',
+            'sms_opt_in': 'yes',
         }, follow=True)
         self.assertEqual(response.status_code, 200)
+        saved_order = Order.objects.get(user=self.normal_user)
+        self.assertTrue(saved_order.sms_opt_in)
+        self.assertTrue(NotificationDelivery.objects.filter(
+            order=saved_order, channel='sms', event='order_placed'
+        ).exists())
         saved = CustomerAddress.objects.get(user=self.normal_user)
         self.assertTrue(saved.is_default)
         self.assertEqual(saved.recipient_name, 'First Order Customer')
