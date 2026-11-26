@@ -6,6 +6,7 @@ urlpatterns = [
     path('admin_products/', views.admin_product, name='admin_products'),
     path('admin_orders/', views.admin_orders, name='admin_orders'),
     path('admin_customers/', views.admin_customers, name='admin_customers'),
+    path('admin_notifications/', views.admin_notifications, name='admin_notifications'),
     path('toggle_product_availability/<int:product_id>/', views.toggle_product_availability, name='toggle_product_availability'),
     path('upload_product_image/', views.upload_product_image, name='upload_product_image'),
     path('add_product_modal/', views.add_product_modal, name='add_product_modal'),
