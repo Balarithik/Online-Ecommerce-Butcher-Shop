@@ -340,6 +340,7 @@ def Orders(request, product_id):
             'price': price,
             'status': 'pending',
             'whatsapp_opt_in': bool(request.POST.get('whatsapp_opt_in')),
+            'sms_opt_in': bool(request.POST.get('sms_opt_in')),
         }
         with transaction.atomic():
             if order_token:
