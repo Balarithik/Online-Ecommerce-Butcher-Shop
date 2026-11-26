@@ -147,7 +147,7 @@ class CustomerOrderSecurityTests(TestCase):
         self.assertEqual(order.items.count(), 2)
         self.assertEqual(order.price, Decimal("300.00"))
 
-    def test_invalid_gps_pair_is_rejected(self):
+    def test_legacy_gps_post_fields_are_ignored(self):
         self.client.force_login(self.customer)
         response = self.client.post(reverse("Orders", args=[self.product.pk]), {
             "name": "Alice", "mobile": "9876543210",
@@ -155,8 +155,10 @@ class CustomerOrderSecurityTests(TestCase):
             "latitude": "9.3", "longitude": "",
             "order_token": "ea74a09b-0a4c-49c5-ae2b-6ecb5ad8d3a7",
         })
-        self.assertEqual(response.status_code, 400)
-        self.assertFalse(Order.objects.filter(user=self.customer).exists())
+        self.assertEqual(response.status_code, 302)
+        order = Order.objects.get(user=self.customer)
+        self.assertIsNone(order.latitude)
+        self.assertIsNone(order.longitude)
 
     def test_confirmation_refresh_does_not_inflate_customer_order_count(self):
         profile = CustomerProfile.objects.create(user=self.other, number_of_orders=1)
