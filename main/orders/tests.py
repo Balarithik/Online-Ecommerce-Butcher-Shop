@@ -368,7 +368,7 @@ class OrderTestCase(TestCase):
             'name': 'Normal', 'mobile': '9876543210', 'quantity': '1',
             'latitude': '9.310044', 'longitude': '78.994671',
         })
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertFalse(Order.objects.filter(user=self.normal_user).exists())
 
     def test_first_manual_order_saves_default_address_for_future_checkout(self):
