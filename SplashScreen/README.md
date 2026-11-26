@@ -25,7 +25,7 @@ VITE_API_BASE_URL=https://lakshmi-broliers.onrender.com
 
 Local Django example: `VITE_API_BASE_URL=http://127.0.0.1:8000`
 
-`VITE_API_BASE_URL` is **required** — the app throws at startup if it is missing.
+`VITE_API_BASE_URL` is optional. If omitted, the production build safely defaults to `https://lakshmi-broliers.onrender.com`. For staging or local environments, set it before running `npm run build` because Vite injects `VITE_*` variables at build time.
 
 ## Scripts
 
@@ -59,5 +59,7 @@ Local Django example: `VITE_API_BASE_URL=http://127.0.0.1:8000`
 
 1. Start Django (`main/` → `runserver` or production Gunicorn).
 2. Confirm `GET {VITE_API_BASE_URL}/healthz/` returns `{"status":"ok"}`.
-3. Run or deploy this splash; it redirects users into the store when healthy.
+3. Run or deploy this splash as a separate static site. Set the static host's build-time environment variable `VITE_API_BASE_URL=https://lakshmi-broliers.onrender.com`, with root directory `SplashScreen`, build command `npm ci && npm run build`, and publish directory `dist`.
+4. Confirm `https://lakshmi-broliers.onrender.com/healthz/` returns `{"status":"ok"}` and is reachable from the splash host. The Django health endpoint permits cross-origin GET requests for this check.
+5. The splash redirects users into the store when healthy.
 4. After 10 failed health checks it displays a connection error and a Try again button; it does not redirect to a failed backend.

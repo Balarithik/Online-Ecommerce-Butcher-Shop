@@ -90,6 +90,13 @@ jobs:
           tags: aramcuts-main:ci
           no-cache: true
 
+      - name: Verify splash screen with npm
+        working-directory: SplashScreen
+        run: |
+          npm ci
+          npm run lint
+          npm run build
+
       - name: Build splashscreen image
         uses: docker/build-push-action@v6
         with:
