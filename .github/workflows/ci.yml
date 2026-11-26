@@ -54,6 +54,9 @@ jobs:
       - name: Check Django configuration
         run: uv run --no-sync python manage.py check
 
+      - name: Check migration state is committed
+        run: uv run --no-sync python manage.py makemigrations --check --dry-run
+
       - name: Run Django tests
         run: uv run --no-sync python manage.py test
 
