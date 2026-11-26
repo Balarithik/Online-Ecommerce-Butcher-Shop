@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import logo from './assets/logo.png';
 
-const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-if (!VITE_API_BASE_URL) throw new Error('VITE_API_BASE_URL is not set. Configure it in your production environment.');
-const MAIN_APP_URL = VITE_API_BASE_URL;
+// Vite injects this value at build time. Keep a production fallback so a
+// missing static-host environment variable cannot crash the React app.
+const CONFIGURED_API_URL = import.meta.env.VITE_API_BASE_URL?.trim()
+  || 'https://lakshmi-broliers.onrender.com';
+const MAIN_APP_URL = new URL(CONFIGURED_API_URL).origin;
 const HEALTH_CHECK_URL = new URL('/healthz/', MAIN_APP_URL).toString();
 
 export default function App() {
@@ -131,7 +133,7 @@ export default function App() {
         {/* Dynamic Loading Message & Linear Minimal Progress Bar */}
         <div className="w-full mt-8">
           <div className="flex items-center justify-between text-xs text-stone-600 mb-2 font-medium">
-            <span className="truncate">{connectionFailed ? "We could not reach the store. Check your connection and try again." : isReady ? "Ready! Launching Store..." : LOADING_MESSAGES[messageIndex]}</span>
+            <span className="truncate">{connectionFailed ? "We could not reach the store. Check your connection and try again." : isReady ? "Ready! Launching Store..." : "Preparing today's fresh cuts..."}</span>
             <span className="text-primary font-bold ml-2 shrink-0">{isReady ? '100%' : `${progress}%`}</span>
           </div>
 
