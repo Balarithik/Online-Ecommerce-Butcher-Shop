@@ -12,6 +12,13 @@ def main():
         errors = []
         page.on("pageerror", lambda error: errors.append(str(error)))
 
+        home_response = page.goto(BASE_URL + "/")
+        assert home_response and home_response.status == 200, "Home page did not load"
+        expect(page.get_by_text("Currently in Testing")).to_be_visible()
+        page.get_by_text("Share feedback").click()
+        expect(page.locator("#feedback-message")).to_be_visible()
+        expect(page.locator("#feedback-category")).to_be_visible()
+
         response = page.goto(f"{BASE_URL}/products/selected_product/98765/")
         assert response and response.status == 200, "Product detail page did not load"
 
