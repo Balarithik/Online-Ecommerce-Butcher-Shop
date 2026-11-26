@@ -47,7 +47,7 @@ class AdminEndpointTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Notification Deliveries")
         self.assertContains(response, "customer@example.com")
-        self.assertContains(response, "order_placed")
+        self.assertContains(response, "Order placed")
         self.assertContains(response, reverse("admin_notifications"))
 
     def test_notification_center_filters_by_status_and_channel(self):
