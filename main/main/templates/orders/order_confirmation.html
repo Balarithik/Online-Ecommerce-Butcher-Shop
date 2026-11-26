@@ -33,7 +33,7 @@
           <span class="material-symbols-outlined text-[44px]"
             style="font-variation-settings: 'FILL' 1;">check_circle</span>
         </div>
-        <div class="absolute inset-0 animate-ping rounded-full border-2 border-emerald-400 opacity-40"></div>
+        <div class="absolute inset-0  rounded-full border-2 border-emerald-400 opacity-40"></div>
       </div>
 
       <div
@@ -88,7 +88,7 @@
           <p class="text-xs text-on-surface-variant">Live status updates from Lakshmi Broliers</p>
         </div>
         <span class="text-xs font-bold text-primary flex items-center gap-1">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500 "></span>
           Status Verified
         </span>
       </div>
@@ -114,7 +114,7 @@
         <div
           class="p-3.5 rounded-2xl {% if order.status == 'preparing' %}bg-primary/10 border-2 border-primary{% elif order.status == 'out_for_delivery' or order.status == 'delivered' %}bg-emerald-50 border border-emerald-200{% else %}bg-surface-container-low border border-outline-variant/50 opacity-60{% endif %} flex md:flex-col items-center md:items-start gap-3">
           <div
-            class="w-9 h-9 rounded-full {% if order.status == 'preparing' %}bg-primary text-white animate-pulse{% elif order.status == 'out_for_delivery' or order.status == 'delivered' %}bg-emerald-600 text-white{% else %}bg-surface-container-highest text-on-surface-variant{% endif %} flex items-center justify-center font-bold text-sm shrink-0">
+            class="w-9 h-9 rounded-full {% if order.status == 'preparing' %}bg-primary text-white {% elif order.status == 'out_for_delivery' or order.status == 'delivered' %}bg-emerald-600 text-white{% else %}bg-surface-container-highest text-on-surface-variant{% endif %} flex items-center justify-center font-bold text-sm shrink-0">
             <span class="material-symbols-outlined text-[20px]">restaurant</span>
           </div>
           <div>
@@ -144,7 +144,7 @@
         <div
           class="p-3.5 rounded-2xl {% if order.status == 'delivered' %}bg-emerald-50 border border-emerald-200{% elif order.status == 'out_for_delivery' %}bg-primary/10 border-2 border-primary{% else %}bg-surface-container-low border border-outline-variant/50 opacity-60{% endif %} flex md:flex-col items-center md:items-start gap-3">
           <div
-            class="w-9 h-9 rounded-full {% if order.status == 'delivered' %}bg-emerald-600 text-white{% elif order.status == 'out_for_delivery' %}bg-primary text-white animate-pulse{% else %}bg-surface-container-highest text-on-surface-variant{% endif %} flex items-center justify-center font-bold text-sm shrink-0">
+            class="w-9 h-9 rounded-full {% if order.status == 'delivered' %}bg-emerald-600 text-white{% elif order.status == 'out_for_delivery' %}bg-primary text-white {% else %}bg-surface-container-highest text-on-surface-variant{% endif %} flex items-center justify-center font-bold text-sm shrink-0">
             <span class="material-symbols-outlined text-[20px]">electric_moped</span>
           </div>
           <div>
