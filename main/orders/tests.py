@@ -156,54 +156,6 @@ class OrderTestCase(TestCase):
         self.assertEqual(order.price, Decimal('500.00'))
         self.assertEqual(order.product_name, "Test Chicken")
 
-    def test_order_saves_customer_shared_gps_location(self):
-        client = Client()
-        client.force_login(self.normal_user)
-        response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
-            'name': 'Bala Test',
-            'mobile': '9999999999',
-            'address': 'Unknown Street',
-            'quantity': '0.25',
-            'latitude': '6.310035',
-            'longitude': '77.356671',
-        }, follow=True)
-        self.assertEqual(response.status_code, 200)
-        order = Order.objects.latest('order_id')
-        self.assertEqual(order.latitude, Decimal('6.310035'))
-        self.assertEqual(order.longitude, Decimal('77.356671'))
-        self.assertContains(response, 'Open shared GPS pin in Maps')
-
-    def test_order_can_use_shared_gps_location_without_manual_address(self):
-        self.client.force_login(self.normal_user)
-        response = self.client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
-            'name': 'Test',
-            'mobile': '0987654321',
-            'quantity': '0.25',
-            'latitude': '9.310044',
-            'longitude': '78.994671',
-        }, follow=True)
-
-        self.assertEqual(response.status_code, 200)
-        order = Order.objects.get()
-        self.assertEqual(order.latitude, Decimal('9.310044'))
-        self.assertEqual(order.longitude, Decimal('78.994671'))
-        self.assertIn('GPS location shared by customer', order.location)
-        self.assertContains(response, 'Open shared GPS pin in Maps')
-
-    def test_order_rejects_invalid_gps_coordinates(self):
-        client = Client()
-        client.force_login(self.normal_user)
-        response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
-            'name': 'Test',
-            'mobile': '0987654321',
-            'address': 'Test address',
-            'quantity': '1',
-            'latitude': '91',
-            'longitude': '78.994671',
-        })
-        self.assertEqual(response.status_code, 400)
-        self.assertFalse(Order.objects.exists())
-
     def test_admin_permissions_superuser_only(self):
         # Test that administrative views are restricted to superusers only
         client = Client()
@@ -398,7 +350,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(delivery.attempt_count, 1)
         self.assertIsNotNone(delivery.next_attempt_at)
 
-    def test_checkout_renders_manual_address_and_gps_options_for_saved_address_users(self):
+    def test_checkout_renders_manual_address_without_location_sharing(self):
         CustomerAddress.objects.create(
             user=self.normal_user, label='Home', recipient_name='Normal',
             mobile='9876543210', address='12 Main Road', is_default=True,
@@ -406,22 +358,18 @@ class OrderTestCase(TestCase):
         self.client.force_login(self.normal_user)
         response = self.client.get(reverse('Checkout_direct', args=[self.product.id, '1']))
         self.assertContains(response, 'manual_address_override')
-        self.assertContains(response, 'Share my current location')
+        self.assertNotContains(response, 'Share my current location')
+        self.assertNotContains(response, 'navigator.geolocation')
+        self.assertNotContains(response, 'location_latitude')
 
-    def test_gps_only_checkout_works_even_when_customer_has_saved_addresses(self):
-        CustomerAddress.objects.create(
-            user=self.normal_user, label='Home', recipient_name='Normal',
-            mobile='9876543210', address='12 Main Road', is_default=True,
-        )
+    def test_checkout_rejects_gps_only_order_payload(self):
         self.client.force_login(self.normal_user)
         response = self.client.post(reverse('Orders', args=[self.product.id]), {
             'name': 'Normal', 'mobile': '9876543210', 'quantity': '1',
             'latitude': '9.310044', 'longitude': '78.994671',
-        }, follow=True)
-        self.assertEqual(response.status_code, 200)
-        order = Order.objects.get(user=self.normal_user)
-        self.assertIn('GPS location shared', order.location)
-
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Order.objects.filter(user=self.normal_user).exists())
 
     def test_first_manual_order_saves_default_address_for_future_checkout(self):
         self.client.force_login(self.normal_user)

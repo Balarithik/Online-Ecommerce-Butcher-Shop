@@ -46,21 +46,6 @@ class OrderForm(forms.ModelForm):
         required=False,
         initial='Cash on Delivery',
     )
-    latitude = forms.DecimalField(
-        required=False,
-        min_value=Decimal('-90'),
-        max_value=Decimal('90'),
-        max_digits=9,
-        decimal_places=6,
-    )
-    longitude = forms.DecimalField(
-        required=False,
-        min_value=Decimal('-180'),
-        max_value=Decimal('180'),
-        max_digits=9,
-        decimal_places=6,
-    )
-
     def clean_mobile(self):
         raw_mobile = self.cleaned_data.get('mobile') or ''
         mobile = ''.join(filter(str.isdigit, raw_mobile))
@@ -91,13 +76,9 @@ class OrderForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        latitude = cleaned_data.get('latitude')
-        longitude = cleaned_data.get('longitude')
-        if (latitude is None) != (longitude is None):
-            raise forms.ValidationError('Share both location coordinates, or leave both blank.')
         address = (cleaned_data.get('address') or '').strip()
-        if not address and (latitude is None or longitude is None):
-            raise forms.ValidationError('Enter a delivery address or share your current GPS location.')
+        if not address:
+            raise forms.ValidationError('Enter your complete delivery address.')
         return cleaned_data
 
     class Meta:
@@ -109,6 +90,4 @@ class OrderForm(forms.ModelForm):
             'delivery_slot',
             'cut_preference',
             'payment_method',
-            'latitude',
-            'longitude',
         ]

@@ -5,7 +5,7 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from orders.models import Order
 from store.models import Products
-from .models import CustomerAddress, CustomerProfile
+from .models import CustomerAddress, CustomerProfile, CustomerFeedback
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
@@ -234,3 +234,57 @@ class HomeProductNavigationTests(TestCase):
         self.assertGreaterEqual(buy_now_link_start, 0)
         self.assertGreater(buy_now_link_end, buy_now_link_start)
         self.assertIn(f'href="{target}"', page_html[buy_now_link_start:buy_now_link_end])
+
+
+
+class CustomerFeedbackTests(TestCase):
+    def test_anonymous_customer_can_submit_feedback(self):
+        response = self.client.post(reverse("submit_feedback"), {
+            "category": "ordering",
+            "rating": "5",
+            "message": "Checkout was clear and easy to use.",
+            "contact_email": "tester@example.com",
+            "next": "/",
+        })
+        self.assertRedirects(response, reverse("home"))
+        feedback = CustomerFeedback.objects.get()
+        self.assertEqual(feedback.category, "ordering")
+        self.assertEqual(feedback.rating, 5)
+        self.assertEqual(feedback.contact_email, "tester@example.com")
+        self.assertIsNone(feedback.user_id)
+
+    def test_signed_in_feedback_is_linked_to_customer(self):
+        user = User.objects.create_user("feedback-customer", password="Strong-password-123!")
+        self.client.force_login(user)
+        self.client.post(reverse("submit_feedback"), {
+            "category": "delivery",
+            "rating": "4",
+            "message": "Delivery updates were helpful.",
+        })
+        self.assertEqual(CustomerFeedback.objects.get().user, user)
+
+    def test_feedback_honeypot_discards_automated_submission(self):
+        response = self.client.post(reverse("submit_feedback"), {
+            "website": "https://spam.example",
+            "category": "website",
+            "rating": "5",
+            "message": "Spam",
+        })
+        self.assertRedirects(response, reverse("home"))
+        self.assertFalse(CustomerFeedback.objects.exists())
+
+    def test_feedback_rejects_invalid_rating_and_empty_message(self):
+        response = self.client.post(reverse("submit_feedback"), {
+            "category": "website",
+            "rating": "9",
+            "message": "",
+        })
+        self.assertRedirects(response, reverse("home"))
+        self.assertFalse(CustomerFeedback.objects.exists())
+
+    def test_testing_banner_contains_feedback_form(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(response, "Currently in Testing")
+        self.assertContains(response, reverse("submit_feedback"))
+        self.assertContains(response, 'name="message"')
+        self.assertContains(response, "Share feedback")
