@@ -155,6 +155,9 @@ class OrderTestCase(TestCase):
         order = Order.objects.latest('order_id')
         self.assertEqual(order.price, Decimal('500.00'))
         self.assertEqual(order.product_name, "Test Chicken")
+        self.assertTrue(NotificationDelivery.objects.filter(
+            order=order, channel='email', event='order_placed', status='pending'
+        ).exists())
 
     def test_admin_permissions_superuser_only(self):
         # Test that administrative views are restricted to superusers only
@@ -288,6 +291,10 @@ class OrderTestCase(TestCase):
         order.refresh_from_db()
         self.assertEqual(order.status, 'delivered')
         self.assertEqual(Order.objects.count(), 1)
+        status_delivery = NotificationDelivery.objects.get(
+            order=order, channel='email', event='delivered'
+        )
+        self.assertEqual(status_delivery.status, 'pending')
 
     def test_notification_enqueue_is_idempotent_and_respects_whatsapp_consent(self):
         order = Order.objects.create(
@@ -332,6 +339,40 @@ class OrderTestCase(TestCase):
         self.assertEqual(delivery.status, 'sent')
         self.assertEqual(delivery.provider_message_id, 'email-test-id')
         self.assertEqual(post.call_args.kwargs['json']['to'], ['user@test.com'])
+
+    @override_settings(
+        WHATSAPP_CLOUD_ACCESS_TOKEN='meta-test-token',
+        WHATSAPP_PHONE_NUMBER_ID='123456789',
+        WHATSAPP_ORDER_TEMPLATE='order_update',
+        WHATSAPP_TEMPLATE_LANGUAGE='en',
+        WHATSAPP_GRAPH_API_VERSION='v22.0',
+        ORDER_NOTIFICATION_COUNTRY_CODE='91',
+        NOTIFICATION_SITE_URL='https://example.com',
+    )
+    @patch('orders.notifications.requests.post')
+    def test_whatsapp_delivery_uses_opted_in_number_and_template_parameters(self, post):
+        post.return_value.raise_for_status.return_value = None
+        post.return_value.json.return_value = {'messages': [{'id': 'wamid-test'}]}
+        order = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name, product_id=self.product.id,
+            name='Test User', mobile='9876543210', location='1 Test Street',
+            quantity='1', price='200.00', whatsapp_opt_in=True,
+        )
+        enqueue_order_event(order, 'order_placed')
+        delivery = NotificationDelivery.objects.get(channel='whatsapp')
+        self.assertTrue(deliver_notification(delivery))
+        delivery.refresh_from_db()
+        self.assertEqual(delivery.status, 'sent')
+        self.assertEqual(delivery.provider_message_id, 'wamid-test')
+        self.assertEqual(post.call_args.args[0], 'https://graph.facebook.com/v22.0/123456789/messages')
+        payload = post.call_args.kwargs['json']
+        self.assertEqual(payload['to'], '919876543210')
+        self.assertEqual(payload['template']['name'], 'order_update')
+        self.assertEqual(
+            [item['text'] for item in payload['template']['components'][0]['parameters']],
+            [str(order.order_id), 'Pending', '200.00',
+             f'https://example.com/orders/confirmation/{order.order_id}/'],
+        )
 
     @patch('orders.notifications.requests.post')
     def test_failed_notification_is_scheduled_for_retry(self, post):

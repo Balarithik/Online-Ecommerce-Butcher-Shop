@@ -147,7 +147,7 @@ Production entry: Gunicorn via `Procfile`. Build helper: `build.sh` (install dep
 | `models.py` | `Order`, `OrderItem`, `Cart`, `CartItem`, placement token. |
 | `views.py` | Cart APIs, checkout, place order, my orders, confirmation. |
 | `forms.py` | `OrderForm` with server-side address/payment/cut/slot validation. |
-| `notifications.py` | Twilio SMS/WhatsApp helpers. |
+| `notifications.py` | Resend email and Meta WhatsApp Cloud API delivery helpers. |
 | `urls.py` | Under `/orders/` and checkout paths used by store. |
 | `admin.py` | Order admin. |
 | `tests.py` | Cart, checkout, idempotency, auth gating tests. |
@@ -199,10 +199,19 @@ The WhatsApp utility template must contain four body placeholders in this order:
 
 ### Deploy the worker
 
-1. Deploy the web service first so migration `0007_notification_delivery` runs through the existing entrypoint.
-2. In Render, create a Cron Job using the same repository, Dockerfile `main/Dockerfile`, and build context `main`.
-3. Set its command to `python manage.py process_notifications --limit 100` and schedule it every minute.
-4. Copy the same notification environment variables to the cron job. The worker and web service must use the same persistent PostgreSQL database; do not use separate SQLite files.
-5. Verify a test order produces an email delivery row and that the worker changes it to Sent. Test WhatsApp only after explicit customer consent and Meta template approval.
+The web service only enqueues notifications. It does not send them itself. A separate long-running worker is required.
 
-The queue retries provider failures with increasing delays, up to six attempts. Review and manually investigate terminal Failed entries in Django Admin → Orders → Notification deliveries. Email is skipped when the account has no email address; WhatsApp is never sent without recorded order-level consent.
+1. Deploy the web service first so the existing entrypoint applies migrations.
+2. In Render, create a **Background Worker** using this repository, Docker runtime, Dockerfile path `main/Dockerfile`, and build context/root directory `main`.
+3. Set the worker's start command to:
+
+   ```bash
+   python manage.py process_notifications --loop --interval 30 --limit 100
+   ```
+
+4. Copy the notification environment variables listed above to the worker. The worker and web service must use the same PostgreSQL `DATABASE_URL`; do not use separate SQLite files.
+5. Deploy the worker and check its logs for `Notification worker started`.
+6. Place a test order. Check Django Admin → Orders → Notification deliveries. Pending rows should be processed; successful sends become Sent, while provider errors remain visible in Last error and are retried.
+
+The worker retries provider failures with increasing delays, up to six attempts. Email is skipped when the signed-in customer's account has no email address. WhatsApp is sent only when the customer checks the explicit consent box and Meta has approved the configured Utility template. Resend production sending requires a verified sender domain; the default Resend test sender is not a production sender.
+

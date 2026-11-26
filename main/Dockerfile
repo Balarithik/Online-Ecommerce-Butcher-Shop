@@ -39,7 +39,7 @@ EXPOSE 8000
 
 # Health check using Python (avoids installing curl)
 HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=3 \
-    CMD ["python", "-c", "import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('PORT', '8000') + '/healthz/')"]
+    CMD ["python", "-c", "import os, urllib.request; port=os.environ.get('PORT'); urllib.request.urlopen('http://127.0.0.1:' + port + '/healthz/') if port else None"]
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
