@@ -1,17 +1,4 @@
-/* Clean transition styles for splash screen */
-
-
-@keyframes fadeOutZoom {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.05);
-  }
-}
-
+/* Static splash handoff. Avoid zoom, fade, and repeating visual effects. */
 .animate-fade-out-screen {
-  animation: fadeOutZoom 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
 }

@@ -72,7 +72,7 @@
             Cancelled
           </span>
           {% elif order.status == 'out_for_delivery' %}
-          <span class="inline-flex items-center gap-1 bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full border border-indigo-200 animate-pulse">
+          <span class="inline-flex items-center gap-1 bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full border border-indigo-200 ">
             <span class="material-symbols-outlined text-[15px]">electric_moped</span>
             Out for Delivery
           </span>
@@ -90,20 +90,20 @@
       <div class="my-5 p-4 rounded-xl bg-surface-container-low border border-outline-variant/40">
         <div class="flex items-center justify-between text-xs font-semibold text-primary mb-3">
           <span class="flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 "></span>
             Order Status Tracker
           </span>
           <span class="text-on-surface-variant font-bold">{{ order.get_status_display }}</span>
         </div>
 
         <div class="grid grid-cols-3 gap-2 text-center text-[11px]">
-          <div class="p-2 rounded-lg {% if order.status == 'pending' %}bg-primary text-white font-bold animate-pulse{% else %}bg-emerald-100 text-emerald-900 font-bold{% endif %}">
+          <div class="p-2 rounded-lg {% if order.status == 'pending' %}bg-primary text-white font-bold {% else %}bg-emerald-100 text-emerald-900 font-bold{% endif %}">
             {% if order.status == 'pending' %}📌 1. Received{% else %}✓ 1. Received{% endif %}
           </div>
-          <div class="p-2 rounded-lg {% if order.status == 'preparing' %}bg-primary text-white font-bold animate-pulse{% elif order.status == 'out_for_delivery' or order.status == 'delivered' %}bg-emerald-100 text-emerald-900 font-bold{% else %}bg-surface-container-highest text-on-surface-variant{% endif %}">
+          <div class="p-2 rounded-lg {% if order.status == 'preparing' %}bg-primary text-white font-bold {% elif order.status == 'out_for_delivery' or order.status == 'delivered' %}bg-emerald-100 text-emerald-900 font-bold{% else %}bg-surface-container-highest text-on-surface-variant{% endif %}">
             🔪 2. Cutting & Packing
           </div>
-          <div class="p-2 rounded-lg {% if order.status == 'out_for_delivery' %}bg-primary text-white font-bold animate-pulse{% elif order.status == 'delivered' %}bg-emerald-100 text-emerald-900 font-bold{% else %}bg-surface-container-highest text-on-surface-variant{% endif %}">
+          <div class="p-2 rounded-lg {% if order.status == 'out_for_delivery' %}bg-primary text-white font-bold {% elif order.status == 'delivered' %}bg-emerald-100 text-emerald-900 font-bold{% else %}bg-surface-container-highest text-on-surface-variant{% endif %}">
             🛵 3. Out for Delivery
           </div>
         </div>

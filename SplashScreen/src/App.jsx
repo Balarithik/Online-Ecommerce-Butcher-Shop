@@ -7,32 +7,12 @@ if (!VITE_API_BASE_URL) throw new Error('VITE_API_BASE_URL is not set. Configure
 const MAIN_APP_URL = VITE_API_BASE_URL;
 const HEALTH_CHECK_URL = new URL('/healthz/', MAIN_APP_URL).toString();
 
-const LOADING_MESSAGES = [
-  "Connecting to Lakshmi Broliers Hub...",
-  "Selecting today's farm-fresh cuts...",
-  "Checking today's fresh-cut inventory...",
-  "Calibrating custom cut preferences...",
-  "Preparing vacuum packaging station...",
-  "Almost ready! Launching store...",
-];
-
 export default function App() {
   const [progress, setProgress] = useState(15);
-  const [messageIndex, setMessageIndex] = useState(0);
   const [isReady, setIsReady] = useState(false);
-  const [fadingOut, setFadingOut] = useState(false);
   const [serverOnline, setServerOnline] = useState(false);
   const [connectionFailed, setConnectionFailed] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
-
-  // Cycle loading messages
-  useEffect(() => {
-    if (isReady) return;
-    const interval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
-    }, 2400);
-    return () => clearInterval(interval);
-  }, [isReady]);
 
   // Smooth progress increments
   useEffect(() => {
@@ -55,7 +35,6 @@ export default function App() {
     let initialTimer;
     let retryTimer;
     let redirectTimer;
-    let fadeTimer;
     let activeController;
 
     const checkServerHealth = async () => {
@@ -86,10 +65,7 @@ export default function App() {
           setProgress(100);
 
           redirectTimer = setTimeout(() => {
-            setFadingOut(true);
-            fadeTimer = setTimeout(() => {
-              window.location.href = MAIN_APP_URL;
-            }, 700);
+            window.location.href = MAIN_APP_URL;
           }, 900);
         }
       } catch (err) {
@@ -111,13 +87,12 @@ export default function App() {
       clearTimeout(initialTimer);
       clearTimeout(retryTimer);
       clearTimeout(redirectTimer);
-      clearTimeout(fadeTimer);
     };
   }, [retryNonce]);
 
 
   return (
-    <div className={`relative min-h-screen w-full bg-[#faf8f6] text-on-surface flex flex-col justify-between items-center px-6 py-10 overflow-hidden select-none font-sans antialiased transition-all duration-700 ${fadingOut ? 'animate-fade-out-screen' : ''}`}>
+    <div className="relative min-h-screen w-full bg-[#faf8f6] text-on-surface flex flex-col justify-between items-center px-6 py-10 overflow-hidden select-none font-sans antialiased">
 
       {/* TOP: Clean status & location */}
       <header className="relative z-10 w-full max-w-md flex items-center justify-between text-xs text-stone-600">
@@ -130,7 +105,7 @@ export default function App() {
 
         <div className="flex items-center gap-1.5 text-stone-500 text-[11px] font-medium">
           <span className="material-symbols-outlined text-[15px] text-stone-600">location_on</span>
-          <span>Uchipuli, Tamil Nadu</span>
+          <span>Lakshmi Broliers, Railway station road, Uchipuli, Ramanathapuram 623534</span>
         </div>
       </header>
 

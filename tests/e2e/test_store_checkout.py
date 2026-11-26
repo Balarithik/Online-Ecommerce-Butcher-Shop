@@ -15,6 +15,10 @@ def main():
         home_response = page.goto(BASE_URL + "/")
         assert home_response and home_response.status == 200, "Home page did not load"
         expect(page.get_by_text("Currently in Testing")).to_be_visible()
+        home_text = " ".join(page.locator("body").inner_text().split())
+        assert "Railway station road, Uchipuli" in home_text
+        assert "Ramanathapuram 623534" in home_text
+        assert page.locator("[class*='animate-pulse'], [class*='animate-ping'], [class*='animate-bounce'], [class*='animate-spin']").count() == 0, "Flicker animation classes remain on the home page"
         page.get_by_text("Share feedback").click()
         expect(page.locator("#feedback-message")).to_be_visible()
         expect(page.locator("#feedback-category")).to_be_visible()
