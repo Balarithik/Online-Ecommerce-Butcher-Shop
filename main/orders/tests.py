@@ -288,6 +288,10 @@ class OrderTestCase(TestCase):
         order.refresh_from_db()
         self.assertEqual(order.status, 'delivered')
         self.assertEqual(Order.objects.count(), 1)
+        status_delivery = NotificationDelivery.objects.get(
+            order=order, channel='email', event='delivered'
+        )
+        self.assertEqual(status_delivery.status, 'pending')
 
     def test_notification_enqueue_is_idempotent_and_respects_whatsapp_consent(self):
         order = Order.objects.create(
