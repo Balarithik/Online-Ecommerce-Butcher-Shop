@@ -47,6 +47,7 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=50, default='Cash on Delivery')
     status = models.CharField(max_length=30, choices=status_choices, default='pending')
     whatsapp_opt_in = models.BooleanField(default=False)
+    sms_opt_in = models.BooleanField(default=False)
     # A checkout form submits this opaque value so a refresh/double-click cannot
     # turn one purchase into multiple order rows.
     placement_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -135,7 +136,7 @@ class CartItem(models.Model):
 
 
 class NotificationDelivery(models.Model):
-    CHANNEL_CHOICES = [("email", "Email"), ("whatsapp", "WhatsApp")]
+    CHANNEL_CHOICES = [("email", "Email"), ("whatsapp", "WhatsApp"), ("sms", "SMS")]
     EVENT_CHOICES = [
         ("order_placed", "Order placed"), ("pending", "Order confirmed"),
         ("preparing", "Preparing"), ("out_for_delivery", "Out for delivery"),
