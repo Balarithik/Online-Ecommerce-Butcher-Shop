@@ -21,6 +21,7 @@ from django.views.decorators.cache import never_cache
 from PIL import Image, UnidentifiedImageError
 from store.models import Products, StorePricing
 from orders.models import Order
+from orders.notifications import enqueue_order_event
 from .forms import CloudinaryProductForm
 
 
@@ -398,8 +399,10 @@ def update_order(request, order_id):
         new_status = request.POST.get("status")
         valid_choices = [choice[0] for choice in Order.status_choices]
         if new_status in valid_choices:
-            order.status = new_status
-            order.save(update_fields=['status'])
+            if order.status != new_status:
+                order.status = new_status
+                order.save(update_fields=['status'])
+                enqueue_order_event(order, new_status)
             messages.success(request, f"Order #{order_id} status updated to {new_status}.")
 
             redirect_url = request.META.get('HTTP_REFERER') or reverse('admin_orders')
