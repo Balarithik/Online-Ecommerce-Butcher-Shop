@@ -196,14 +196,14 @@ The WhatsApp utility template must contain four body placeholders in this order:
 The web service only enqueues notifications. It does not send them itself. A separate long-running worker is required.
 
 1. Deploy the web service first so the existing entrypoint applies migrations.
-2. In Render, create a **Background Worker** using this repository, Docker runtime, Dockerfile path `main/Dockerfile`, and build context/root directory `main`.
+2. In Render, create a **Background Worker** using this repository, Docker runtime, root/build directory `main`, and Dockerfile path `Dockerfile`.
 3. Set the worker's start command to:
 
    ```bash
    python manage.py process_notifications --loop --interval 30 --limit 100
    ```
 
-4. Copy the notification environment variables listed above to the worker. The worker and web service must use the same PostgreSQL `DATABASE_URL`; do not use separate SQLite files.
+4. Copy the notification environment variables listed above to the worker. Also set `SKIP_DJANGO_STARTUP_TASKS=1` on the worker so it does not race the web service to run migrations/collectstatic. The worker and web service must use the same PostgreSQL `DATABASE_URL`; do not use separate SQLite files.
 5. Deploy the worker and check its logs for `Notification worker started`.
 6. Place a test order. Check Django Admin → Orders → Notification deliveries. Pending rows should be processed; successful sends become Sent, while provider errors remain visible in Last error and are retried.
 
