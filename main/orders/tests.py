@@ -374,6 +374,52 @@ class OrderTestCase(TestCase):
              f'https://example.com/orders/confirmation/{order.order_id}/'],
         )
 
+    def test_sms_notification_is_queued_only_after_explicit_consent(self):
+        order = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name, product_id=self.product.id,
+            name='Test User', mobile='9876543210', location='1 Test Street',
+            quantity='1', price='200.00', sms_opt_in=True,
+        )
+        enqueue_order_event(order, 'order_placed')
+        self.assertSetEqual(
+            set(NotificationDelivery.objects.values_list('channel', flat=True)),
+            {'email', 'sms'},
+        )
+
+    @override_settings(
+        MSG91_AUTH_KEY='msg91-test-key',
+        MSG91_SMS_TEMPLATE_ID='approved-template-id',
+        ORDER_NOTIFICATION_COUNTRY_CODE='91',
+        NOTIFICATION_SITE_URL='https://example.com',
+    )
+    @patch('orders.notifications.requests.post')
+    def test_msg91_sms_delivery_uses_approved_template_variables(self, post):
+        post.return_value.raise_for_status.return_value = None
+        post.return_value.json.return_value = {'type': 'success', 'message': 'msg91-request-id'}
+        order = Order.objects.create(
+            user=self.normal_user, product_name=self.product.name, product_id=self.product.id,
+            name='Test User', mobile='9876543210', location='1 Test Street',
+            quantity='1', price='200.00', sms_opt_in=True,
+        )
+        enqueue_order_event(order, 'order_placed')
+        delivery = NotificationDelivery.objects.get(channel='sms')
+        self.assertTrue(deliver_notification(delivery))
+        delivery.refresh_from_db()
+        self.assertEqual(delivery.status, 'sent')
+        self.assertEqual(delivery.provider_message_id, 'msg91-request-id')
+        self.assertEqual(post.call_args.args[0], 'https://control.msg91.com/api/v5/flow')
+        self.assertEqual(post.call_args.kwargs['headers']['authkey'], 'msg91-test-key')
+        self.assertEqual(post.call_args.kwargs['json'], {
+            'template_id': 'approved-template-id',
+            'short_url': '0',
+            'recipients': [{
+                'mobiles': '919876543210',
+                'VAR1': str(order.order_id),
+                'VAR2': 'Pending',
+                'VAR3': '200.00',
+            }],
+        })
+
     @patch('orders.notifications.requests.post')
     def test_failed_notification_is_scheduled_for_retry(self, post):
         import requests
@@ -420,8 +466,14 @@ class OrderTestCase(TestCase):
             'address': '12/4 Main Road, Uchipuli, PIN: 623534',
             'quantity': '1',
             'payment_method': 'Cash on Delivery',
+            'sms_opt_in': 'yes',
         }, follow=True)
         self.assertEqual(response.status_code, 200)
+        saved_order = Order.objects.get(user=self.normal_user)
+        self.assertTrue(saved_order.sms_opt_in)
+        self.assertTrue(NotificationDelivery.objects.filter(
+            order=saved_order, channel='sms', event='order_placed'
+        ).exists())
         saved = CustomerAddress.objects.get(user=self.normal_user)
         self.assertTrue(saved.is_default)
         self.assertEqual(saved.recipient_name, 'First Order Customer')

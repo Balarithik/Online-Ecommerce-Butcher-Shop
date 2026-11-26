@@ -20,6 +20,8 @@ def enqueue_order_event(order, event):
     channels = ["email"]
     if order.whatsapp_opt_in:
         channels.append("whatsapp")
+    if order.sms_opt_in:
+        channels.append("sms")
     created = []
     for channel in channels:
         recipient = (order.user.email if order.user_id else "") if channel == "email" else (order.mobile or "")
@@ -102,6 +104,45 @@ def _send_whatsapp(delivery):
     delivery.provider_message_id = messages[0].get("id", "") if messages else ""
 
 
+def _send_sms(delivery):
+    """Send a DLT-approved transactional SMS through MSG91 Flow API."""
+    if not settings.MSG91_AUTH_KEY or not settings.MSG91_SMS_TEMPLATE_ID:
+        raise RuntimeError("MSG91_AUTH_KEY and MSG91_SMS_TEMPLATE_ID must be configured")
+
+    digits = "".join(ch for ch in delivery.recipient if ch.isdigit())
+    if len(digits) == 10:
+        digits = settings.ORDER_NOTIFICATION_COUNTRY_CODE + digits
+    if not 10 <= len(digits) <= 15:
+        raise RuntimeError("Customer mobile number is invalid for SMS")
+
+    context = _order_context(delivery)
+    response = requests.post(
+        "https://control.msg91.com/api/v5/flow",
+        headers={
+            "accept": "application/json",
+            "authkey": settings.MSG91_AUTH_KEY,
+            "content-type": "application/json",
+        },
+        json={
+            "template_id": settings.MSG91_SMS_TEMPLATE_ID,
+            "short_url": "0",
+            "recipients": [{
+                "mobiles": digits,
+                "VAR1": str(delivery.order_id),
+                "VAR2": context["status_label"],
+                "VAR3": str(delivery.order.price),
+            }],
+        },
+        timeout=15,
+    )
+    response.raise_for_status()
+    payload = response.json()
+    if payload.get("type") != "success" or payload.get("hasError") is True:
+        reason = payload.get("message") or payload.get("errors") or "MSG91 rejected the SMS request"
+        raise RuntimeError(f"MSG91 SMS error: {reason}")
+    delivery.provider_message_id = str(payload.get("message", ""))
+
+
 def deliver_notification(delivery):
     """Attempt delivery and persist bounded retry state."""
     try:
@@ -109,6 +150,8 @@ def deliver_notification(delivery):
             _send_email(delivery)
         elif delivery.channel == "whatsapp":
             _send_whatsapp(delivery)
+        elif delivery.channel == "sms":
+            _send_sms(delivery)
         else:
             raise RuntimeError("Unsupported notification channel")
     except (requests.RequestException, RuntimeError, ValueError) as exc:

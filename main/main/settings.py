@@ -125,6 +125,8 @@ WHATSAPP_PHONE_NUMBER_ID = os.environ.get('WHATSAPP_PHONE_NUMBER_ID', '').strip(
 WHATSAPP_ORDER_TEMPLATE = os.environ.get('WHATSAPP_ORDER_TEMPLATE', '').strip()
 WHATSAPP_TEMPLATE_LANGUAGE = os.environ.get('WHATSAPP_TEMPLATE_LANGUAGE', 'en').strip()
 WHATSAPP_GRAPH_API_VERSION = os.environ.get('WHATSAPP_GRAPH_API_VERSION', 'v22.0').strip()
+MSG91_AUTH_KEY = os.environ.get("MSG91_AUTH_KEY", "").strip()
+MSG91_SMS_TEMPLATE_ID = os.environ.get("MSG91_SMS_TEMPLATE_ID", "").strip()
 ORDER_NOTIFICATION_COUNTRY_CODE = ''.join(
     character for character in os.environ.get("ORDER_NOTIFICATION_COUNTRY_CODE", "91")
     if character.isdigit()
