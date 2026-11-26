@@ -156,7 +156,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(order.price, Decimal('500.00'))
         self.assertEqual(order.product_name, "Test Chicken")
 
-    def test_order_saves_customer_shared_gps_location(self):
+
         client = Client()
         client.force_login(self.normal_user)
         response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
@@ -173,7 +173,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(order.longitude, Decimal('77.356671'))
         self.assertContains(response, 'Open shared GPS pin in Maps')
 
-    def test_order_can_use_shared_gps_location_without_manual_address(self):
+
         self.client.force_login(self.normal_user)
         response = self.client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
             'name': 'Test',
@@ -190,7 +190,7 @@ class OrderTestCase(TestCase):
         self.assertIn('GPS location shared by customer', order.location)
         self.assertContains(response, 'Open shared GPS pin in Maps')
 
-    def test_order_rejects_invalid_gps_coordinates(self):
+
         client = Client()
         client.force_login(self.normal_user)
         response = client.post(reverse('Orders', kwargs={'product_id': self.product.id}), {
@@ -398,7 +398,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(delivery.attempt_count, 1)
         self.assertIsNotNone(delivery.next_attempt_at)
 
-    def test_checkout_renders_manual_address_and_gps_options_for_saved_address_users(self):
+    def test_checkout_renders_manual_address_without_location_sharing(self):
         CustomerAddress.objects.create(
             user=self.normal_user, label='Home', recipient_name='Normal',
             mobile='9876543210', address='12 Main Road', is_default=True,
@@ -406,9 +406,11 @@ class OrderTestCase(TestCase):
         self.client.force_login(self.normal_user)
         response = self.client.get(reverse('Checkout_direct', args=[self.product.id, '1']))
         self.assertContains(response, 'manual_address_override')
-        self.assertContains(response, 'Share my current location')
+        self.assertNotContains(response, 'Share my current location')
+        self.assertNotContains(response, 'navigator.geolocation')
+        self.assertNotContains(response, 'location_latitude')
 
-    def test_gps_only_checkout_works_even_when_customer_has_saved_addresses(self):
+
         CustomerAddress.objects.create(
             user=self.normal_user, label='Home', recipient_name='Normal',
             mobile='9876543210', address='12 Main Road', is_default=True,
