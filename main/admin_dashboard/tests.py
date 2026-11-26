@@ -139,6 +139,7 @@ class AdminEndpointTests(TestCase):
 
         self.assertEqual(dashboard.status_code, 200)
         self.assertContains(dashboard, 'id="mobileMenuBtn"')
+        self.assertContains(dashboard, "Notification Deliveries")
         self.assertContains(dashboard, 'id="mobileSidebarBackdrop"')
         self.assertContains(dashboard, 'class="space-y-3 p-3 md:hidden"')
         self.assertContains(dashboard, 'Manage Order')
