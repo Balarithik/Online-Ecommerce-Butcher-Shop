@@ -36,3 +36,13 @@ def csrf_failure(request, reason=""):
         {"reason": reason},
         status=403,
     )
+
+
+def page_not_found(request, exception):
+    """Render the branded not-found page without exposing requested internals."""
+    return render(request, "404.html", status=404)
+
+
+def server_error(request):
+    """Render a safe branded server-error page; details stay in server logs."""
+    return render(request, "500.html", status=500)

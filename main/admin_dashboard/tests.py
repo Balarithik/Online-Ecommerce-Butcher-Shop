@@ -15,7 +15,7 @@ from django.contrib.auth import get_user_model
 from cloudinary.exceptions import Error as CloudinaryError
 from main.settings import _cloudinary_credentials
 from store.models import Products, StorePricing
-from orders.models import Order
+from orders.models import Order, NotificationDelivery
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
@@ -27,6 +27,73 @@ class AdminEndpointTests(TestCase):
             'test-password',
         )
         self.client.force_login(self.admin)
+
+    def test_notification_center_is_available_from_custom_admin(self):
+        order = Order.objects.create(
+            product_name="Test Chicken",
+            name="Notification Customer",
+            mobile="9876543210",
+            quantity="0.500",
+            price="125.00",
+        )
+        NotificationDelivery.objects.create(
+            order=order,
+            channel="email",
+            event="order_placed",
+            recipient="customer@example.com",
+        )
+        response = self.client.get(reverse("admin_notifications"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Notification Deliveries")
+        self.assertContains(response, "customer@example.com")
+        self.assertContains(response, "Order placed")
+        self.assertContains(response, reverse("admin_notifications"))
+
+    def test_notification_center_filters_by_status_and_channel(self):
+        order = Order.objects.create(
+            product_name="Filter Chicken",
+            name="Filter Customer",
+            mobile="9876543210",
+            quantity="0.500",
+            price="125.00",
+        )
+        NotificationDelivery.objects.create(
+            order=order, channel="email", event="order_placed",
+            recipient="email@example.com", status="pending",
+        )
+        NotificationDelivery.objects.create(
+            order=order, channel="whatsapp", event="order_placed",
+            recipient="919876543210", status="sent",
+        )
+        response = self.client.get(reverse("admin_notifications"), {
+            "channel": "whatsapp", "status": "sent",
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "919876543210")
+        self.assertNotContains(response, "email@example.com")
+
+    def test_notification_center_requires_admin_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("admin_notifications"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/admin_login/", response.url)
+
+    def test_custom_404_page_is_rendered_when_debug_is_disabled(self):
+        with override_settings(DEBUG=False, ALLOWED_HOSTS=["testserver"]):
+            response = self.client.get("/this-page-does-not-exist/")
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, "We can't find that page", status_code=404)
+
+    def test_custom_500_handler_returns_branded_error_page(self):
+        from django.test import RequestFactory
+        from main.views import server_error
+
+        request = RequestFactory().get("/trigger-server-error/")
+        response = server_error(request)
+        self.assertEqual(response.status_code, 500)
+        self.assertContains(response, "Something went wrong", status_code=500)
 
     def test_delete_endpoint_rejects_get(self):
         self.assertEqual(self.client.get(reverse('delete_product', args=[999])).status_code, 405)
@@ -72,6 +139,7 @@ class AdminEndpointTests(TestCase):
 
         self.assertEqual(dashboard.status_code, 200)
         self.assertContains(dashboard, 'id="mobileMenuBtn"')
+        self.assertContains(dashboard, "Notification Deliveries")
         self.assertContains(dashboard, 'id="mobileSidebarBackdrop"')
         self.assertContains(dashboard, 'class="space-y-3 p-3 md:hidden"')
         self.assertContains(dashboard, 'Manage Order')

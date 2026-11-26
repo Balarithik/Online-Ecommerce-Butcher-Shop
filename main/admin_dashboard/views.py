@@ -20,7 +20,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
 from PIL import Image, UnidentifiedImageError
 from store.models import Products, StorePricing
-from orders.models import Order
+from orders.models import Order, NotificationDelivery
 from orders.notifications import enqueue_order_event
 from .forms import CloudinaryProductForm
 
@@ -278,6 +278,47 @@ def admin_orders(request):
         'cancelled_orders': all_orders.filter(status='cancelled').count(),
         'query': query,
         'status_filter': status_filter,
+    })
+
+
+@login_required(login_url='/admin_login/')
+@user_passes_test(lambda u: u.is_superuser, login_url='/admin_login/')
+def admin_notifications(request):
+    deliveries = NotificationDelivery.objects.select_related("order").all()
+    channel = request.GET.get("channel", "").strip()
+    status = request.GET.get("status", "").strip()
+    event = request.GET.get("event", "").strip()
+    query = request.GET.get("q", "").strip()
+
+    valid_channels = {choice[0] for choice in NotificationDelivery.CHANNEL_CHOICES}
+    valid_statuses = {choice[0] for choice in NotificationDelivery.STATUS_CHOICES}
+    valid_events = {choice[0] for choice in NotificationDelivery.EVENT_CHOICES}
+    if channel in valid_channels:
+        deliveries = deliveries.filter(channel=channel)
+    if status in valid_statuses:
+        deliveries = deliveries.filter(status=status)
+    if event in valid_events:
+        deliveries = deliveries.filter(event=event)
+    if query:
+        deliveries = deliveries.filter(
+            Q(recipient__icontains=query) |
+            Q(order__order_id__icontains=query) |
+            Q(provider_message_id__icontains=query)
+        )
+
+    return render(request, "admin/notifications.html", {
+        "deliveries": deliveries[:250],
+        "total_deliveries": NotificationDelivery.objects.count(),
+        "pending_count": NotificationDelivery.objects.filter(status="pending").count(),
+        "failed_count": NotificationDelivery.objects.filter(status="failed").count(),
+        "sent_count": NotificationDelivery.objects.filter(status="sent").count(),
+        "channel": channel,
+        "status": status,
+        "event": event,
+        "query": query,
+        "channel_choices": NotificationDelivery.CHANNEL_CHOICES,
+        "status_choices": NotificationDelivery.STATUS_CHOICES,
+        "event_choices": NotificationDelivery.EVENT_CHOICES,
     })
 
 

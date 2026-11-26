@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+{% block title %}Notification Deliveries - Lakshmi Broliers Admin{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-[1400px] space-y-6">
+  <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+    <div>
+      <p class="text-xs font-bold uppercase tracking-wider text-primary">Communications</p>
+      <h1 class="mt-1 text-2xl font-black tracking-tight text-on-surface md:text-3xl">Notification Deliveries</h1>
+      <p class="mt-1 text-sm text-on-surface-variant">Track customer order emails and WhatsApp updates, including provider errors.</p>
+    </div>
+    <a href="{% url 'admin_dashboard' %}" class="rounded-xl border border-primary/15 bg-white px-4 py-2 text-sm font-bold text-primary hover:bg-primary/5">Back to dashboard</a>
+  </div>
+
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="rounded-2xl border border-primary/10 bg-white p-5"><p class="text-xs font-semibold text-slate-500">All deliveries</p><p class="mt-2 text-3xl font-black">{{ total_deliveries }}</p></div>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5"><p class="text-xs font-semibold text-amber-800">Pending</p><p class="mt-2 text-3xl font-black text-amber-900">{{ pending_count }}</p></div>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"><p class="text-xs font-semibold text-emerald-800">Sent</p><p class="mt-2 text-3xl font-black text-emerald-900">{{ sent_count }}</p></div>
+    <div class="rounded-2xl border border-red-200 bg-red-50 p-5"><p class="text-xs font-semibold text-red-800">Failed</p><p class="mt-2 text-3xl font-black text-red-900">{{ failed_count }}</p></div>
+  </div>
+
+  <form method="get" class="grid grid-cols-1 gap-3 rounded-2xl border border-primary/10 bg-white p-4 sm:grid-cols-2 lg:grid-cols-5">
+    <input name="q" value="{{ query }}" placeholder="Search order, recipient, provider ID" class="rounded-xl border-slate-200 text-sm">
+    <select name="channel" class="rounded-xl border-slate-200 text-sm"><option value="">All channels</option>{% for value,label in channel_choices %}<option value="{{ value }}" {% if channel == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <select name="status" class="rounded-xl border-slate-200 text-sm"><option value="">All statuses</option>{% for value,label in status_choices %}<option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <select name="event" class="rounded-xl border-slate-200 text-sm"><option value="">All events</option>{% for value,label in event_choices %}<option value="{{ value }}" {% if event == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <button class="rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary-container" type="submit">Apply filters</button>
+  </form>
+
+  <div class="overflow-hidden rounded-2xl border border-primary/10 bg-white shadow-sm">
+    <div class="border-b border-slate-100 px-5 py-4"><h2 class="font-bold">Recent deliveries</h2><p class="mt-1 text-xs text-slate-500">Showing up to 250 latest records. Open Django Admin for full record details and editing controls.</p></div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-100 text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500"><tr><th class="px-4 py-3">Order</th><th class="px-4 py-3">Channel / Event</th><th class="px-4 py-3">Recipient</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Attempts</th><th class="px-4 py-3">Last error</th><th class="px-4 py-3">Created</th></tr></thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for delivery in deliveries %}
+          <tr class="align-top hover:bg-slate-50/70">
+            <td class="whitespace-nowrap px-4 py-3 font-bold">#{{ delivery.order.order_id }}</td>
+            <td class="whitespace-nowrap px-4 py-3"><span class="font-semibold">{{ delivery.get_channel_display }}</span><span class="block text-xs text-slate-500">{{ delivery.get_event_display }}</span></td>
+            <td class="max-w-[220px] break-all px-4 py-3 text-xs">{{ delivery.recipient }}</td>
+            <td class="whitespace-nowrap px-4 py-3"><span class="rounded-full px-2.5 py-1 text-xs font-bold {% if delivery.status == 'sent' %}bg-emerald-100 text-emerald-800{% elif delivery.status == 'failed' %}bg-red-100 text-red-800{% elif delivery.status == 'processing' %}bg-blue-100 text-blue-800{% else %}bg-amber-100 text-amber-800{% endif %}">{{ delivery.get_status_display }}</span></td>
+            <td class="px-4 py-3 tabular-nums">{{ delivery.attempt_count }}</td>
+            <td class="max-w-sm px-4 py-3 text-xs text-red-700">{{ delivery.last_error|default:"—"|truncatechars:180 }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-xs text-slate-500">{{ delivery.created_at|date:"d M Y, H:i" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="px-5 py-12 text-center"><p class="font-bold text-slate-700">No notification deliveries found</p><p class="mt-1 text-sm text-slate-500">New order notifications will appear here after checkout queues them.</p></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="text-xs text-slate-500">A “Sent” status means the provider accepted the message; it does not guarantee the customer opened it.</p>
+</div>
+{% endblock %}
