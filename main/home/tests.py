@@ -288,3 +288,15 @@ class CustomerFeedbackTests(TestCase):
         self.assertContains(response, reverse("submit_feedback"))
         self.assertContains(response, 'name="message"')
         self.assertContains(response, "Share feedback")
+
+    def test_shop_address_is_consistent_and_public_pages_have_no_flicker_classes(self):
+        home = self.client.get(reverse("home"))
+        self.assertContains(home, "Lakshmi Broliers")
+        self.assertContains(home, "Railway station road, Uchipuli,")
+        self.assertContains(home, "Ramanathapuram 623534")
+        for animation_class in ("animate-pulse", "animate-ping", "animate-bounce", "animate-spin"):
+            self.assertNotContains(home, animation_class)
+
+        about = self.client.get(reverse("aboutus"))
+        self.assertContains(about, "Lakshmi Broliers, Railway station road, Uchipuli, Ramanathapuram 623534")
+        self.assertContains(about, "Lakshmi%20Broliers,%20Railway%20station%20road")
