@@ -42,8 +42,6 @@
     {% if saved_addresses %}
     <input type="hidden" name="saved_address_id" id="saved_address_id" value="{{ selected_address.pk|default:'' }}">
     {% endif %}
-    <input type="hidden" id="location_latitude" name="latitude" value="{{ form.latitude.value|default:'' }}">
-    <input type="hidden" id="location_longitude" name="longitude" value="{{ form.longitude.value|default:'' }}">
     <input type="hidden" id="selected_slot_input" name="delivery_slot" value="Express Delivery (45-60 Mins)">
     <input type="hidden" id="selected_cut_input" name="cut_preference" value="Curry Cut (Medium)">
 
@@ -174,14 +172,8 @@
           <a href="{% url 'customer_account' %}" class="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline">
             <span class="material-symbols-outlined text-sm">edit_location_alt</span> Add or manage addresses
           </a>
-          <div class="rounded-xl border border-outline-variant/50 bg-white p-3">
-            <button type="button" id="shareLocationButton" onclick="shareCurrentLocation()" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-primary px-4 py-2 text-sm font-bold text-primary hover:bg-primary/5">
-              <span class="material-symbols-outlined text-[18px]">my_location</span> Share my current location
-            </button>
-            <p id="location_share_status" class="mt-2 text-xs text-on-surface-variant" role="status" aria-live="polite">Optional: share a one-time GPS pin to help the delivery rider find you.</p>
-          </div>
         </div>
-        {% else %}
+        {% else %}/
         <div class="space-y-3">
           {% if form.address.errors %}
           <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-semibold flex items-center gap-2">
@@ -264,22 +256,8 @@
               <span class="font-bold text-on-surface">Delivering to: </span>
               <span id="address_preview_text">Enter your door/flat no. and street name above.</span>
             </div>
-            <div class="rounded-xl border border-outline-variant/50 bg-white p-3">
-              <button
-                type="button"
-                id="shareLocationButton"
-                onclick="shareCurrentLocation()"
-                class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-primary px-4 py-2 text-sm font-bold text-primary transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              >
-                <span class="material-symbols-outlined text-[18px]">my_location</span>
-                Share my current location
-              </button>
-              <p id="location_share_status" class="mt-2 text-xs text-on-surface-variant" role="status" aria-live="polite">
-                Optional: share a one-time GPS pin to help the delivery rider find you.
-              </p>
-            </div>
           </div>
-          {% endif %}
+          {% endif %}/
         </div>
       </div>
 
@@ -568,41 +546,6 @@
     document.getElementById('address_preview_text').textContent = fullStr;
   }
 
-  function shareCurrentLocation() {
-    const status = document.getElementById('location_share_status');
-    const button = document.getElementById('shareLocationButton');
-    if (!navigator.geolocation) {
-      status.textContent = "This browser does not support location sharing. Please enter your address manually.";
-      return;
-    }
-
-    button.disabled = true;
-    button.classList.add('opacity-60', 'cursor-wait');
-    status.textContent = "Waiting for your location permission…";
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        document.getElementById('location_latitude').value = latitude.toFixed(6);
-        document.getElementById('location_longitude').value = longitude.toFixed(6);
-        status.textContent = `Location shared for this order (${latitude.toFixed(5)}, ${longitude.toFixed(5)}).`;
-        button.disabled = false;
-        button.classList.remove('opacity-60', 'cursor-wait');
-      },
-      (error) => {
-        const messages = {
-          1: "Location permission was denied. You can allow it in your browser or enter your address manually.",
-          2: "Your location could not be determined. Please try again or enter your address manually.",
-          3: "Location request timed out. Please try again or enter your address manually."
-        };
-        status.textContent = messages[error.code] || "Location could not be shared. Please enter your address manually.";
-        button.disabled = false;
-        button.classList.remove('opacity-60', 'cursor-wait');
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-    );
-  }
-
   function selectSlot(slotText, card) {
     document.getElementById('selected_slot_input').value = slotText;
     document.getElementById('estimated_time_text').textContent = slotText.includes('Express') ? 'Today in 45-60 Mins' : slotText;
@@ -689,11 +632,7 @@
     } else if (!savedAddressSelect) {
       const house = document.getElementById('addr_house')?.value.trim();
       const street = document.getElementById('addr_street')?.value.trim();
-      const hasGpsBeforeAddressCheck = Boolean(
-        document.getElementById('location_latitude').value &&
-        document.getElementById('location_longitude').value
-      );
-      if ((!house || !street) && !hasGpsBeforeAddressCheck) {
+      if (!house || !street) {
         e.preventDefault();
         alert("Please enter both your House/Flat number and Street name for delivery.");
         if (!house) document.getElementById('addr_house')?.focus();
@@ -704,18 +643,10 @@
     }
     const manualOverride = document.getElementById('manual_address_override');
     const addr = document.getElementById('hidden_address').value.trim();
-    const latitude = document.getElementById('location_latitude').value;
-    const longitude = document.getElementById('location_longitude').value;
-    const hasGps = Boolean(latitude && longitude);
-    if ((!addr || addr.length < 10) && !hasGps) {
+    if (!addr || addr.length < 10) {
       e.preventDefault();
-      alert("Enter a complete delivery address or share your current GPS location.");
+      alert("Enter a complete delivery address.");
       (manualOverride || savedAddressSelect || document.getElementById('addr_house'))?.focus();
-      return;
-    }
-    if (Boolean(latitude) !== Boolean(longitude)) {
-      e.preventDefault();
-      alert("Please share your location again, or clear the location pin and continue with your address.");
       return;
     }
     const placeOrderButton = document.getElementById('placeOrderBtn');
