@@ -298,20 +298,14 @@ def Orders(request, product_id):
         order_data['name'] = selected_address.recipient_name
         order_data['mobile'] = selected_address.mobile
         order_data['address'] = selected_address.formatted_address
-    elif request.user.saved_addresses.exists() and not order_data.get('address') and not (
-        order_data.get('latitude') and order_data.get('longitude')
-    ):
-        return HttpResponseBadRequest("Choose a saved address, enter a manual address, or share your GPS location.")
+    elif request.user.saved_addresses.exists() and not order_data.get('address'):
+        return HttpResponseBadRequest("Choose a saved address or enter a manual delivery address.")
 
     form = OrderForm(order_data)
     if form.is_valid():
         name = form.cleaned_data.get('name', '').strip()
         mobile = form.cleaned_data.get('mobile', '').strip()
         location = form.cleaned_data.get('address', '').strip()
-        latitude = form.cleaned_data.get('latitude')
-        longitude = form.cleaned_data.get('longitude')
-        if not location and latitude is not None and longitude is not None:
-            location = f'GPS location shared by customer ({latitude}, {longitude})'
         instructions = form.cleaned_data.get('instructions', '').strip()
         quantity = form.cleaned_data.get('quantity', Decimal('1.000'))
         delivery_slot = form.cleaned_data.get('delivery_slot', 'Express Delivery (45-60 Mins)')
@@ -337,8 +331,6 @@ def Orders(request, product_id):
             'name': name,
             'mobile': mobile,
             'location': location,
-            'latitude': latitude,
-            'longitude': longitude,
             'instructions': instructions,
             'delivery_slot': delivery_slot,
             'cut_preference': cut_preference,
@@ -394,10 +386,7 @@ def Orders(request, product_id):
                         cut_preference=cut_preference,
                     )
                 # Save the customer's first manually entered delivery address for future checkouts.
-                # GPS-only coordinates remain attached to this order and are not stored as a postal address.
-                if (not selected_address and location
-                        and not location.startswith('GPS location shared by customer')
-                        and not request.user.saved_addresses.exists()):
+                if not selected_address and location and not request.user.saved_addresses.exists():
                     CustomerAddress.objects.create(
                         user=request.user,
                         label='Home',
