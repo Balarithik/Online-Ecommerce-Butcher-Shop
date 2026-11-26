@@ -9,8 +9,8 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from orders.models import Order
-from .forms import CustomerAddressForm, CustomerProfileForm, CustomerSignupForm
-from .models import CustomerAddress, CustomerProfile
+from .forms import CustomerAddressForm, CustomerProfileForm, CustomerSignupForm, CustomerFeedbackForm
+from .models import CustomerAddress, CustomerProfile, CustomerFeedback
 from store.models import Products
 
 
@@ -171,4 +171,27 @@ def delete_customer_account(request):
         user.delete()
     logout(request)
     messages.success(request, "Your account and saved addresses have been deleted.")
+    return redirect("home")
+
+
+
+@require_POST
+def submit_feedback(request):
+    # Honeypot field: real visitors never see or fill this input.
+    if request.POST.get("website", "").strip():
+        return redirect("home")
+
+    form = CustomerFeedbackForm(request.POST)
+    if form.is_valid():
+        feedback = form.save(commit=False)
+        if request.user.is_authenticated:
+            feedback.user = request.user
+        feedback.save()
+        messages.success(request, "Thank you — your feedback has been received.")
+    else:
+        messages.error(request, "Please check the feedback form and try again.")
+
+    next_url = request.POST.get("next", "")
+    if next_url and url_has_allowed_host_and_scheme(next_url, {request.get_host()}):
+        return redirect(next_url)
     return redirect("home")
