@@ -10,7 +10,7 @@ This folder is the **production deploy unit** for Lakshmi Broliers: WSGI app, mi
 - **Cloudinary** — product image storage (optional; falls back to filesystem)
 - **PostgreSQL** via `DATABASE_URL` (SQLite when unset)
 - **python-dotenv** — loads `main/.env`
-- **Twilio** (optional) — order SMS / WhatsApp in `orders/notifications.py`
+- **Resend + Meta WhatsApp Cloud API + MSG91** — queued customer order notifications
 - **Pillow** — admin image validation before Cloudinary upload
 
 ## Environment
@@ -26,7 +26,7 @@ Copy repo-root `.env.example` to `main/.env` (never commit `.env`).
 | `DATABASE_URL` | Postgres URL in production |
 | `WHATSAPP_NUMBER` | Shop WhatsApp (digits, country code first) |
 | `CLOUDINARY_*` / `CLOUDINARY_URL` | Product image uploads |
-| `TWILIO_*` | Optional order notifications |
+| `RESEND_*`, `WHATSAPP_*`, `MSG91_*` | Email, WhatsApp and SMS order notifications |
 | `SECURE_SSL_REDIRECT` | HTTPS redirect when not DEBUG |
 
 ### Cloudinary
@@ -47,18 +47,10 @@ CLOUDINARY_API_SECRET=...
 
 Admin create/edit uploads go through a signed Django endpoint (`upload_product_image`). JPG/PNG/WebP up to 5 MB; public IDs stored under `products_images/`.
 
-### Twilio (optional)
+### Order notifications
 
-```dotenv
-TWILIO_ACCOUNT_SID=AC...
-TWILIO_AUTH_TOKEN=...
-TWILIO_SMS_FROM=+1...
-TWILIO_WHATSAPP_FROM=whatsapp:+1...
-TWILIO_WHATSAPP_CONTENT_SID=HX...
-ORDER_NOTIFICATION_COUNTRY_CODE=91
-```
+The live implementation uses Resend for email, Meta WhatsApp Cloud API for WhatsApp, and MSG91 Flow API for SMS. The notification worker must run separately; see the deployment section below. Provider credentials are optional during local development, but each channel will remain pending/retry until configured.
 
-Leave blank to skip external notifications; order placement still works.
 
 ## Commands
 
@@ -179,7 +171,7 @@ Customer `/signup/` and `/login/` (and admin login) use `@never_cache` + `@ensur
 
 ## Customer order notifications
 
-The notification system uses a database-backed outbox. Order placement and every subsequent order status transition enqueue one email delivery and, only when the customer explicitly checks the WhatsApp consent box, one WhatsApp delivery. A unique `(order, channel, event)` constraint prevents duplicate queue rows.
+The notification system uses a database-backed outbox. Order placement and subsequent order status transitions enqueue email, plus WhatsApp and SMS only when the customer explicitly checks each channel's separate consent box. A unique `(order, channel, event)` constraint prevents duplicate queue rows.
 
 ### Render environment variables
 
@@ -194,8 +186,10 @@ Set these in the web service and notification worker service:
 - `WHATSAPP_TEMPLATE_LANGUAGE`: approved template language code (default `en`).
 - `WHATSAPP_GRAPH_API_VERSION`: supported Graph API version (default `v22.0`).
 - `ORDER_NOTIFICATION_COUNTRY_CODE`: default `91` for India.
+- `MSG91_AUTH_KEY`: MSG91 API auth key (secret).
+- `MSG91_SMS_TEMPLATE_ID`: active MSG91 Flow template ID, mapped to your approved Indian DLT template.
 
-The WhatsApp utility template must contain four body placeholders in this order: order ID, current order status, order total, and order-tracking URL. Configure and approve the template in Meta WhatsApp Manager before enabling live WhatsApp delivery. Never commit API keys or tokens.
+The WhatsApp utility template must contain four body placeholders in this order: order ID, current order status, order total, and order-tracking URL. Configure and approve the template in Meta WhatsApp Manager before enabling live WhatsApp delivery.\n\nFor MSG91, create an SMS Flow template with three variables in this exact order: `VAR1` = order ID, `VAR2` = current status, `VAR3` = order total. For Indian numbers, map the template to your DLT-approved template ID and sender ID, verify it in MSG91, and make that version active. Never commit API keys or tokens.
 
 ### Deploy the worker
 
@@ -213,5 +207,5 @@ The web service only enqueues notifications. It does not send them itself. A sep
 5. Deploy the worker and check its logs for `Notification worker started`.
 6. Place a test order. Check Django Admin → Orders → Notification deliveries. Pending rows should be processed; successful sends become Sent, while provider errors remain visible in Last error and are retried.
 
-The worker retries provider failures with increasing delays, up to six attempts. Email is skipped when the signed-in customer's account has no email address. WhatsApp is sent only when the customer checks the explicit consent box and Meta has approved the configured Utility template. Resend production sending requires a verified sender domain; the default Resend test sender is not a production sender.
+The worker retries provider failures with increasing delays, up to six attempts. Email is skipped when the signed-in customer's account has no email address. WhatsApp and SMS are sent only when the customer checks their respective consent boxes. Meta requires an approved Utility template. MSG91 requires an active template mapped to the approved DLT template and sender ID in India. Resend production sending requires a verified sender domain; the default Resend test sender is not a production sender.
 
