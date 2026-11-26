@@ -18,21 +18,11 @@ const LOADING_MESSAGES = [
 
 export default function App() {
   const [progress, setProgress] = useState(15);
-  const [messageIndex, setMessageIndex] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
   const [serverOnline, setServerOnline] = useState(false);
   const [connectionFailed, setConnectionFailed] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
-
-  // Cycle loading messages
-  useEffect(() => {
-    if (isReady) return;
-    const interval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
-    }, 2400);
-    return () => clearInterval(interval);
-  }, [isReady]);
 
   // Smooth progress increments
   useEffect(() => {
@@ -130,7 +120,7 @@ export default function App() {
 
         <div className="flex items-center gap-1.5 text-stone-500 text-[11px] font-medium">
           <span className="material-symbols-outlined text-[15px] text-stone-600">location_on</span>
-          <span>Uchipuli, Tamil Nadu</span>
+          <span>Lakshmi Broliers, Railway station road, Uchipuli, Ramanathapuram 623534</span>
         </div>
       </header>
 
