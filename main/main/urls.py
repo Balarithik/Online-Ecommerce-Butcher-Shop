@@ -19,7 +19,7 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 from admin_dashboard import views
-from main.views import health_check
+from main.views import health_check, page_not_found, server_error
 
 urlpatterns = [
     path('healthz/', health_check, name='health_check'),
@@ -32,3 +32,7 @@ urlpatterns = [
     path('', include('home.urls')),  # root goes to home
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Django invokes these handlers for production 404 and 500 responses when DEBUG=False.
+handler404 = "main.views.page_not_found"
+handler500 = "main.views.server_error"
